@@ -11,30 +11,30 @@
                     <div class="card">
                         <div class="card-body">
         
-                        @can('crear-rol')
+                        @hasrole('CEO')
                         <a class="btn btn-primary" href="{{ route('roles.create') }}">Nuevo</a>                        
-                        @endcan
+                        @endhasrole
         
                 
                             <table class="table table-striped mt-2">
                                 <thead style="background-color:background:linear-gradient(to right, hsla(234, 94%, 39%, 0.977), #023cfb,hsl(213, 99%, 49%))">                                                       
-                                    <th style="color:#fff;">Rol</th>
-                                    <th style="color:#fff;">Acciones</th>
+                                    <th style="color:#000;">Rol</th>
+                                    <th style="color:#000;">Acciones</th>
                                 </thead>  
                                 <tbody>
                                 @foreach ($roles as $role)
                                 <tr>                           
                                     <td>{{ $role->name }}</td>
                                     <td>                                
-                                        @can('editar-rol')
+                                        @hasrole('CEO')
                                             <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Editar</a>
-                                        @endcan
+                                        @endhasrole
                                         
-                                        @can('borrar-rol')
+                                        @hasrole('CEO')
                                             {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
                                                 {!! Form::submit('Borrar', ['class' => 'btn btn-danger']) !!}
                                             {!! Form::close() !!}
-                                        @endcan
+                                        @endhasrole
                                     </td>
                                 </tr>
                                 @endforeach

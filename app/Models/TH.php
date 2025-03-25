@@ -12,5 +12,6 @@ class TH extends Model
     use Userstamps;
     // protected $fillable = ['vacaciones','descfranq','granizo','ponerep','taller','direccion','barrio','localidad','telefonos',
     // 'email','zona','razon','cuit','grua','traslado'];
+    protected $table = '_t_h';
     protected $guarded = [''];
 }
