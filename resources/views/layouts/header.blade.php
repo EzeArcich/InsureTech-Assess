@@ -24,20 +24,21 @@
 
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <div class="dropdown-title">Panel</div>
-                <a class="dropdown-item has-icon edit-profile" href="{{ route('usuarios.edit', ['usuario' => \Auth::id()]) }}">
-                    <i class="fa fa-user"></i><h5>Editar perfil</h5>
+                <a class="dropdown-item has-icon edit-profile d-flex align-items-center" href="{{ route('usuarios.edit', ['usuario' => \Auth::id()]) }}">
+                    <i class="fa fa-user"></i><h5 class="mb-0 ms-2">Editar perfil</h5>
                 </a>
-                <a class="dropdown-item has-icon" data-toggle="modal" data-target="#changePasswordModal" data-id="{{ \Auth::id() }}">
-                    <i class="fa fa-lock"></i><h5>Cambiar clave</h5>
+                <a class="dropdown-item has-icon d-flex align-items-center" data-toggle="modal" style="cursor:pointer;" data-target="#changePasswordModal" data-id="{{ \Auth::id() }}">
+                    <i class="fa fa-lock"></i><h5 class="mb-0 ms-2">Cambiar clave</h5>
                 </a>
-                <a href="{{ url('logout') }}" class="dropdown-item has-icon text-danger" onclick="event.preventDefault(); localStorage.clear(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i> <h5>Salir</h5>
+                <a href="{{ url('logout') }}" class="dropdown-item has-icon text-danger d-flex align-items-center" onclick="event.preventDefault(); localStorage.clear(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i><h5 class="mb-0 ms-2">Salir</h5>
                 </a>
 
                 <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
                     {{ csrf_field() }}
                 </form>
             </div>
+
         </li>
     @else
         <li class="nav-item dropdown">
