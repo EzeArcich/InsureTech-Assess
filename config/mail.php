@@ -39,7 +39,7 @@ return [
             'host' => env('MAIL_HOST', 'smtp.hostinger.com'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'TLS'),
-            'username' => env('derivaciones@siniestrosdag.com'),
+            'username' => env('derivaciones@InsureTechAsses.com'),
             'password' => env('Michaki88@'),
             'timeout' => null,
             // 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 apikei de sendgird
@@ -101,7 +101,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'derivaciones@siniestrosdag.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'derivaciones@InsureTechAsses.com'),
         'name' => env('MAIL_FROM_NAME', 'Coordinaciones - Estudio DAG'),
     ],
 

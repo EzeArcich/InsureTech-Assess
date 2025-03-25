@@ -5,45 +5,34 @@
     cursor: pointer;
 }
 
-.user-menu {
-    font-family: 'Bebas Neue', cursive;
-        background: red;
-        -webkit-background-clip: text; /* Para navegadores Webkit (Chrome, Safari, etc.) */
-        background-clip: text;
-        color: transparent; /* Oculta el color del texto */
-}
 </style>
 
 <form class="form-inline mr-auto" action="#">
     <ul class="navbar-nav mr-3">
-        <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+        <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg text-dark"><i class="fas fa-bars"></i></a></li>
     </ul>
 </form>
-<ul class="navbar-nav navbar-right">
-
+<ul class="navbar-nav navbar-right ms-auto">
     @if(\Illuminate\Support\Facades\Auth::user())
-        <li class="dropdown">
-            <a data-toggle="dropdown"
-               class="nav-link dropdown-toggle nav-link-lg nav-link-user" style="color:red;">
-                <img alt="image" src="{{ asset('img/logo.png') }}"
-                     class="rounded-circle mr-1 thumbnail-rounded user-thumbnail ">
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle nav-link-lg nav-link-user" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img alt="image" src="{{ asset('img/logo.png') }}" class="rounded-circle mr-1 thumbnail-rounded user-thumbnail pb-2">
                 <div class="d-sm-none d-lg-inline-block">
-                    <h5 class="user-menu">{{\Illuminate\Support\Facades\Auth::user()->name}}</h5>
+                    <h5 class="text-dark">{{ \Illuminate\Support\Facades\Auth::user()->name }}</h5>
                 </div>
             </a>
 
-            <div class="dropdown-menu dropdown-menu-right">
-                <div class="dropdown-title">
-                    Panel</div>
-                    <a class="dropdown-item has-icon edit-profile" href="{{ route('usuarios.edit', ['usuario' => \Auth::id()]) }}">
-                        <i class="fa fa-user"></i><h5>Editar perfil</h5>
-                    </a>
-
-                <a class="dropdown-item has-icon" data-toggle="modal" data-target="#changePasswordModal" data-id="{{ \Auth::id() }}"><i
-                            class="fa fa-lock"> </i><h5>Cambiar clave</h5></a>
-                            <a href="{{ url('logout') }}" class="dropdown-item has-icon text-danger" onclick="event.preventDefault(); localStorage.clear();  document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt"></i> <h5>Salir</h5>
-                            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <div class="dropdown-title">Panel</div>
+                <a class="dropdown-item has-icon edit-profile" href="{{ route('usuarios.edit', ['usuario' => \Auth::id()]) }}">
+                    <i class="fa fa-user"></i><h5>Editar perfil</h5>
+                </a>
+                <a class="dropdown-item has-icon" data-toggle="modal" data-target="#changePasswordModal" data-id="{{ \Auth::id() }}">
+                    <i class="fa fa-lock"></i><h5>Cambiar clave</h5>
+                </a>
+                <a href="{{ url('logout') }}" class="dropdown-item has-icon text-danger" onclick="event.preventDefault(); localStorage.clear(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i> <h5>Salir</h5>
+                </a>
 
                 <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
                     {{ csrf_field() }}
@@ -51,12 +40,11 @@
             </div>
         </li>
     @else
-        <li class="dropdown"><a href="#" data-toggle="dropdown"
-                                class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                {{--                <img alt="image" src="#" class="rounded-circle mr-1">--}}
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle nav-link-lg nav-link-user" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="d-sm-none d-lg-inline-block">{{ __('messages.common.hello') }}</div>
             </a>
-            <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-menu dropdown-menu-end">
                 <div class="dropdown-title">{{ __('messages.common.login') }}
                     / {{ __('messages.common.register') }}</div>
                 <a href="{{ route('login') }}" class="dropdown-item has-icon">

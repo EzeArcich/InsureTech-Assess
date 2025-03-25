@@ -76,7 +76,7 @@ class CoordinacionesController extends Controller
         $usuario = $request->coordinador;
         $file = $request->file;
 
-        $asunto = "Estudio DAG - Siniestro: $siniestro- Patente: $patente - $nrocorto";
+        $asunto = "Estudio InsureTech Assess  - Siniestro: $siniestro- Patente: $patente - $nrocorto";
 
         $cuerpodelmail = "<div class=>  
         <div class=>
@@ -85,12 +85,12 @@ class CoordinacionesController extends Controller
                     <div class=>
                                 
                                  
-                                <div id=':mdi' class='Am Al editable LW-avf tS-tW' hidefocus='true' aria-label='Cuerpo del mensaje' g_editable='true' role='textbox' aria-multiline='true' contenteditable='true' tabindex='1' style='direction: ltr; min-height: 226px;' spellcheck='false'><div dir='ltr'><div><div dir='ltr'><div dir='ltr'><div><div dir='ltr'><div><div dir='ltr'><div dir='ltr'><div>Estimados,<br><br>me comunico desde Estudio DAG, al servicio de Mercantil Andina, a fin de coordinar una inspeccion del rodado patente <span zeum4c268='PR_3_0' data-ddnwab='PR_3_0' aria-invalid='spelling' class='LI ng'> $patente </span>.<br><br>Favor de aportar telefono del titular registral del rodado para coordinar la misma o informar los siguientes datos:<br><br>En caso de taller homologado , adjunto listado completo, quedando al aguardo de que nos indican taller y fecha por el cual&nbsp;
+                                <div id=':mdi' class='Am Al editable LW-avf tS-tW' hidefocus='true' aria-label='Cuerpo del mensaje' g_editable='true' role='textbox' aria-multiline='true' contenteditable='true' tabindex='1' style='direction: ltr; min-height: 226px;' spellcheck='false'><div dir='ltr'><div><div dir='ltr'><div dir='ltr'><div><div dir='ltr'><div><div dir='ltr'><div dir='ltr'><div>Estimados,<br><br>me comunico desde Estudio InsureTech Assess , al servicio de Mercantil Andina, a fin de coordinar una inspeccion del rodado patente <span zeum4c268='PR_3_0' data-ddnwab='PR_3_0' aria-invalid='spelling' class='LI ng'> $patente </span>.<br><br>Favor de aportar telefono del titular registral del rodado para coordinar la misma o informar los siguientes datos:<br><br>En caso de taller homologado , adjunto listado completo, quedando al aguardo de que nos indican taller y fecha por el cual&nbsp;
     
-    pasara el asegurado<br><span zeum4c268='PR_10_0' data-ddnwab='PR_10_0' aria-invalid='grammar' class='Lm ng'>Tengan</span> en cuenta que no deben de coordinar turno con el taller; nos lo solicitan directamente por este medio:<br><br> <a href='https://siniestrosdag.com/urls/1654551972_TALLERES%20HOMOLOGADOS%20-%20ACTUALIZADO.xlsx'>https://siniestrosdag.com/urls/1654551972_TALLERES%20HOMOLOGADOS%20-%20ACTUALIZADO.xlsx</a>  <br>(En el caso de que el link no <span zeum4c268='PR_4_0' data-ddnwab='PR_4_0' aria-invalid='grammar' class='Lm ng'>funcione</span>, copiar y pegar en su navegador para descargar el archivo)<br><br>En caso de optar por un taller que no este en el listado, lo ideal es que saque turno, y nos lo informe por este medio con al menos 24 hs de antelacion, indicando fecha, domicilio, localidad, telefono y correo electronico del taller.<br><br>En caso de que el asegurado informe no tener piezas por reparar, pueden <span zeum4c268='PR_13_0' data-ddnwab='PR_13_0' aria-invalid='spelling' class='LI ng'>adjuntarnos</span> fotos por este medio.<br><br>Por cualquier consulta, quedo a entera disposicion.<br><br>Saludos cordiales.<br><br><br><br></div></div></div></div></div></div></div></div></div></div><div><div dir='ltr' class='gmail_signature' data-smartmail='gmail_signature'><div dir='ltr'><div><div><span style='color:rgb(34,34,34)'>$usuario</span><div style='color:rgb(34,34,34)'><font style='font-size:10pt'>
-    Coordinacion de siniestros</font></div><div style='color:rgb(34,34,34)'><font style='font-size:10pt'>ESTUDIO DAG</font></div>
-    <div style='color:rgb(34,34,34)'><a href='http://www.estudiodag.com.ar/' style='color:rgb(17,85,204)' target='_blank'>
-    <font style='font-size:10pt'>www.estudiodag.com.ar</font></a></div></div></div></div></div></div></div>
+    pasara el asegurado<br><span zeum4c268='PR_10_0' data-ddnwab='PR_10_0' aria-invalid='grammar' class='Lm ng'>Tengan</span> en cuenta que no deben de coordinar turno con el taller; nos lo solicitan directamente por este medio:<br><br> <a href='https://siniestrosInsureTech Assess .com/urls/1654551972_TALLERES%20HOMOLOGADOS%20-%20ACTUALIZADO.xlsx'>https://siniestrosInsureTech Assess .com/urls/1654551972_TALLERES%20HOMOLOGADOS%20-%20ACTUALIZADO.xlsx</a>  <br>(En el caso de que el link no <span zeum4c268='PR_4_0' data-ddnwab='PR_4_0' aria-invalid='grammar' class='Lm ng'>funcione</span>, copiar y pegar en su navegador para descargar el archivo)<br><br>En caso de optar por un taller que no este en el listado, lo ideal es que saque turno, y nos lo informe por este medio con al menos 24 hs de antelacion, indicando fecha, domicilio, localidad, telefono y correo electronico del taller.<br><br>En caso de que el asegurado informe no tener piezas por reparar, pueden <span zeum4c268='PR_13_0' data-ddnwab='PR_13_0' aria-invalid='spelling' class='LI ng'>adjuntarnos</span> fotos por este medio.<br><br>Por cualquier consulta, quedo a entera disposicion.<br><br>Saludos cordiales.<br><br><br><br></div></div></div></div></div></div></div></div></div></div><div><div dir='ltr' class='gmail_signature' data-smartmail='gmail_signature'><div dir='ltr'><div><div><span style='color:rgb(34,34,34)'>$usuario</span><div style='color:rgb(34,34,34)'><font style='font-size:10pt'>
+    Coordinacion de siniestros</font></div><div style='color:rgb(34,34,34)'><font style='font-size:10pt'>ESTUDIO InsureTech Assess </font></div>
+    <div style='color:rgb(34,34,34)'><a href='http://www.youtube.com/' style='color:rgb(17,85,204)' target='_blank'>
+    <font style='font-size:10pt'>www.youtube.com</font></a></div></div></div></div></div></div></div>
     
                                 </div>
                                 
@@ -105,22 +105,25 @@ class CoordinacionesController extends Controller
         </div>
     </div>";
 
-        @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/autoload.php';
-        @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/Exception.php';
-        @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-        @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/SMTP.php';
+        @require base_path('vendor/autoload.php');
+        @require base_path('vendor/phpmailer/phpmailer/src/Exception.php');
+        @require base_path('vendor/phpmailer/phpmailer/src/PHPMailer.php');
+        @require base_path('vendor/phpmailer/phpmailer/src/SMTP.php');
+    
+    
         $mail = new PHPMailer(true);
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
         $mail->isSMTP();
         $mail->SMTPDebug = 0;
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth = true;  
-        $mail->Username = 'coordinaciones.dag@gmail.com';
-        $mail->Password = 'hvmhibwglsibihzu';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+        $mail->Username = '503ea3eff999ff'; // MAIL_USERNAME
+        $mail->Password = '7395398c77cfd9'; // MAIL_PASSWORD
+        // Intenta con esta configuración:
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // O elimina esta línea para probar sin encriptación
+        $mail->Port = 2525;
 
-        $mail->setFrom('derivaciones@siniestrosdag.com', 'Coordinaciones - Estudio DAG');
+        $mail->setFrom('derivaciones@siniestros.com', 'Coordinaciones - Estudio InsureTech Assess ');
         $mail->addAddress($email);
 
 
@@ -328,27 +331,27 @@ class CoordinacionesController extends Controller
           
           </tbody>
           
-          <br><hr><h1 style='margin-top:100px;'>Ingrese al siguiente link para completar la tasacion:<a href=$link>$link</h1></a><img src='https://siniestrosdag.com/cover/$imagen' title='mi_titulo' style='height: 900px;width:600px'><hr>";
+          <br><hr><h1 style='margin-top:100px;'>Ingrese al siguiente link para completar la tasacion:<a href=$link>$link</h1></a><img src='https://siniestrosInsureTech Assess .com/cover/$imagen' title='mi_titulo' style='height: 900px;width:600px'><hr>";
     
-            @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/autoload.php';
-            @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/Exception.php';
-            @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-            @require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/phpmailer/phpmailer/src/SMTP.php';
+            @require base_path('vendor/autoload.php');
+            @require base_path('vendor/phpmailer/phpmailer/src/Exception.php');
+            @require base_path('vendor/phpmailer/phpmailer/src/PHPMailer.php');
+            @require base_path('vendor/phpmailer/phpmailer/src/SMTP.php');   
+
             $mail = new PHPMailer(true);
             $mail->CharSet = 'UTF-8';
             $mail->SMTPDebug = SMTP::DEBUG_SERVER;
             $mail->isSMTP();
             $mail->SMTPDebug = 0;
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = 'sandbox.smtp.mailtrap.io';
             $mail->SMTPAuth = true;  
-            $mail->Username = 'coordinaciones.dag@gmail.com';
-            $mail->Password = 'hvmhibwglsibihzu';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port = 465;
+            $mail->Username = '503ea3eff999ff'; // MAIL_USERNAME
+            $mail->Password = '7395398c77cfd9'; // MAIL_PASSWORD
+            // Intenta con esta configuración:
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // O elimina esta línea para probar sin encriptación
+            $mail->Port = 2525;
     
-            $mail->setFrom('derivaciones@siniestrosdag.com', 'Coordinaciones - Estudio DAG');
-            $mail->addAddress('arcichsilvio@gmail.com');
-            
+            $mail->setFrom('derivaciones@siniestros.com', 'Coordinaciones - Estudio InsureTech Assess ');            
     
     
             $mail->isHTML(true);

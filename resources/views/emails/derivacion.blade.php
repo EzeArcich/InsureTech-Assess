@@ -20,7 +20,7 @@
 
 
                             
-                                    <div style="margin-top:100px"><span style="color:rgb(34,34,34)">{{\Illuminate\Support\Facades\Auth::user()->name}}</span><div style="color:rgb(34,34,34)"><font style="font-size:10pt">Coordinación de siniestros</font></div><div style="color:rgb(34,34,34)"><font style="font-size:10pt">ESTUDIO DAG</font></div><div style="color:rgb(34,34,34)"><a href="http://www.estudiodag.com.ar/" style="color:rgb(17,85,204)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://www.estudiodag.com.ar/&amp;source=gmail&amp;ust=1654635631600000&amp;usg=AOvVaw0JsACMRJaJvX-HTqvFwp7v"><font style="font-size:10pt">www.estudiodag.com.ar</font></a></div></div>
+                                    <div style="margin-top:100px"><span style="color:rgb(34,34,34)">{{\Illuminate\Support\Facades\Auth::user()->name}}</span><div style="color:rgb(34,34,34)"><font style="font-size:10pt">Coordinación de siniestros</font></div><div style="color:rgb(34,34,34)"><font style="font-size:10pt">Insure TechAsses</font></div><div style="color:rgb(34,34,34)"><a href="http://www.estudiodag.com.ar/" style="color:rgb(17,85,204)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://www.estudiodag.com.ar/&amp;source=gmail&amp;ust=1654635631600000&amp;usg=AOvVaw0JsACMRJaJvX-HTqvFwp7v"><font style="font-size:10pt">www.youtube.com.ar</font></a></div></div>
 
                             </div>
 

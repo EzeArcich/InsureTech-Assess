@@ -53,12 +53,7 @@ class SiniestroController extends Controller
     public function pendientes()
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Pendiente')->get();
-        
-
-        
-        
-        
+        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Pendiente')->paginate(10);  
         
         return view('siniestros.index', compact('siniestros'));
 
@@ -73,11 +68,7 @@ class SiniestroController extends Controller
     public function ausentes()
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Ausente')->get();
-        
-
-        
-        
+        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Ausente')->paginate(10);       
         
         
         return view('siniestros.index', compact('siniestros'));

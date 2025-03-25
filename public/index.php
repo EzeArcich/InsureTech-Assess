@@ -32,7 +32,6 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 */
 
 require __DIR__.'/../vendor/autoload.php';
-//require '/home/u277224827/domains/siniestrosdag.com/dash_roles test/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +45,6 @@ require __DIR__.'/../vendor/autoload.php';
 */
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
-//$app = require_once '/home/u277224827/domains/siniestrosdag.com/dash_roles test/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 

@@ -16,8 +16,9 @@
     </div>
     
     <div class="sidebar-brand sidebar-brand-sm">
+        <h5 class="text-center pt-2">IA</h5>
         <a href="{{ url('/home') }}" class="small-sidebar-text">
-            <img class="navbar-brand-full" src="{{ asset('img/DAG.png') }}" width="45px" alt=""/>
+            <!-- <img class="navbar-brand-full" src="{{ asset('img/DAG.png') }}" width="45px" alt=""/> -->
         </a>
     </div>
     <ul class="sidebar-menu">

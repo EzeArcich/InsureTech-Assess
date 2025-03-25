@@ -9,9 +9,8 @@
         <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudio DAG</title>
+    <title>Insure TechAsses</title>
 
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dongle:wght@300&family=Roboto&display=swap');
 

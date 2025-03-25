@@ -15,8 +15,8 @@
         </div>
         <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/siniestros">Siniestros</a></li>
+    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/home#">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/siniestros">Siniestros</a></li>
     <li class="breadcrumb-item active" aria-current="page">Editar siniestro</li> 
     
   </ol>
@@ -163,8 +163,11 @@
                                         <div class="input-group ml-1">	
                                     <input type="text" class="form-control name" id="nombre" name="nombre">
                                         <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_productores" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
-                                    </span>	
+                                            <button class="btn btn-info pull-right" type="button" data-bs-toggle="modal" data-bs-target="#modal_productores" ><span class="fa fa-search-plus"></span></button>
+                                        </span>	
+
+
+                                        
                                     </div>	
                                     </div>
 
@@ -211,9 +214,12 @@
                                     <label for="nombretaller" class="ml-2">Nombre del taller</label>    
                                         <div class="input-group ml-1">	
                                     <input type="text" class="form-control name" id="nombretaller" name="nombretaller" value="{{ $siniestro->nombretaller }}">
-                                        <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_talleres" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info pull-right" type="button" data-bs-toggle="modal" data-bs-target="#modal_talleres">
+                                            <span class="fa fa-search-plus" aria-hidden="true"></span>
+                                        </button>
                                     </span>	
+
                                     </div>	
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
@@ -443,8 +449,10 @@
                                         <div class="input-group ml-1">	
                                     <input type="text" class="form-control name" id="nombre" name="nombre">
                                         <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_productores" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
-                                    </span>	
+                                            <button class="btn btn-info pull-right" type="button" data-bs-toggle="modal" data-bs-target="#modal_productores">
+                                                <span class="fa fa-search-plus" aria-hidden="true"></span>
+                                            </button>
+                                        </span>	
                                     </div>	
                                     </div>
 
@@ -492,8 +500,10 @@
                                         <div class="input-group ml-1">	
                                     <input type="text" class="form-control name" id="lugar" name="lugar" value="{{ $siniestro->lugar }}">
                                         <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_talleres" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
-                                    </span>	
+                                            <button class="btn btn-info pull-right" type="button" data-bs-toggle="modal" data-bs-target="#modal_talleres">
+                                                <span class="fa fa-search-plus" aria-hidden="true"></span>
+                                            </button>
+                                        </span>	
                                     </div>	
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
@@ -735,7 +745,7 @@
                                         <div class="input-group ml-1">	
                                     <input type="text" class="form-control name" id="nombretaller" name="nombretaller" value="{{ $siniestro->nombretaller }}">
                                         <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_talleres" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
+                                         <button class="btn btn-info pull-right" type="button" data-bs-toggle="modal" href="#" data-bs-target="#modal_talleres" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
                                     </span>	
                                     </div>	
                                     </div>
@@ -1110,11 +1120,11 @@
                                                     
                                                         
                                                         @if (session('info'))
-                                                                        <script>
-                                                                            alert('{{session('info')}}');
-                                                                        </script>
+                                                            <script>
+                                                                alert('{{session('info')}}');
+                                                            </script>
 
-                                                                    @endif
+                                                        @endif
                                                       
                         </div>
                         </form>
@@ -1137,116 +1147,106 @@
         background-color: #3abaf4; font-weight: bold; color: black;
     }
 </style>
-	<div class="modal fade" id="modal_productores" tabindex="-1" role="dialog" >
+	<div class="modal fade" id="modal_productores" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color:hsl(213, 99%, 49%);padding-top:5px;">
-            <h4 class="modal-title" style="color:white;">Productores</h4>  
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              
-            </div>      
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">  
-                    <div style="width: 100%; padding-left: -10px;">    
-		            <div class="table-responsive">        
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:hsl(213, 99%, 49%);padding-top:5px;">
+                    <h4 class="modal-title" style="color:white;">Productores</h4>  
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button> 
+                </div>      
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">  
+                            <div style="width: 100%; padding-left: -10px;">    
+		                        <div class="table-responsive">        
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                                            
                                                 
                                                         
-                                                    <table class="table mt-2 productores" id="productores" cellspacing="0" width="100%">
-                                                        <thead style="background-color:hsl(213, 99%, 49%)">                                     
-                                                            <th style="display: none;color:#fff;font-size:20px">ID</th>
-                                                            <th style="color:#fff;font-size:17px">Asignar a</th>
-                                                            <th style="color:#fff;font-size:17px">Teléfono</th>
-                                                            <th style="color:#fff;font-size:17px">E-mail</th>
-                                                            
-                                                                                                                                
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($productores as $productor)
-                                                            <tr>
-                                                                <td style="display: none;">{{ $productor->id }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->nombre }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->telefono }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->correo }}</td>
-
-                                                                
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                        </div>
-                    </div>
-                    </div>
-                    </div>
-                </div>	
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>							
-            </div>
-            <div class="modal-footer">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal fade" id="modal_talleres" tabindex="-1" role="dialog" >
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color:hsl(213, 99%, 49%);padding-top:5px;">
-            <h4 class="modal-title" style="color:white;">Buscar perito</h4>  
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              
-            </div>      
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">  
-                    <div style="width: 100%; padding-left: -10px;">    
-		            <div class="table-responsive">        
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                            <label for="">Talleres homologados</label>
+                                        <table class="table mt-2 productores" id="productores" cellspacing="0" width="100%">
+                                            <thead style="background-color:hsl(213, 99%, 49%)">                                     
+                                                <th style="display: none;color:#fff;font-size:20px">ID</th>
+                                                <th style="color:#fff;font-size:17px">Asignar a</th>
+                                                <th style="color:#fff;font-size:17px">Teléfono</th>
+                                                <th style="color:#fff;font-size:17px">E-mail</th>
                                                 
-                                                        
-                                                    <table class="table mt-2 talleres" id="talleres" cellspacing="0" width="100%">
-                                                        <thead style="background-color:hsl(213, 99%, 49%)">                                     
-                                                            <th style="display: none;font-size:20px">ID</th>
-                                                            <th style="color:#fff;font-size:17px">Taller</th>
-                                                            <th style="color:#fff;font-size:17px">E-mail</th>
-                                                            <th style="color:#fff;font-size:17px">Telefono</th>
-                                                            <th style="color:#fff;font-size:17px">Domicilio</th>
-                                                            <th style="color:#fff;font-size:17px">Localidad</th>
+                                                                                                                    
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($productores as $productor)
+                                                <tr>
+                                                    <td style="display: none;">{{ $productor->id }}</td>
+                                                    <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->nombre }}</td>
+                                                    <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->telefono }}</td>
+                                                    <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->correo }}</td>
 
-                                                            
-                                                                                                                                
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($talleres as $taller)
-                                                            <tr>
-                                                                <td style="display: none;">{{ $taller->id }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->taller }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->telefonos }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->email }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->direccion }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->localidad }}</td>
-
-                                                                
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                        </div>
-                    </div>
-                    </div>
+                                                    
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
                     </div>
                 </div>	
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>							
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>							
+                </div>
             </div>
-            <div class="modal-footer">
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+
+    <div class="modal fade" id="modal_talleres" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:hsl(213, 99%, 49%); padding-top:5px;">
+                    <h4 class="modal-title" style="color:white;">Talleres homologados</h4>  
+                    <!-- Botón de cierre corregido -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>  
+                </div>      
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">  
+                            <div style="width: 100%;">
+                                <div class="table-responsive">        
+                                    <div class="col-12">
+                                        <table class="table mt-2 talleres" id="talleres" cellspacing="0" width="100%">
+                                            <thead style="background-color:hsl(213, 99%, 49%)">                                     
+                                                <tr>
+                                                    <th style="display: none;font-size:20px">ID</th>
+                                                    <th style="color:#fff;font-size:17px">Taller</th>
+                                                    <th style="color:#fff;font-size:17px">E-mail</th>
+                                                    <th style="color:#fff;font-size:17px">Telefono</th>
+                                                    <th style="color:#fff;font-size:17px">Domicilio</th>
+                                                    <th style="color:#fff;font-size:17px">Localidad</th> 
+                                                </tr>                                                                                               
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($talleres as $taller)
+                                                <tr>
+                                                    <td style="display: none;">{{ $taller->id }}</td>
+                                                    <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->taller }}</td>
+                                                    <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->telefonos }}</td>
+                                                    <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->email }}</td>
+                                                    <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->direccion }}</td>
+                                                    <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->localidad }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>	
+                    <!-- Botón de confirmación corregido -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>							
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
     
 
 @endsection
@@ -1308,24 +1308,24 @@
             }
             selectedRow();
 
-            function selectedRow2(){
+            // function selectedRow2(){
                 
-                var index,
-                    table = document.getElementById("inspectores");
+            //     var index,
+            //         table = document.getElementById("inspectores");
             
-                for(var i = 1; i < table.rows.length; i++)
-                {
-                    table.rows[i].onclick = function()
-                    {
+            //     for(var i = 1; i < table.rows.length; i++)
+            //     {
+            //         table.rows[i].onclick = function()
+            //         {
                          
-                        {
-                            $(this).addClass('selected').siblings().removeClass('selected')
-                        }
-                    };
-                }
+            //             {
+            //                 $(this).addClass('selected').siblings().removeClass('selected')
+            //             }
+            //         };
+            //     }
                 
-            }
-            selectedRow2();
+            // }
+            // selectedRow2();
 
             function selectedRow3(){
                 
@@ -1349,283 +1349,283 @@
 
 
 
-function clearData(){
- $('#siniestro').val('');
- $('#fechaip').val('');
- $('#inspector').val('');
- $('#localidad').val('');
- $('#direccion').val('');
- $('#email').val('');
- $('#nameError').text('');
- $('#titleError').text('');
- $('#instituteError').text('');
-}
+    function clearData(){
+    $('#siniestro').val('');
+    $('#fechaip').val('');
+    $('#inspector').val('');
+    $('#localidad').val('');
+    $('#direccion').val('');
+    $('#email').val('');
+    $('#nameError').text('');
+    $('#titleError').text('');
+    $('#instituteError').text('');
+    }
 
-function reladData(){
-    setTimeout(function() {
-   location.reload();
-   }); 
-}
-
-
+    function reladData(){
+        setTimeout(function() {
+    location.reload();
+    }); 
+    }
 
 
-    function editData(id){
+
+
+        function editData(id){
+        
+
+
+
     
+        $.ajax({
+            type:"get",
+            dataType:"json",
+            url:"/teacher/edit/"+id,
+            success: function(data){
+                $('#id').val(data.id);
+                $('#siniestro').val(data.siniestro);
+                $('#fechaip').val(data.fechaip);
+                $('#patente').val(data.patente);
+                $('#direccion').val(data.direccion);
+                $('#localidad').val(data.localidad);
+                console.log(data);
+            }
+        })
+    }
 
 
 
- 
-    $.ajax({
-        type:"get",
-        dataType:"json",
-        url:"/teacher/edit/"+id,
-        success: function(data){
-            $('#id').val(data.id);
-            $('#siniestro').val(data.siniestro);
-            $('#fechaip').val(data.fechaip);
-            $('#patente').val(data.patente);
-            $('#direccion').val(data.direccion);
-            $('#localidad').val(data.localidad);
-            console.log(data);
+    function productorData(id){
+        
+
+
+
+    
+        $.ajax({
+            type:"get",
+            dataType:"json",
+            url:"/teacher/productores/"+id,
+            success: function(data){
+            
+
+                // $('#id_inspector').val(data.id);
+                $('#nombre').val(data.nombre);
+                $('#emailPas').val(data.correo);
+                
+            
+
+                console.log(data);
+            }
+        })
+    }
+
+    function tallerData(id){
+        
+
+
+
+    
+        $.ajax({
+            type:"get",
+            dataType:"json",
+            url:"/teacher/taller/"+id,
+            success: function(data){
+            
+
+                // $('#id_inspector').val(data.id);
+                $('#nombretaller').val(data.taller);
+                $('#telefono').val(data.telefonos);
+                $('#email').val(data.email);
+                $('#direccion').val(data.direccion);
+                $('#localidad').val(data.localidad);
+                
+            
+
+                console.log(data);
+            }
+        })
+    }
+
+    function goTo() {
+        let link = "https://InsureTechAsses.com/siniestros/pendientes";
+        window.location.replace(link);
+    };
+
+
+    // --------------------------------------------- Update de registros a la table de BD -----------------------------------------------------
+
+    function updateData(event){
+
+    event.preventDefault();
+    var id = $('#id').val();
+    var link = $('#link').val();
+    var siniestro =  $('#siniestro').val();
+    var patente = $('#patente').val();
+    var nrocorto = $('#nrocorto').val();
+    var cliente = $('#cliente').val();
+    var modalidad = $('#modalidad').val();
+    //  var imagen = $('#imagen').val();
+    var motivo = $('#motivo').val();
+    var correo = $('#correo').val();
+    var observaciones = $('#observaciones').val();
+    var email = $('#email').val();
+    var nombretaller = $('#nombretaller').val();
+    var telefonos = $('#telefono').val();
+    var direccion = $('#direccion').val();
+    var localidad = $('#localidad').val();
+    var estado = $('#estado').val();
+    var fechaip = $('#fechaip').val();
+    var enviarorden = $('#enviarorden').val();
+    var horario = $('#horario').val();
+    var comentariosparaip = $('#comentariosparaip').val();
+    var comentariosdelperitovisita = $('#comentariosdelperitovisita').val();
+    var comentariosdelperitofinales = $('#comentariosdelperitofinales').val();
+    
+    
+    
+    
+    
+    
+    
+    
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     })
-}
 
 
-
-function productorData(id){
-    
-
-
-
- 
     $.ajax({
-        type:"get",
-        dataType:"json",
-        url:"/teacher/productores/"+id,
+        type: "PUT",
+        
+        data: {modalidad:modalidad, motivo:motivo, fechaip:fechaip, patente:patente, siniestro:siniestro, localidad:localidad, direccion:direccion, email:email, estado:estado,
+        observaciones:observaciones, nombretaller:nombretaller, telefono:telefonos, localidad:localidad, enviarorden:enviarorden, horario:horario, comentariosparaip:comentariosparaip, link:link,
+        nrocorto:nrocorto, cliente:cliente, comentariosdelperitovisita:comentariosdelperitovisita, comentariosdelperitofinales:comentariosdelperitofinales},
+        url: "/teacher/update/"+id,
         success: function(data){
-           
-
-            // $('#id_inspector').val(data.id);
-            $('#nombre').val(data.nombre);
-            $('#emailPas').val(data.correo);
+                Swal.fire({
+                icon: 'success',
+                position: 'top-end',
+                showConfirmButton: false,
+                title: 'Siniestro ingresado con éxito',
+            });
+                setTimeout(goTo,1500);
+        
+        
             
-           
-
-            console.log(data);
-        }
-    })
-}
-
-function tallerData(id){
+        
+        console.log('Siniestro asignado con éxito');
+        },
     
-
-
-
- 
-    $.ajax({
-        type:"get",
-        dataType:"json",
-        url:"/teacher/taller/"+id,
-        success: function(data){
-           
-
-            // $('#id_inspector').val(data.id);
-            $('#nombretaller').val(data.taller);
-            $('#telefono').val(data.telefonos);
-            $('#email').val(data.email);
-            $('#direccion').val(data.direccion);
-            $('#localidad').val(data.localidad);
-            
-           
-
-            console.log(data);
-        }
     })
-}
-
-function goTo() {
-    let link = "https://siniestrosdag.com/siniestros/pendientes";
-    window.location.replace(link);
-};
 
 
- // --------------------------------------------- Update de registros a la table de BD -----------------------------------------------------
+    }
+    // <-------------------------------------- Para enviar correo ---------------------------------------------------------------------------------->
 
- function updateData(event){
+    function Correo(event){
 
-event.preventDefault();
- var id = $('#id').val();
- var link = $('#link').val();
- var siniestro =  $('#siniestro').val();
- var patente = $('#patente').val();
- var nrocorto = $('#nrocorto').val();
- var cliente = $('#cliente').val();
- var modalidad = $('#modalidad').val();
-//  var imagen = $('#imagen').val();
- var motivo = $('#motivo').val();
- var correo = $('#correo').val();
- var observaciones = $('#observaciones').val();
- var email = $('#email').val();
- var nombretaller = $('#nombretaller').val();
- var telefonos = $('#telefono').val();
- var direccion = $('#direccion').val();
- var localidad = $('#localidad').val();
- var estado = $('#estado').val();
- var fechaip = $('#fechaip').val();
- var enviarorden = $('#enviarorden').val();
- var horario = $('#horario').val();
- var comentariosparaip = $('#comentariosparaip').val();
- var comentariosdelperitovisita = $('#comentariosdelperitovisita').val();
- var comentariosdelperitofinales = $('#comentariosdelperitofinales').val();
- 
- 
- 
- 
- 
- 
-  
- 
- $.ajaxSetup({
-headers:{
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-}
-})
-
-
- $.ajax({
-     type: "PUT",
-     
-     data: {modalidad:modalidad, motivo:motivo, fechaip:fechaip, patente:patente, siniestro:siniestro, localidad:localidad, direccion:direccion, email:email, estado:estado,
-     observaciones:observaciones, nombretaller:nombretaller, telefono:telefonos, localidad:localidad, enviarorden:enviarorden, horario:horario, comentariosparaip:comentariosparaip, link:link,
-     nrocorto:nrocorto, cliente:cliente, comentariosdelperitovisita:comentariosdelperitovisita, comentariosdelperitofinales:comentariosdelperitofinales},
-     url: "/teacher/update/"+id,
-     success: function(data){
-            Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Siniestro ingresado con éxito',
-         });
-            setTimeout(goTo,1500);
-      
-     
+        event.preventDefault();
+        // var id = $('#id').val();
+        var siniestro =  $('#siniestro').val();
+        var emailPas = $('#emailPas').val();
+        var coordinador = $('#coordinador').val();
+        var patente = $('#patente').val();
         
-      
-     console.log('Siniestro asignado con éxito');
-     },
-  
- })
-
-
-}
-// <-------------------------------------- Para enviar correo ---------------------------------------------------------------------------------->
-
-function Correo(event){
-
-event.preventDefault();
-// var id = $('#id').val();
-var siniestro =  $('#siniestro').val();
-var emailPas = $('#emailPas').val();
-var coordinador = $('#coordinador').val();
-var patente = $('#patente').val();
- 
- $.ajaxSetup({
-headers:{
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-}
-})
-
-
- $.ajax({
-     type: "POST",
-     
-     data: {siniestro:siniestro, emailPas:emailPas, patente:patente, coordinador:coordinador},
-     url: "/correo",
-     success: function(response){
-            
-         Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Correo enviado con éxito',
-         })
-         timer: 500;
-        
-           
-         
-        console.log('Correo enviado con éxito');
+        $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-  
- })
+        })
 
 
-}
-
-// <-------------------------------------- Para enviar correo a Edu ---------------------------------------------------------------------------------->
-
-function CorreoEdu(event){
-
-event.preventDefault();
-// var id = $('#id').val();
-var siniestro =  $('#siniestro').val();
-var email = $('#email').val();
-var fechaip = $('#fechaip').val();
-var patente = $('#patente').val();
-var nrocorto =  $('#nrocorto').val();
-var comentariosparaip = $('#comentariosparaip').val();
-var telefono = $('#telefono').val();
-var localidad = $('#localidad').val();
-var direccion =  $('#direccion').val();
-var modalidad = $('#modalidad').val();
-var link = $('#link').val();
-// var nombretaller = $('#nombretaller').val();
-var motivo = $('#motivo').val();
-var horario = $('#horario').val();
-var cliente = $('#cliente').val();
-var enviarorden = $('#enviarorden').val();
-var imagen = $('#imagen').val();
-var contacto = $('#contacto').val();
-var lugar = $('#lugar').val();
-
-
-
-
-
- 
- $.ajaxSetup({
-headers:{
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-}
-})
-
-
- $.ajax({
-     type: "POST",
-     
-     data: {siniestro:siniestro, email:email, fechaip:fechaip, patente:patente, nrocorto:nrocorto, comentariosparaip:comentariosparaip, telefono:telefono, localidad:localidad, direccion:direccion,
-    modalidad:modalidad, motivo:motivo, horario:horario, enviarorden:enviarorden, cliente:cliente, link:link, imagen:imagen, lugar:lugar, contacto:contacto},
-     url: "/correoEdu",
-     success: function(response){
+        $.ajax({
+            type: "POST",
             
-         Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Enviado a Edu con exito',
-         })
-         timer: 500;
+            data: {siniestro:siniestro, emailPas:emailPas, patente:patente, coordinador:coordinador},
+            url: "/correo",
+            success: function(response){
+                    
+                Swal.fire({
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    title: 'Correo enviado con éxito',
+                })
+                timer: 500;
+                
+                
+                
+                console.log('Correo enviado con éxito');
+                }
         
-           
-         
-        console.log('Correo enviado con exito');
-        }
-  
- })
+        })
 
 
-}
+    }
+
+    // <-------------------------------------- Para enviar correo a Edu ---------------------------------------------------------------------------------->
+
+    function CorreoEdu(event){
+
+        event.preventDefault();
+        // var id = $('#id').val();
+        var siniestro =  $('#siniestro').val();
+        var email = $('#email').val();
+        var fechaip = $('#fechaip').val();
+        var patente = $('#patente').val();
+        var nrocorto =  $('#nrocorto').val();
+        var comentariosparaip = $('#comentariosparaip').val();
+        var telefono = $('#telefono').val();
+        var localidad = $('#localidad').val();
+        var direccion =  $('#direccion').val();
+        var modalidad = $('#modalidad').val();
+        var link = $('#link').val();
+        // var nombretaller = $('#nombretaller').val();
+        var motivo = $('#motivo').val();
+        var horario = $('#horario').val();
+        var cliente = $('#cliente').val();
+        var enviarorden = $('#enviarorden').val();
+        var imagen = $('#imagen').val();
+        var contacto = $('#contacto').val();
+        var lugar = $('#lugar').val();
+
+
+
+
+
+        
+        $.ajaxSetup({
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+
+        $.ajax({
+            type: "POST",
+            
+            data: {siniestro:siniestro, email:email, fechaip:fechaip, patente:patente, nrocorto:nrocorto, comentariosparaip:comentariosparaip, telefono:telefono, localidad:localidad, direccion:direccion,
+            modalidad:modalidad, motivo:motivo, horario:horario, enviarorden:enviarorden, cliente:cliente, link:link, imagen:imagen, lugar:lugar, contacto:contacto},
+            url: "/correoEdu",
+            success: function(response){
+                    
+                Swal.fire({
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    title: 'Enviado a Edu con exito',
+                })
+                timer: 500;
+                
+                
+                
+                console.log('Correo enviado con exito');
+                }
+        
+        })
+
+
+    }
 
  
 

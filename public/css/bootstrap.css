@@ -2526,26 +2526,26 @@ fieldset[disabled] a.btn {
 }
 
 .btn-primary {
-    color: #fff;
+    color: #000!important;
     background-color: #0275d8;
     border-color: #0275d8;
 }
 
 .btn-primary:hover {
-    color: #fff;
+    color: #000;
     background-color: #025aa5;
     border-color: #01549b;
 }
 
 .btn-primary:focus, .btn-primary.focus {
-    color: #fff;
+    color: #000;
     background-color: #025aa5;
     border-color: #01549b;
 }
 
 .btn-primary:active, .btn-primary.active,
 .open > .btn-primary.dropdown-toggle {
-    color: #fff;
+    color: #000;
     background-color: #025aa5;
     border-color: #01549b;
     background-image: none;

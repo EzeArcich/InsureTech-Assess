@@ -12,8 +12,8 @@
         </div>
         <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/siniestros">Terceros</a></li>
+    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/home#">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/siniestros">Terceros</a></li>
     <li class="breadcrumb-item active" aria-current="page">Index</li>
   </ol>
 </nav>

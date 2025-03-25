@@ -11,12 +11,12 @@
             <h3 class="page__heading">Reclamos de terceros</h3>
         </div>
         <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://siniestrosdag.com/siniestros">Terceros</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Index</li>
-  </ol>
-</nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ url('/siniestros') }}">Terceros</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Index</li>
+            </ol>
+        </nav>
         <div class="section-body">
             <div class="row">
                 <div class="col-lg-12">
@@ -37,38 +37,38 @@
                                
                                     <th style="display: none;">ID</th>
                                     @can('perito-siniestro')
-                                <th style="color:#fff;">Fecha IP</th>
-                                <th style="color:#fff;">Nro Corto</th>
+                                <th>Fecha IP</th>
+                                <th>Nro Corto</th>
                                 @endcan
-                                    <th style="color:#fff;">Siniestro</th>
+                                    <th>Siniestro</th>
                                                                         
-                                    <th style="color:#fff;">Patente</th>
+                                    <th>Patente</th>
                                     @can('derivar-siniestro')
                                     
-                                    <th style="color:#fff;">Fecha IP</th>
+                                    <th>Fecha IP</th>
                                     @endcan
                                     @can('ver-siniestro')
                                     
-                                    <th style="color:#fff;">Coordinador</th>
-                                    <th style="color:#fff;">Actualizado</th>
-                                    <th style="color:#fff;">Fecha ingreso</th>
-                                    <th style="color:#fff;">Fecha gestión</th>
-                                    <th style="color:#fff;">Observaciones</th>
+                                    <th>Coordinador</th>
+                                    <th>Actualizado</th>
+                                    <th>Fecha ingreso</th>
+                                    <th>Fecha gestión</th>
+                                    <th>Observaciones</th>
                                     @endcan
-                                    <th style="color:#fff;">Estado</th>
-                                    <th style="color:#fff;">Modalidad</th>
+                                    <th>Estado</th>
+                                    <th>Modalidad</th>
                                     
                                     @can('derivar-siniestro')
-                                    <!-- <th style="color:#fff;">Screenshot</th> 
-                                    <th style="color:#fff;">Captura de pantalla</th>  -->
-                                    <th style="color:#fff;">Cliente</th>
-                                    <th style="color:#fff;">Dirección</th>
-                                    <th style="color:#fff;">Localidad</th>
-                                    <th style="color:#fff;">Inspector</th>
-                                    <th style="color:#fff;">Motivo</th>
-                                    <!-- <th style="color:#fff;">Enviar Orden</th> -->
+                                    <!-- <th>Screenshot</th> 
+                                    <th>Captura de pantalla</th>  -->
+                                    <th>Cliente</th>
+                                    <th>Dirección</th>
+                                    <th>Localidad</th>
+                                    <th>Inspector</th>
+                                    <th>Motivo</th>
+                                    <!-- <th>Enviar Orden</th> -->
                                     @endcan
-                                    <th style="color:#fff;">Acciones</th>                                                                   
+                                    <th>Acciones</th>                                                                   
                               </thead>
                               <tbody>
                             @foreach ($siniestros as $siniestro)
@@ -179,6 +179,9 @@
     $('.tablita').DataTable({
         responsive: true,
         processing: true,
+        language: {
+            lengthMenu: '_MENU_' // Esto elimina el texto "elements per page"
+        }
         
     
 

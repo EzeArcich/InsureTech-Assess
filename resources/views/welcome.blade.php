@@ -5,7 +5,7 @@
         <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudio DAG</title>
+    <title>Insure TechAsses</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     
@@ -65,8 +65,7 @@ body::before {
 }
 
 #login {
-    padding-top: 300px;
-    margin-left: -200px;
+    padding-top: 100px;
     font-family: 'Bebas Neue', cursive;
     padding-bottom: 0px;
     margin-bottom: 0px; 
@@ -239,7 +238,7 @@ h2 {
         <div class="row" id="login">
             <h2 class="text-center">InsureTech Assess</h2>
         </div>
-        <div class="row" style="margin: 20px 0px 0px 20px; font-size: 25px;">
+        <div class="row">
             <div class="col-md-12">
                 @if (Route::has('login'))
                     @auth
@@ -340,39 +339,59 @@ h2 {
 </body>
 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 <script>
-    function fadeIn() {
-    const form = document.getElementById('login-form');
-    const form2 = document.getElementById('register-form');
-    const button = document.getElementById('register-button');
+function fadeIn() {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginButton = document.getElementById('login-button');
+    const registerButton = document.getElementById('register-button');
 
-    form2.style.opacity = '0';
-    button.style.transform = 'translateX(160px)';
-    form.style.opacity = '1';
-    form.style.visibility = 'visible';
+    // Muestra el formulario de login y oculta el de register
+    loginForm.style.opacity = '1';
+    loginForm.style.visibility = 'visible';
+
+    registerForm.style.opacity = '0';
+    registerForm.style.visibility = 'hidden';
+
+    // Mostrar el botón de "Register" y ocultar "Login"
+    registerButton.style.display = 'inline-block';  
+    registerButton.style.position = 'relative';  // 👈 Esto permite moverlo sin problemas
+    registerButton.style.left = '300px';  // 👈 Ajustá este valor según lo que necesites
+    loginButton.style.display = 'none';  
 }
 
 function fadeIn2() {
-    const form = document.getElementById('login-form');
-    const form2 = document.getElementById('register-form');
-    const button2 = document.getElementById('login-button');
+    console.log('esta función');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginButton = document.getElementById('login-button');
+    const registerButton = document.getElementById('register-button');
 
-    form.style.opacity = '0';
-    button2.style.transform = 'translateX(-160px)';
-    form2.style.opacity = '1';
-    form2.style.visibility = 'visible';
+    // Muestra el formulario de registro y oculta el de login
+    registerForm.style.opacity = '1';
+    registerForm.style.visibility = 'visible';
+    registerForm.style.marginLeft = '150px';
+
+    loginForm.style.opacity = '0';
+    loginForm.style.visibility = 'hidden';
+
+    // Mostrar el botón de "Login" y ocultar "Register"
+    loginButton.style.display = 'inline-block';  
+    registerButton.style.display = 'none';  
 }
-document.addEventListener("DOMContentLoaded", function() {
-    // var loginButton = document.getElementById("login-button");
-    // var loginForm = document.getElementById("login-form");
 
-    // if (loginButton && loginForm) {
-    //     loginButton.addEventListener("click", function() {
-    //         loginButton.classList.add("clicked");
-    //         setTimeout(function() {
-    //             loginForm.classList.add("active");
-    //         }, 100); // Agregar un retraso de 100 milisegundos
-    //     });
-    // }
+
+document.addEventListener("DOMContentLoaded", function() {
+     var loginButton = document.getElementById("login-button");
+     var loginForm = document.getElementById("login-form");
+
+     if (loginButton && loginForm) {
+         loginButton.addEventListener("click", function() {
+             loginButton.classList.add("clicked");
+             setTimeout(function() {
+                 loginForm.classList.add("active");
+             }, 100); // Agregar un retraso de 100 milisegundos
+         });
+     }
 
     var loginButton = document.getElementById("register-button");
     var loginForm = document.getElementById("register-form");
