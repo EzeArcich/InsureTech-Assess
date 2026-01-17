@@ -29,8 +29,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -93,9 +91,3 @@ Route::PUT('/teacher/update/{id}', [SiniestroController::class, 'updateData']);
 Route::get('/teacher/store', [SiniestroController::class, 'storeData']);
 Route::get('/teacher/users/{id}', [SiniestroController::class, 'userData']);
 Route::get('/teacher/productores/{id}', [SiniestroController::class, 'productoresData']);
-
-
-
-Route::get('link', function() {
-    Artisan::call('storage:link');
-});

@@ -1,171 +1,171 @@
 @extends('layouts.app')
 
-
 @section('content')
- 
-<style>
-    .table td, .table th {
-        padding: 0px!important;
-        vertical-align: middle; /* Para centrar verticalmente el contenido */
-        text-align: center; /* Para centrar horizontalmente el contenido */
-        border-top: 3px solid #dee2e6!important;
-        height: 10px!important;
-}
-</style>
+<section class="py-2">
 
-
-
-    <section class="section">
-        <div class="section-header">
-            <h3 class="page__heading">Siniestros</h3>
+    {{-- Header --}}
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+            <h3 class="mb-0 fw-bold">Siniestros</h3>
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Siniestros</li>
+                </ol>
+            </nav>
         </div>
-        <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/siniestros">Siniestros</a></li>
-    <!-- <li class="breadcrumb-item active" aria-current="page">Index</li> -->
-  </ol>
-</nav>
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                
-            
-                        @can('crear-siniestro')
-                        <div class="row px-3 py-4">
-                            <a class="btn btn-primary btn-sm" href="{{ route('siniestros.create') }}">Ingresar siniestro</a>
-                        </div>
-                        
+
+        @can('crear-siniestro')
+            <a class="btn btn-brand btn-sm" href="{{ route('siniestros.create') }}">
+                <i class="fas fa-plus me-2"></i>
+                Ingresar siniestro
+            </a>
+        @endcan
+    </div>
+
+    {{-- Panel principal --}}
+    <div class="panel">
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0 tablita w-100">
+                <thead>
+                    <tr>
+                        <th class="d-none">ID</th>
+
+                        <th>Siniestro</th>
+                        <th>Compañía</th>
+
+                        @can('peritos-siniestro')
+                            <th>Fecha IP</th>
+                            <th>Nro Corto</th>
+                            <th>Dirección</th>
+                            <th>Localidad</th>
                         @endcan
+
+                        <th>Patente</th>
+
                         @can('derivar-siniestro')
-                        
-                    
+                            <th>Fecha IP</th>
                         @endcan
-                        <table class="table table-sm m-1 p-1 table-bordered table-hover table-striped tablita" style="width:100%">
-                                <thead style="background-color:hsl(213, 99%, 49%)">                                     
- 
-                                    <th style="display: none;">ID</th>
-                                    <th style="color:#000;">Siniestro</th>
-                                    <th style="color:#000;">Compañía</th>
-                                    @can('peritos-siniestro')
-                                    <th style="color:#000;">Fecha IP</th>
-                                    <th style="color:#000;">Nro Corto</th>
-                                    <th style="color:#000;">Dirección</th>
-                                    <th style="color:#000;">Localidad</th>
-                                    @endcan                                   
-                                    <th style="color:#000;">Patente</th>
-                                    @can('derivar-siniestro')
-                                    <th style="color:#000;">Fecha IP</th>
-                                    @endcan
-                                    @can('ver-siniestro')
-                                    <th style="color:#000;">Estado</th>
-                                    <th style="color:#000;">Fecha ingreso</th>
-                                    <th style="color:#000;">Fecha gestión</th>
-                                    <th style="color:#000;">Observaciones</th>
-                                    @endcan 
-                                    <th style="color:#000;">Modalidad</th> 
-                                    @can('derivar-siniestro')
-                                    <!-- <th style="color:#000;">Screenshot</th> 
-                                    <th style="color:#000;">Captura de pantalla</th>  -->
-                                    <th style="color:#000;">Cliente</th>
-                                    <th style="color:#000;">Dirección</th>
-                                    <th style="color:#000;">Localidad</th>
-                                    <th style="color:#000;">Inspector</th>
-                                    <th style="color:#000;">Motivo</th>
-                                    <!-- <th style="color:#000;">Enviar Orden</th> -->
-                                    @endcan
-                                    <th style="color:#000;">Acciones</th>                                                                   
-                              </thead>
-                              <tbody>
-                            @foreach ($siniestros as $siniestro)
-                            <tr>
-                                <td style="display: none;">{{ $siniestro->id }}</td>
-                                <td>{{ $siniestro->siniestro }}</td>
-                                <td>{{ $siniestro->compania }}</td>
-                                @can('peritos-siniestro')
-                                <td>{{ date('d-m-Y', strtotime($siniestro->fechaip)) }}</td>
+
+                        @can('ver-siniestro')
+                            <th>Estado</th>
+                            <th>Fecha ingreso</th>
+                            <th>Fecha gestión</th>
+                            <th class="text-start">Observaciones</th>
+                        @endcan
+
+                        <th>Modalidad</th>
+
+                        @can('derivar-siniestro')
+                            <th>Cliente</th>
+                            <th>Dirección</th>
+                            <th>Localidad</th>
+                            <th>Inspector</th>
+                            <th>Motivo</th>
+                        @endcan
+
+                        <th class="text-center" style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($siniestros as $siniestro)
+                        <tr>
+                            <td class="d-none">{{ $siniestro->id }}</td>
+
+                            <td class="fw-semibold">{{ $siniestro->siniestro }}</td>
+                            <td>{{ $siniestro->compania }}</td>
+
+                            @can('peritos-siniestro')
+                                <td>{{ $siniestro->fechaip ? date('d-m-Y', strtotime($siniestro->fechaip)) : '-' }}</td>
                                 <td>{{ $siniestro->nrocorto }}</td>
                                 <td>{{ $siniestro->direccion }}</td>
                                 <td>{{ $siniestro->localidad }}</td>
-                                @endcan                                
-                                <td>{{ $siniestro->patente }}</td>
-                                @can('derivar-siniestro')
-                                <td>{{ date('d-m-Y', strtotime($siniestro->fechaip)) }}</td>
-                                @endcan
-                                @can('ver-siniestro')
-                                <td>{{ $siniestro->estado }}</td>
-                                <td>{{ date('d-m-Y', strtotime($siniestro->created_at)) }}</td>
-                                <td>{{ date('d-m-Y', strtotime($siniestro->updated_at)) }}</td>
-                                <td>{{ $siniestro->observaciones }}</td>
-                                @endcan
-                                <td>{{ $siniestro->modalidad }}</td>
-                                @can('derivar-siniestro')
-                                <!-- <td><a href="{{ $siniestro->url }}" target="blank_" >Ver documento</a></td>
-                                <td><img alt="img" src="/img/{{ $siniestro->imagen }}" width="100px"></td> -->
+                            @endcan
+
+                            <td>{{ $siniestro->patente }}</td>
+
+                            @can('derivar-siniestro')
+                                <td>{{ $siniestro->fechaip ? date('d-m-Y', strtotime($siniestro->fechaip)) : '-' }}</td>
+                            @endcan
+
+                            @can('ver-siniestro')
+                                <td>
+                                    {{-- Si querés lo hacemos badge por estado (pendiente/en gestión/cerrado) --}}
+                                    <span class="badge text-bg-light border">
+                                        {{ $siniestro->estado }}
+                                    </span>
+                                </td>
+                                <td>{{ $siniestro->created_at ? date('d-m-Y', strtotime($siniestro->created_at)) : '-' }}</td>
+                                <td>{{ $siniestro->updated_at ? date('d-m-Y', strtotime($siniestro->updated_at)) : '-' }}</td>
+                                <td class="text-start" style="min-width: 220px;">
+                                    <span class="d-inline-block text-truncate" style="max-width: 420px;">
+                                        {{ $siniestro->observaciones }}
+                                    </span>
+                                </td>
+                            @endcan
+
+                            <td>{{ $siniestro->modalidad }}</td>
+
+                            @can('derivar-siniestro')
                                 <td>{{ $siniestro->cliente }}</td>
                                 <td>{{ $siniestro->direccion }}</td>
                                 <td>{{ $siniestro->localidad }}</td>
                                 <td>{{ $siniestro->inspector }}</td>
                                 <td>{{ $siniestro->motivo }}</td>
-                                <!-- <td>{{ $siniestro->enviarorden }}</td> -->
-                                @endcan
-                                <td>
-                                    <form action="{{ route('siniestros.destroy',$siniestro->id) }}" method="POST">                                            
-                                        <a class="btn btn-outline-success px-2 py-1 mx-0 my-0" href="{{ route('siniestros.edit',$siniestro->id) }}"><i class="fa-solid fa-pen-to-square fa-xl"></i></a>
+                            @endcan
+
+                            <td>
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <a href="{{ route('siniestros.edit', $siniestro->id) }}"
+                                       class="btn btn-outline-primary btn-sm px-3">
+                                        <i class="fas fa-pen me-1"></i>
+                                        Editar
+                                    </a>
+
+                                    <form action="{{ route('siniestros.destroy', $siniestro->id) }}"
+                                          method="POST"
+                                          class="m-0 p-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm px-3"
+                                                onclick="return confirm('¿Seguro que querés borrar este registro?')">
+                                            <i class="fas fa-trash me-1"></i>
+                                            Borrar
+                                        </button>
                                     </form>
-                                    
-                                    <form action="{{ route('siniestros.update',$siniestro->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
+                                </div>
+                            </td>
 
-                                        @if (session('info'))
-                                            <script>
-                                                alert('{{session('info')}}');
-                                            </script>
-
-                                        @endif
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-
-                        <!-- Paginacion a la derecha -->
-                        <div class="pagination justify-content-end">
-                            {!! $siniestros->links() !!}
-                          </div>
-                        
-                        </div>
-                    </div>
-                </div>
-               
-            </div>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </section>
-    
-    
-    
-    
-    
-   
 
-    
+        {{-- Paginación Laravel --}}
+        <div class="d-flex justify-content-end mt-3">
+            {!! $siniestros->links() !!}
+        </div>
+
+    </div>
+</section>
 @endsection
 
 @section('javas')
-
 <script>
-    $(document).ready(function () {
-        console.log('andaJquery');
+    $(function () {
+        // Si mantenés paginación de Laravel, DataTables SOLO para estilos/orden, sin paging
         $('.tablita').DataTable({
-            pageLength: 10, // Personaliza la cantidad de registros por página
+            paging: false,
+            info: false,
+            searching: true,
+            order: [], // no fuerza orden
         });
     });
-
 </script>
-
 @endsection
-

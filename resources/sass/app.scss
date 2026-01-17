@@ -1,0 +1,279 @@
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Fonts (si lo querés seguir usando)
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// 1) Tu paleta (base)
+$brand-navy:   #031D44; // oscuro
+$brand-deep:   #04395E; // azul profundo
+$brand-sage:   #70A288; // verde sobrio
+$brand-cream:  #FFE0B5; // crema (warning / highlight suave)
+$brand-rose:   #D35269; // peligro / acento
+
+// 2) Bootstrap theme overrides (antes de importar Bootstrap)
+$primary:   $brand-deep;
+$secondary: $brand-navy;
+$success:   $brand-sage;
+$warning:   $brand-cream;
+$danger:    $brand-rose;
+
+// Opcionales pero útiles en apps "sobrias"
+$info:      lighten($brand-deep, 18%);
+$light:     #f6f8fb;
+$dark:      #0b1220;
+
+// Tipografía / bordes / sombras (minimal)
+$font-family-sans-serif: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+$body-bg: $light;
+$body-color: rgba(15, 23, 42, .92);
+
+$border-radius: .75rem;
+$border-radius-sm: .6rem;
+$border-radius-lg: .95rem;
+
+$border-color: rgba(15, 23, 42, .10);
+
+// Botones más “pro”
+$btn-border-radius: .75rem;
+$btn-border-radius-sm: .65rem;
+$btn-border-radius-lg: .95rem;
+$btn-font-weight: 600;
+$btn-padding-y: .55rem;
+$btn-padding-x: 1rem;
+
+// Inputs minimal
+$input-border-radius: .75rem;
+$input-padding-y: .55rem;
+$input-padding-x: .85rem;
+$input-border-color: rgba(15, 23, 42, .14);
+$input-focus-border-color: rgba(4, 57, 94, .55);
+$input-focus-box-shadow: 0 0 0 .25rem rgba(4, 57, 94, .18);
+
+// Cards
+$card-border-color: rgba(15, 23, 42, .10);
+$card-border-radius: 1rem;
+
+// 3) Import Bootstrap
+@import "bootstrap/scss/bootstrap";
+
+
+// ==========================================================
+// 4) Estilo global de la app (sobrio, minimal, consistente)
+// ==========================================================
+
+:root{
+  --brand-navy: #{$brand-navy};
+  --brand-deep: #{$brand-deep};
+  --brand-sage: #{$brand-sage};
+  --brand-cream: #{$brand-cream};
+  --brand-rose: #{$brand-rose};
+}
+
+body{
+  background: $body-bg;
+}
+
+// Layout / navbar (lo tuyo, refinado)
+.app-navbar{
+  border-bottom: 1px solid rgba(15, 23, 42, .08);
+  backdrop-filter: blur(8px);
+}
+
+.brand-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  background: rgba(4,57,94,.08);
+  border: 1px solid rgba(4,57,94,.18);
+}
+
+.brand-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: $primary;
+  box-shadow: 0 0 0 4px rgba(4,57,94,.14);
+}
+
+.nav-user{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+main.app-main{
+  min-height: calc(100vh - 72px);
+}
+
+// Offcanvas menu (lo tuyo, refinado)
+.app-offcanvas{
+  border-right: 1px solid rgba(15, 23, 42, .08);
+}
+
+.menu-section-title{
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, .55);
+  margin: .85rem 0 .35rem;
+}
+
+.menu-link{
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .6rem .75rem;
+  border-radius: .85rem;
+  color: rgba(15,23,42,.88);
+  text-decoration: none;
+  transition: transform .08s ease, background-color .12s ease, box-shadow .12s ease;
+}
+
+.menu-link:hover{
+  background: rgba(4,57,94,.08);
+  transform: translateY(-1px);
+  box-shadow: 0 .25rem .75rem rgba(15,23,42,.06);
+}
+
+.menu-link.active{
+  background: rgba(4,57,94,.12);
+  border: 1px solid rgba(4,57,94,.20);
+  color: rgba(15,23,42,.96);
+}
+
+.menu-icon{
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .8rem;
+  background: rgba(15,23,42,.06);
+}
+
+.menu-link.active .menu-icon{
+  background: rgba(4,57,94,.16);
+}
+
+
+// ==========================================================
+// 5) Componentes globales reutilizables (para todo el proyecto)
+// ==========================================================
+
+// Botones: mismo “feeling” en todas las vistas
+.btn{
+  border-width: 1px;
+  box-shadow: 0 .25rem .75rem rgba(15,23,42,.04);
+}
+
+.btn:hover{
+  box-shadow: 0 .5rem 1rem rgba(15,23,42,.06);
+}
+
+.btn:active{
+  transform: translateY(1px);
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-secondary{
+  background: #fff;
+}
+
+// Botón “brand” (para acciones principales del sistema)
+.btn-brand{
+  @extend .btn;
+  @extend .btn-primary;
+
+  border-color: rgba(4,57,94,.25);
+  box-shadow: 0 .35rem 1rem rgba(4,57,94,.10);
+}
+
+.btn-brand:hover{
+  box-shadow: 0 .6rem 1.2rem rgba(4,57,94,.14);
+}
+
+// Inputs / selects sobrios
+.form-control,
+.form-select{
+  border-color: rgba(15, 23, 42, .14);
+}
+
+.form-control::placeholder{
+  color: rgba(15,23,42,.45);
+}
+
+// Cards “panel” para pantallas de gestión
+.card{
+  box-shadow: 0 .6rem 1.6rem rgba(15,23,42,.06);
+}
+
+.card-header{
+  background: rgba(4,57,94,.04);
+  border-bottom: 1px solid rgba(15,23,42,.08);
+}
+
+// Tablas más “enterprise”
+.table{
+  --bs-table-striped-bg: rgba(4,57,94,.03);
+}
+
+.table thead th{
+  font-weight: 700;
+  color: rgba(15,23,42,.85);
+  border-bottom: 1px solid rgba(15,23,42,.12);
+}
+
+.table td{
+  color: rgba(15,23,42,.88);
+}
+
+// Badges con colores “limpios”
+.badge{
+  border-radius: 999px;
+  font-weight: 700;
+  padding: .45em .65em;
+}
+
+// Utilidad: contenedor “panel”
+.panel{
+  background: #fff;
+  border: 1px solid rgba(15,23,42,.10);
+  border-radius: 1rem;
+  box-shadow: 0 .6rem 1.6rem rgba(15,23,42,.06);
+  padding: 1rem;
+}
+
+/* Estilos suaves, BS5-friendly */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.card-header-gradient {
+    background: linear-gradient(132deg, rgba(2,0,36,1) 0%, rgba(9,51,121,1) 0%, rgba(0,176,255,1) 100%);
+    color: #fff;
+}
+.table .selected {
+    background-color: rgba(58, 186, 244, .25) !important;
+    font-weight: 600;
+    color: #0b0f19;
+}
+.sticky-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(0,0,0,.08);
+    padding: .75rem 0;
+}

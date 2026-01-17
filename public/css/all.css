@@ -684,10 +684,6 @@ body {
     background-color: #f5f8f9;
 }
 
-.fondo {
-    background: linear-gradient(rgb(206, 76, 1), #c48403, #e10202);
-}
-
 .pull-right {
     float: right !important;
 }
@@ -1779,7 +1775,7 @@ main {
 
 .articles article .articles-header .articles-header-category {
     display: inline-block;
-    float: right;
+    
 }
 
 .articles article .articles-content {

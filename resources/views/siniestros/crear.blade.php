@@ -1,924 +1,512 @@
 @extends('layouts.app')
 
-@section('css')
+@push('styles')
+<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" />
 
-<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
-
-@endsection
-
-
-
+<style>
+    /* Selección de fila en tablas de modal */
+    .row-selected {
+        background: rgba(4,57,94,.10) !important;
+        font-weight: 700;
+    }
+</style>
+@endpush
 
 @section('content')
-    <section class="section">
-        <div class="section-header">
-            <h3 class="page__heading">Ingresar siniestro</h3>
+<section class="py-2">
+
+    {{-- Header --}}
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+            <h3 class="mb-0 fw-bold">Ingresar siniestro</h3>
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url('/siniestros') }}" class="text-decoration-none">Siniestros</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Crear</li>
+                </ol>
+            </nav>
         </div>
-        <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/siniestros">Siniestros</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Crear siniestros</li> 
-  </ol>
-</nav>
 
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                    <div class="card-header" style="background:linear-gradient(132deg, rgba(2,0,36,1) 0%, rgba(9,51,121,1) 0%, rgba(0,176,255,1) 100%);">
-                                <h4 style="color:white">Datos del siniestro </h4>
-                                </div>
-                        <div class="card-body">     
-                                                                      
-                            @if ($errors->any())                                                
-                            <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                            <strong>¡Revise los campos!</strong>                        
-                                @foreach ($errors->all() as $error)                                    
-                                    <span class="badge badge-danger">{{ $error }}</span>
-                                @endforeach                        
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            @endif
+        <div class="d-flex gap-2">
+            <a href="{{ url('/siniestros') }}" class="btn btn-light border btn-sm rounded-3">
+                <i class="fas fa-arrow-left me-2"></i> Volver
+            </a>
+        </div>
+    </div>
 
-                            <form action="{{ route('siniestros.store') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="row">
-                                    
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                        
-                                        <label for="link">Link 2.0</label>
-                                        
-                                        <input type="text" name="link" class="form-control" id="link"  value="{{ $siniestro->link }}">
-                                        </div>
-                                    </div>   
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="siniestro">Siniestro</label>
-                                        <input type="text" name="siniestro" class="form-control" id="siniestro" value="{{ $siniestro->siniestro }}">
-                                        
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="patente">Patente</label>
-                                        <input type="text" name="patente" class="form-control" id="patente" value="{{ $siniestro->patente }}">
-                                        <span id="error_patente"></span>
-                                        </div>
-                                    </div>
+    {{-- Errors --}}
+    @if ($errors->any())
+        <div class="alert alert-danger border-0 shadow-sm">
+            <div class="fw-bold mb-2">Revisá estos campos:</div>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach ($errors->all() as $error)
+                    <span class="badge text-bg-danger">{{ $error }}</span>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="compania">Compañía</label>
-                                        <input type="text" name="compania" class="form-control" id="compania"  value="{{ $siniestro->compania }}">
-                                        </div>
-                                    </div>
+    <form action="{{ route('siniestros.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="nrocorto">Nro. corto</label>
-                                        <input type="text" name="nrocorto" class="form-control" id="nrocorto"  value="{{ $siniestro->nrocorto }}">
-                                        </div>
-                                    </div>
-                                    
-                                      
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <label for="cliente">Cliente</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" id="cliente" for="cliente" name="cliente"">
-                                            <option selected value="{{ $siniestro->cliente }}">{{ $siniestro->cliente }}</option>
-                                            <option value="Asegurado">Asegurado</option>
-                                            <option value="Tercero">Tercero</option>
-                                            <option value="Cotizacion">Cotizacion</option>
-                                        </select>
-                                    </div>
-                                    
-                                    
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="motivo">Motivo</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" id="motivo" for="motivo" name="motivo"">
-                                            <option selected value="{{ $siniestro->motivo }}">{{ $siniestro->motivo }}</option>
-                                            <option value="Todo riesgo">Todo riesgo</option>
-                                            <option value="ampliacion">Ampliacion</option>
-                                            <option value="actualizaciondevalores">Actualizacion de valores</option>
-                                            <option value="cotizarsincerrar">Cotizar y devolver sin cerrar</option>
-                                            <option value="robo">Robo</option>
-                                            <option value="incendio">Incendio</option>
-                                            <option value="posibleDT">Posible DT</option>
-                                        </select>
-                                        </div>
-                                    </div>
+        {{-- Panel 1: Datos del siniestro --}}
+        <div class="panel mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h5 class="mb-0 fw-bold">Datos del siniestro</h5>
+                    <small class="text-muted">Carga la información base</small>
+                </div>
+                <span class="badge text-bg-light border">Alta</span>
+            </div>
 
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <label for="nombre" class="ml-2">Productor</label>    
-                                        <div class="input-group ml-1">	
-                                    <input type="text" class="form-control name" id="nombre" name="nombre">
-                                        <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_productores" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
-                                    </span>	
-                                    </div>	
-                                    </div>
+            <div class="row g-3">
 
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="correo">Email del PAS</label>
-                                        <input type="text" name="correo" class="form-control" id="emailPas">
-                                        </div>
-                                    </div>
+                <div class="col-12">
+                    <label for="link" class="form-label">Link 2.0</label>
+                    <input type="text" name="link" id="link" class="form-control"
+                           value="{{ $siniestro->link ?? '' }}">
+                </div>
 
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="cc">En copia</label>
-                                        <input type="text" name="cc" class="form-control" id="cc">
-                                        </div>
-                                    </div>
+                <div class="col-12 col-md-3">
+                    <label for="siniestro" class="form-label">Siniestro</label>
+                    <input type="text" name="siniestro" id="siniestro" class="form-control"
+                           value="{{ $siniestro->siniestro ?? '' }}">
+                </div>
 
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="cc2">Segundo en copia</label>
-                                        <input type="text" name="cc2" class="form-control" id="cc2">
-                                        </div>
-                                    </div>
+                <div class="col-12 col-md-3">
+                    <label for="patente" class="form-label">Patente</label>
+                    <input type="text" name="patente" id="patente" class="form-control"
+                           value="{{ $siniestro->patente ?? '' }}">
+                    <div id="error_patente" class="form-text"></div>
+                </div>
 
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div class="form-group mt-4">
-                                    <button type="submit" class="btn btn-info btn-lg ml-5 mb-3" onclick="Correo(event)">Contacto vía mail</button>
-                                    </div>
-                                    </div>
-                                    
+                <div class="col-12 col-md-3">
+                    <label for="compania" class="form-label">Compañía</label>
+                    <input type="text" name="compania" id="compania" class="form-control"
+                           value="{{ $siniestro->compania ?? '' }}">
+                </div>
 
-                                    <hr>
-                                    <div class="card-header DatCord" style="background:linear-gradient(132deg, rgba(2,0,36,1) 0%, rgba(9,51,121,1) 0%, rgba(0,176,255,1) 100%);">
-                                <h4 style="color:white">Datos de coordinación </h4>
-                                </div>
-                                    
-                                    
-                                    
+                <div class="col-12 col-md-3">
+                    <label for="nrocorto" class="form-label">Nro. corto</label>
+                    <input type="text" name="nrocorto" id="nrocorto" class="form-control"
+                           value="{{ $siniestro->nrocorto ?? '' }}">
+                </div>
 
-                                    
+                <div class="col-12 col-md-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <select class="form-select" id="cliente" name="cliente">
+                        <option value="{{ $siniestro->cliente ?? '' }}" selected>
+                            {{ $siniestro->cliente ?? 'Seleccionar...' }}
+                        </option>
+                        <option value="Asegurado">Asegurado</option>
+                        <option value="Tercero">Tercero</option>
+                        <option value="Cotizacion">Cotización</option>
+                    </select>
+                </div>
 
-                                                <!-- Datatable User --> 
-                                                 
-                                    
-                                              
+                <div class="col-12 col-md-3">
+                    <label for="motivo" class="form-label">Motivo</label>
+                    <select class="form-select" id="motivo" name="motivo">
+                        <option value="{{ $siniestro->motivo ?? '' }}" selected>
+                            {{ $siniestro->motivo ?? 'Seleccionar...' }}
+                        </option>
+                        <option value="Todo riesgo">Todo riesgo</option>
+                        <option value="ampliacion">Ampliación</option>
+                        <option value="actualizaciondevalores">Actualización de valores</option>
+                        <option value="cotizarsincerrar">Cotizar y devolver sin cerrar</option>
+                        <option value="robo">Robo</option>
+                        <option value="incendio">Incendio</option>
+                        <option value="posibleDT">Posible DT</option>
+                    </select>
+                </div>
 
+                {{-- Productor --}}
+                <div class="col-12 col-md-6">
+                    <label for="nombre" class="form-label">Productor</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control name" id="nombre" name="nombre"
+                               value="{{ $siniestro->nombre ?? '' }}">
+                        <button class="btn btn-outline-primary"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modal_productores">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
 
-                                                <!-- Fin Datatable User -->
-                                    
-                                    <div class="col-xs-12 col-sm-12 col-md-12 mt-3 DatCord">           
-                                        <label for="observaciones">Observaciones</label>    
-                                        <div class="form-floating">
-                                        <textarea class="form-control" name="observaciones" style="height:100px" id="observaciones" value="{{ $siniestro->observaciones }}">{{ $siniestro->observaciones }}</textarea>
-                                        </div>
-                                    </div>
+                <div class="col-12 col-md-6">
+                    <label for="emailPas" class="form-label">Email del PAS</label>
+                    <input type="text" name="correo" class="form-control" id="emailPas"
+                           value="{{ $siniestro->correo ?? '' }}">
+                </div>
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                    <label for="nombretaller" class="ml-2">Nombre del taller</label>    
-                                        <div class="input-group ml-1">	
-                                    <input type="text" class="form-control name" id="nombretaller" name="nombretaller" value="{{ $siniestro->nombretaller }}">
-                                        <span class="input-group-btn">
-                                         <button class="btn btn-info pull-right" type="button" data-toggle="modal" href="#" data-target="#modal_talleres" ><span class="fa fa-search-plus"  aria-hidden="true"></span></button>
-                                    </span>	
-                                    </div>	
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4 DatCord">
-                                        <div class="form-group">
-                                        <label for="email">E-mail</label>
-                                        <input type="text" name="email"  class="form-control" id="email" value="{{ $siniestro->email }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4 DatCord">
-                                        <div class="form-group">
-                                        <label for="telefono">Teléfono</label>
-                                        <input type="text" name="telefono"  class="form-control" id="telefono" value="{{ $siniestro->telefono }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                        <div class="form-group">
-                                        <label for="direccion">Dirección</label>
-                                        <input type="text" name="direccion"  class="form-control" id="direccion" value="{{ $siniestro->direccion }}">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                        <div class="form-group">
-                                        <label for="localidad">Localidad</label>
-                                        <input type="text" name="localidad"  class="form-control" id="localidad" value="{{ $siniestro->localidad }}">
-                                        </div>
-                                    </div>
+                <div class="col-12 col-md-6">
+                    <label for="cc" class="form-label">En copia</label>
+                    <input type="text" name="cc" class="form-control" id="cc" value="{{ $siniestro->cc ?? '' }}">
+                </div>
 
-                                     <div class="col-xs-3 col-sm-3 col-md-3 DatCord" hide="true">
-                                        <div class="form-group">
-                                        <label for="coordinador">Coordinador</label>
-                                        <input type="text" name="coordinador"  class="form-control" id="coordinador" value="{{\Illuminate\Support\Facades\Auth::user()->name}}">
-                                        </div>
-                                    </div>
+                <div class="col-12 col-md-6">
+                    <label for="cc2" class="form-label">Segundo en copia</label>
+                    <input type="text" name="cc2" class="form-control" id="cc2" value="{{ $siniestro->cc2 ?? '' }}">
+                </div>
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                    <label for="modalidad">Tipo de inspeccion</label>
-                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" id="modalidad" for="modalidad" name="modalidad" value="{{ $siniestro->modalidad }}">
-                                            <option selected value="{{ $siniestro->modalidad }}">{{ $siniestro->modalidad }}</option>
-                                            <option value="presencial">Presencial</option>
-                                            <option value="videollamada">Videollamada</option>
-                                            <option value="foto y presupuesto">Por foto y presupuesto</option>
-                                            <option value="foto">Por foto</option>
-                                        </select>
-                                    </div>
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary"
+                                onclick="Correo(event)">
+                            <i class="fas fa-envelope me-2"></i>
+                            Contacto vía mail
+                        </button>
+                    </div>
+                </div>
 
+            </div>
+        </div>
 
+        {{-- Panel 2: Datos de coordinación --}}
+        <div class="panel mb-3 DatCord">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h5 class="mb-0 fw-bold">Datos de coordinación</h5>
+                    <small class="text-muted">Información para gestión y asignación</small>
+                </div>
+                <span class="badge text-bg-light border">Coordinación</span>
+            </div>
 
-                                    
-                                    
+            <div class="row g-3">
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                    <label for="estado">Estado</label>
-                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" for="estado" id="estado" name="estado" value="{{ $siniestro->estado }}">
-                                            <option selected value="Pendiente">Pendiente</option>
-                                            <option value="Coordinado">Coordinado</option>
-                                            <option value="Ausente">Ausente</option>
-                                            @can('derivar-siniestro')
-                                            <option value="Peritando">Derivado a inspector</option>
-                                            @endcan('derivar-siniestro')
-                                            <option value="Reclamo de repuestos">Reclamo de repuestos</option>
-                                            <option value="Actualizacion de valores">Actualizacion de valores</option>
-                                            <option value="Cargar ampliacion">Cargar ampliacion</option>
-                                            
-                                            <option value="Baja">Baja</option>
-                
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                        <div class="form-group">
-                                        <label for="fechaip">Fecha IP</label>
-                                        <input type="date" name="fechaip" class="form-control" id="fechaip"  value="{{ $siniestro->fechaip }}">
-                                        </div>
-                                    </div>  
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                        <div class="form-group">
-                                        <label for="enviarorden">Enviar orden</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12" id="enviarorden"  aria-label="Default select example" for="enviarorden" name="enviarorden"" value="{{ $siniestro->enviarorden }}">
-                                            <option selected value="si">Si</option>
-                                            <option value="no">No</option>
-                                        </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 DatCord">
-                                        <div class="form-group">
-                                        <label for="horario">Rango horario</label>
-                                        <input type="text" name="horario"  class="form-control" id="horario" value="{{ $siniestro->horario }}" >
-                                        </div>
-                                    </div>
-                                    
-                                     <!--<div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="file" class="form-label">Adjuntos</label>
-                                        <input type="file" name="urls[]" class="form-control" id="file" multiple>
-                                        </div>
-                                    </div>-->
-                                    <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <label for="imagen" class="form-label">Cover</label>
-                                        <input type="file" name="imagen" class="form-control">
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-xs-3 col-sm-3 col-md-3">
-                                        <div class="form-group">
-                                        <button type="submit" class="btn btn-warning ml-5 mb-3 mt-4">Cargar fotos</button>
-                                        
-                                        </div>
-                                    </div> -->
-                                    <div class="col-xs-12 col-sm-12 col-md-12 DatCord">           
-                                        <label for="comentariosparaip">Comentarios para el perito</label>    
-                                        <div class="form-floating">
-                                        <textarea class="form-control"  name="comentariosparaip" id="comentariosparaip" value="{{ $siniestro->comentariosparaip }}" style="height:100px">{{ $siniestro->comentariosparaip }}</textarea>
-                                        </div>
-                                        </div> 
-                                        <input id="id" hidden="true" value="{{ $siniestro->id }}">
-                                </div>
-                                </div>
-                                </div>
-                                </div>
-                                
-                                                    <hr> 
-                                    
-                                                    <button type="submit" class="btn btn-success btn-lg ml-5 mb-3">Aplicar cambios</button>
-                                                    {{-- <button onclick="CorreoEdu(event)" class="btn btn-success btn-lg ml-5 mb-3">Enviar IP</button> --}}
-                                    
+                <div class="col-12">
+                    <label for="observaciones" class="form-label">Observaciones</label>
+                    <textarea class="form-control" name="observaciones" id="observaciones" rows="3">{{ $siniestro->observaciones ?? '' }}</textarea>
+                </div>
 
-                                    
-                                    
-                                    </div>
-                                
-                                </div>
-                            </form>
-                        </div>   
-                    </div>    
+                {{-- Taller --}}
+                <div class="col-12 col-md-6">
+                    <label for="nombretaller" class="form-label">Nombre del taller</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="nombretaller" name="nombretaller"
+                               value="{{ $siniestro->nombretaller ?? '' }}">
+                        <button class="btn btn-outline-primary"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modal_talleres">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="text" name="email" class="form-control" id="email"
+                           value="{{ $siniestro->email ?? '' }}">
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control" id="telefono"
+                           value="{{ $siniestro->telefono ?? '' }}">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="direccion" class="form-label">Dirección</label>
+                    <input type="text" name="direccion" class="form-control" id="direccion"
+                           value="{{ $siniestro->direccion ?? '' }}">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="localidad" class="form-label">Localidad</label>
+                    <input type="text" name="localidad" class="form-control" id="localidad"
+                           value="{{ $siniestro->localidad ?? '' }}">
+                </div>
+
+                {{-- Coordinador hidden --}}
+                <input type="hidden" name="coordinador" id="coordinador" value="{{ auth()->user()->name }}">
+
+                <div class="col-12 col-md-4">
+                    <label for="modalidad" class="form-label">Tipo de inspección</label>
+                    <select class="form-select" id="modalidad" name="modalidad">
+                        <option value="{{ $siniestro->modalidad ?? '' }}" selected>
+                            {{ $siniestro->modalidad ?? 'Seleccionar...' }}
+                        </option>
+                        <option value="presencial">Presencial</option>
+                        <option value="videollamada">Videollamada</option>
+                        <option value="foto y presupuesto">Por foto y presupuesto</option>
+                        <option value="foto">Por foto</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select class="form-select" id="estado" name="estado">
+                        <option value="Pendiente" selected>Pendiente</option>
+                        <option value="Coordinado">Coordinado</option>
+                        <option value="Ausente">Ausente</option>
+                        @can('derivar-siniestro')
+                            <option value="Peritando">Derivado a inspector</option>
+                        @endcan
+                        <option value="Reclamo de repuestos">Reclamo de repuestos</option>
+                        <option value="Actualizacion de valores">Actualización de valores</option>
+                        <option value="Cargar ampliacion">Cargar ampliación</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="fechaip" class="form-label">Fecha IP</label>
+                    <input type="date" name="fechaip" class="form-control" id="fechaip"
+                           value="{{ $siniestro->fechaip ?? '' }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="enviarorden" class="form-label">Enviar orden</label>
+                    <select class="form-select" id="enviarorden" name="enviarorden">
+                        <option value="si" selected>Si</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="horario" class="form-label">Rango horario</label>
+                    <input type="text" name="horario" class="form-control" id="horario"
+                           value="{{ $siniestro->horario ?? '' }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="imagen" class="form-label">Cover</label>
+                    <input type="file" name="imagen" class="form-control">
+                </div>
+
+                <div class="col-12">
+                    <label for="comentariosparaip" class="form-label">Comentarios para el perito</label>
+                    <textarea class="form-control" name="comentariosparaip" id="comentariosparaip" rows="3">{{ $siniestro->comentariosparaip ?? '' }}</textarea>
+                </div>
+
+                <input id="id" type="hidden" value="{{ $siniestro->id ?? '' }}">
+            </div>
+        </div>
+
+        {{-- Actions --}}
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="fas fa-check me-2"></i>
+                Aplicar cambios
+            </button>
+
+            {{-- si lo querés activo --}}
+            {{-- <button type="button" class="btn btn-outline-primary px-4" onclick="CorreoEdu(event)">
+                <i class="fas fa-paper-plane me-2"></i>
+                Enviar IP
+            </button> --}}
+        </div>
+
+    </form>
+</section>
+
+{{-- MODAL PRODUCTORES --}}
+<div class="modal fade" id="modal_productores" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Productores</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle productores" id="productores" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="d-none">ID</th>
+                                <th>Productor</th>
+                                <th>Teléfono</th>
+                                <th>E-mail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($productores as $productor)
+                                <tr data-id="{{ $productor->id }}" class="pick-productor">
+                                    <td class="d-none">{{ $productor->id }}</td>
+                                    <td>{{ $productor->nombre }}</td>
+                                    <td>{{ $productor->telefono }}</td>
+                                    <td>{{ $productor->correo }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
                 </div>
             </div>
         </div>
-    </section>
-<!-- Ventana Modal PERITOS   -->
+    </div>
+</div>
 
-<style>
-    .selected{
-        background-color: #3abaf4; font-weight: bold; color: black;
-    }
-</style>
-	<div class="modal fade" id="modal_productores" tabindex="-1" role="dialog" >
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color:hsl(213, 99%, 49%);padding-top:5px;">
-            <h4 class="modal-title" style="color:white;">Productores</h4>  
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              
-            </div>      
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">  
-                    <div style="width: 100%; padding-left: -10px;">    
-		            <div class="table-responsive">        
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                           
-                                                
-                                                        
-                                                    <table class="table mt-2 productores" id="productores" cellspacing="0" width="100%">
-                                                        <thead style="background-color:hsl(213, 99%, 49%)">                                     
-                                                            <th style="display: none;color:#fff;font-size:20px">ID</th>
-                                                            <th style="color:#fff;font-size:17px">Productor</th>
-                                                            <th style="color:#fff;font-size:17px">Telefono</th>
-                                                            <th style="color:#fff;font-size:17px">E-mail</th>
-                                                            
-                                                                                                                                
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($productores as $productor)
-                                                            <tr>
-                                                                <td style="display: none;">{{ $productor->id }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->nombre }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->telefono }}</td>
-                                                                <td onclick="selectedRow(),productorData('{{ $productor->id }}')">{{ $productor->correo }}</td>
-
-                                                                
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                        </div>
-                    </div>
-                    </div>
-                    </div>
-                </div>	
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>							
+{{-- MODAL TALLERES --}}
+<div class="modal fade" id="modal_talleres" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Talleres homologados</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-footer">
+
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle talleres" id="talleres" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="d-none">ID</th>
+                                <th>Taller</th>
+                                <th>Localidad</th>
+                                <th>Domicilio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($talleres as $taller)
+                                <tr data-id="{{ $taller->id }}" class="pick-taller">
+                                    <td class="d-none">{{ $taller->id }}</td>
+                                    <td>{{ $taller->taller }}</td>
+                                    <td>{{ $taller->localidad }}</td>
+                                    <td>{{ $taller->direccion }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-
-      <div class="modal fade" id="modal_talleres" tabindex="-1" role="dialog" >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header" style="background-color:hsl(213, 99%, 49%);padding-top:5px;">
-            <h4 class="modal-title" style="color:white;">Buscar perito</h4>  
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              
-            </div>      
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">  
-                    <div style="width: 100%; padding-left: -10px;">    
-		            <div class="table-responsive">        
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                                            <label for="">Talleres homologados</label>
-                                                
-                                                        
-                                                    <table class="table mt-2 talleres" id="talleres" cellspacing="0" width="100%">
-                                                        <thead style="background-color:hsl(213, 99%, 49%)">                                     
-                                                            <th style="display: none;font-size:20px">ID</th>
-                                                            <th style="color:#fff;font-size:17px">Taller</th>
-                                                            <th style="color:#fff;font-size:17px">Localidad</th>
-                                                            <th style="color:#fff;font-size:17px">Domicilio</th>
-                                                            
-                                                                                                                                
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($talleres as $taller)
-                                                            <tr>
-                                                                <td style="display: none;">{{ $taller->id }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->taller }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->localidad }}</td>
-                                                                <td onclick="selectedRow3(),tallerData('{{ $taller->id }}')">{{ $taller->direccion }}</td>
-
-                                                                
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                        </div>
-                    </div>
-                    </div>
-                    </div>
-                </div>	
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>							
-            </div>
-            <div class="modal-footer">
-            </div>
-          </div>
-        </div>
-      </div>
-    
-
+    </div>
+</div>
 @endsection
 
 
-
 @section('javas')
+<script>
+$(function () {
+    // Check patente
+    $('#patente').on('blur', function(){
+        const patente = $(this).val();
+        const _token = $('meta[name="csrf-token"]').attr('content');
 
+        $.ajax({
+            url: "{{ route('siniestros.check') }}",
+            method: "POST",
+            data: { patente, _token },
+            success: function(result) {
+                if (result === 'unique') {
+                    $('#error_patente').html('<span class="badge text-bg-success">Primer siniestro con esta patente</span>');
+                    $('#patente').removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    $('#error_patente').html('<span class="badge text-bg-warning">Ya existe un siniestro con esta patente</span>');
+                    $('#patente').removeClass('is-valid').addClass('is-invalid');
+                }
+            }
+        });
+    });
 
-   <script>
-
-$(document).ready(function(){
-    $('#patente').blur(function(){
-        var error_patente = '';
-        var patente = $('#patente').val();
-        var _token =  $('meta[name="csrf-token"]').attr('content');
-        
-        
-      
-   
-  
-  
-   $.ajax({
-    url:"{{ route('siniestros.check') }}",
-    method:"POST",
-    data:{patente:patente, _token:_token},
-    success:function(result)
-    {
-     if(result == 'unique')
-     {
-        $('#error_patente').html('<label class="card">Primer siniestro con esta patente</label>');
-      $('#patente').removeClass('has-error');
-      $('#register').attr('disabled', false);
-      
-     }
-     else
-     {
-      $('#error_patente').html('<label class="card">Ya hay otro siniestro con esta patente</label>');
-      $('#patente').addClass('has-error');
-      $('#register').attr('disabled', 'disabled');
-      
-     }
-    }
-   })
-  
- });
- 
-});
-
-
-    
-    $(document).ready(function() {
+    // DataTables modales (sin romper el diseño)
     $('.productores').DataTable({
-        pageLength : 15,
+        pageLength: 15,
         pagingType: "simple",
         lengthChange: false,
         responsive: true,
         processing: true,
-        
-    
-        
     });
-    })
-    
 
-</script>   
-
-<script>
-    
-    $(document).ready(function() {
     $('.talleres').DataTable({
-        pageLength : 10,
+        pageLength: 10,
         pagingType: "simple",
         lengthChange: false,
         responsive: true,
         processing: true,
-
-        
     });
-})
 
-</script>  
+    // Selección de productor
+    $(document).on('click', '.pick-productor', function(){
+        $('.pick-productor').removeClass('row-selected');
+        $(this).addClass('row-selected');
 
+        const id = $(this).data('id');
+        productorData(id);
+    });
+
+    // Selección de taller
+    $(document).on('click', '.pick-taller', function(){
+        $('.pick-taller').removeClass('row-selected');
+        $(this).addClass('row-selected');
+
+        const id = $(this).data('id');
+        tallerData(id);
+    });
+});
+</script>
+
+{{-- Mantengo tus funciones tal cual (solo las dejo separadas) --}}
 <script>
-
-
-
-
-
-   function selectedRow(){
-                
-                var index,
-                    table = document.getElementById("productores");
-            
-                for(var i = 1; i < table.rows.length; i++)
-                {
-                    table.rows[i].onclick = function()
-                    {
-                         
-                        {
-                            $(this).addClass('selected').siblings().removeClass('selected')
-                        }
-                    };
-                }
-                
-            }
-            selectedRow();
-
-            function selectedRow2(){
-                
-                var index,
-                    table = document.getElementById("inspectores");
-            
-                for(var i = 1; i < table.rows.length; i++)
-                {
-                    table.rows[i].onclick = function()
-                    {
-                         
-                        {
-                            $(this).addClass('selected').siblings().removeClass('selected')
-                        }
-                    };
-                }
-                
-            }
-            selectedRow2();
-
-            function selectedRow3(){
-                
-                var index,
-                    table = document.getElementById("talleres");
-            
-                for(var i = 1; i < table.rows.length; i++)
-                {
-                    table.rows[i].onclick = function()
-                    {
-                         
-                        {
-                            $(this).addClass('selected').siblings().removeClass('selected')
-                        }
-                    };
-                }
-                
-            }
-            selectedRow3();
-
-
-
-
-function clearData(){
- $('#siniestro').val('');
- $('#fechaip').val('');
- $('#inspector').val('');
- $('#localidad').val('');
- $('#direccion').val('');
- $('#email').val('');
- $('#nameError').text('');
- $('#titleError').text('');
- $('#instituteError').text('');
-}
-
-function reladData(){
-    setTimeout(function() {
-   location.reload();
-   }); 
-}
-
-function addData(){
-
-    
-    
-    var link = $('#link').val();
-    var siniestro =  $('#siniestro').val();
-    var patente = $('#patente').val();
-    var nrocorto = $('#nrocorto').val();
-    var cliente = $('#cliente').val();
-    var modalidad = $('#modalidad').val();
-    var motivo = $('#motivo').val();
-    var correo = $('#correo').val();
-    var observaciones = $('#observaciones').val();
-    var email = $('#email').val();
-    var nombretaller = $('#nombretaller').val();
-    var telefonos = $('#telefono').val();
-    var direccion = $('#direccion').val();
-    var localidad = $('#localidad').val();
-    var estado = $('#estado').val();
-    var fechaip = $('#fechaip').val();
-    var enviarorden = $('#enviarorden').val();
-    var horario = $('#horario').val();
-    var comentariosparaip = $('#comentariosparaip').val();
-
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        data: {link:link, siniestro:siniestro, patente:patente, nrocorto:nrocorto, cliente:cliente, modalidad:modalidad, motivo:motivo, correo:correo, observaciones:observaciones, email:email, 
-        nombretaller:nombretaller, telefono:telefono, direccion:direccion, localidad:localidad, estado:estado, fechaip:fechaip, enviarorden:enviarorden, horario:horario, comentariosparaip:comentariosparaip},
-        url: "/teacher/store/",
-        success: function(data){
-            
-            
-            console.log('Siniestro ingresado con éxito');
-        }
-
-    })
-
-}
-
-
-
-
-    function editData(id){
-    
-
-
-
- 
-    $.ajax({
-        type:"get",
-        dataType:"json",
-        url:"/teacher/edit/"+id,
-        success: function(data){
-            $('#id').val(data.id);
-            $('#siniestro').val(data.siniestro);
-            $('#fechaip').val(data.fechaip);
-            $('#patente').val(data.patente);
-            $('#direccion').val(data.direccion);
-            $('#localidad').val(data.localidad);
-            console.log(data);
-        }
-    })
-}
-
-function userData(id){
-    
-
-
-
- 
-    $.ajax({
-        type:"get",
-        dataType:"json",
-        url:"/teacher/users/"+id,
-        success: function(data){
-           
-
-            // $('#id_inspector').val(data.id);
-            $('.name').val(data.name);
-            $('#email').val(data.email);
-            
-           
-
-            console.log(data);
-        }
-    })
-}
-
 function productorData(id){
-    
-
-
-
- 
     $.ajax({
         type:"get",
         dataType:"json",
         url:"/teacher/productores/"+id,
         success: function(data){
-           
-
-            // $('#id_inspector').val(data.id);
             $('#nombre').val(data.nombre);
             $('#emailPas').val(data.correo);
-            
-           
-
-            console.log(data);
         }
     })
 }
 
 function tallerData(id){
-    
-
-
-
- 
     $.ajax({
         type:"get",
         dataType:"json",
         url:"/teacher/taller/"+id,
         success: function(data){
-           
-
-            // $('#id_inspector').val(data.id);
             $('#nombretaller').val(data.taller);
             $('#telefono').val(data.telefonos);
             $('#email').val(data.email);
             $('#direccion').val(data.direccion);
             $('#localidad').val(data.localidad);
-            
-           
-
-            console.log(data);
         }
     })
 }
-
-
- // --------------------------------------------- Update de registros a la table de BD -----------------------------------------------------
-
-
-
-
-    function updateData(event){
-
-   event.preventDefault();
-    var id = $('#id').val();
-    var link = $('#link').val();
-    var siniestro =  $('#siniestro').val();
-    var patente = $('#patente').val();
-    var nrocorto = $('#nrocorto').val();
-    var cliente = $('#cliente').val();
-    var modalidad = $('#modalidad').val();
-    
-    var motivo = $('#motivo').val();
-    var correo = $('#correo').val();
-    var observaciones = $('#observaciones').val();
-    var email = $('#email').val();
-    var nombretaller = $('#nombretaller').val();
-    var telefonos = $('#telefono').val();
-    var direccion = $('#direccion').val();
-    var localidad = $('#localidad').val();
-    var estado = $('#estado').val();
-    var fechaip = $('#fechaip').val();
-    var enviarorden = $('#enviarorden').val();
-    var horario = $('#horario').val();
-    var comentariosparaip = $('#comentariosparaip').val();
-    
-    
-    
-    
-     
-    
-    $.ajaxSetup({
-   headers:{
-       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-   }
-   })
- 
-
-    $.ajax({
-        type: "PUT",
-        
-        data: {modalidad:modalidad, motivo:motivo, fechaip:fechaip, patente:patente, siniestro:siniestro, localidad:localidad, direccion:direccion, email:email, estado:estado,
-        observaciones:observaciones, nombretaller:nombretaller, telefono:telefonos, localidad:localidad, enviarorden:enviarorden, horario:horario, comentariosparaip:comentariosparaip, link:link,
-        nrocorto:nrocorto, cliente:cliente},
-        url: "/teacher/update/"+id,
-        success: function(response){
-         Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Siniestro actualizado con éxito',
-         })
-         timer: 1500;
-        
-           
-         
-        console.log('Siniestro asignado con éxito');
-        }
-     
-    })
-
-
-   }
-// <-------------------------------------- Para enviar correo ---------------------------------------------------------------------------------->
 
 function Correo(event){
+    event.preventDefault();
 
-event.preventDefault();
-// var id = $('#id').val();
-var siniestro =  $('#siniestro').val();
-var emailPas = $('#emailPas').val();
-var coordinador = $('#coordinador').val();
-var patente = $('#patente').val();
-var cc = $('#cc').val();
-var cc2 = $('#cc2').val();
-var nrocorto = $('#nrocorto').val();
- 
- $.ajaxSetup({
-headers:{
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-}
-})
+    const siniestro   = $('#siniestro').val();
+    const emailPas    = $('#emailPas').val();
+    const coordinador = $('#coordinador').val();
+    const patente     = $('#patente').val();
+    const cc          = $('#cc').val();
+    const cc2         = $('#cc2').val();
+    const nrocorto    = $('#nrocorto').val();
 
+    $.ajaxSetup({
+        headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+    });
 
- $.ajax({
-     type: "POST",
-     
-     data: {siniestro:siniestro, emailPas:emailPas, patente:patente, coordinador:coordinador, cc:cc, cc2:cc2, nrocorto:nrocorto},
-     url: "/correo",
-     success: function(response){
-            
-         Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Correo enviado con éxito',
-         })
-         timer: 500;
-        
-           
-         
-        console.log('Correo enviado con éxito');
+    $.ajax({
+        type: "POST",
+        data: { siniestro, emailPas, patente, coordinador, cc, cc2, nrocorto },
+        url: "/correo",
+        success: function(){
+            Swal.fire({
+                icon: 'success',
+                position: 'top-end',
+                showConfirmButton: false,
+                title: 'Correo enviado con éxito',
+                timer: 1200
+            });
         }
-  
- })
-
-
+    });
 }
-
-// <-------------------------------------- Para enviar correo a Edu ---------------------------------------------------------------------------------->
-
-function CorreoEdu(event){
-
-event.preventDefault();
-// var id = $('#id').val();
-var siniestro =  $('#siniestro').val();
-// var email = $('#email').val();
-var fechaip = $('#fechaip').val();
-var patente = $('#patente').val();
-var nrocorto =  $('#nrocorto').val();
-var comentariosparaip = $('#comentariosparaip').val();
-var telefono = $('#telefono').val();
-var localidad = $('#localidad').val();
-var direccion =  $('#direccion').val();
-var modalidad = $('#modalidad').val();
-// var imagen = $('#imagen').val();
-var nombretaller = $('#nombretaller').val();
-var motivo = $('#motivo').val();
-var horario = $('#horario').val();
-var cliente = $('#cliente').val();
-var enviarorden = $('#enviarorden').val();
-
-
-
-
- 
- $.ajaxSetup({
-headers:{
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-}
-})
-
-
- $.ajax({
-     type: "POST",
-     
-     data: {siniestro:siniestro, fechaip:fechaip, patente:patente, nrocorto:nrocorto, comentariosparaip:comentariosparaip, telefono:telefono, localidad:localidad, direccion:direccion,
-    modalidad:modalidad, nombretaller:nombretaller, motivo:motivo, horario:horario, enviarorden:enviarorden, cliente:cliente},
-     url: "/correoEdu",
-     success: function(response){
-            
-         Swal.fire({
-             icon: 'success',
-             position: 'top-end',
-             showConfirmButton: false,
-             title: 'Enviado a Edu con exito',
-         })
-         timer: 500;
-        
-           
-         
-        console.log('Correo enviado con exito');
-        }
-  
- })
-
-
-}
-
-
-
-
- 
-
-
 </script>
 @endsection
