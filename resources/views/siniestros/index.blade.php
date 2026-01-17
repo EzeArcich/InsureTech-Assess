@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="py-2">
+<section class="p-2">
 
     {{-- Header --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">

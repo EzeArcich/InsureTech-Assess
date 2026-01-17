@@ -1,5 +1,5 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+// Fonts - Fuente moderna y sobria
+@import url('https://fonts.bunny.net/css?family=Inter:wght@400;500;600;700&display=swap');
 
 // Variables
 @import 'variables';
@@ -27,7 +27,7 @@ $light:     #f6f8fb;
 $dark:      #0b1220;
 
 // Tipografía / bordes / sombras (minimal)
-$font-family-sans-serif: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+$font-family-sans-serif: "Inter", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
 $body-bg: $light;
 $body-color: rgba(15, 23, 42, .92);
 
@@ -111,54 +111,128 @@ main.app-main{
   min-height: calc(100vh - 72px);
 }
 
-// Offcanvas menu (lo tuyo, refinado)
+// Offcanvas menu (refinado con mejor tipografía y efectos)
 .app-offcanvas{
   border-right: 1px solid rgba(15, 23, 42, .08);
+  background: linear-gradient(180deg, rgba(3,29,68,.03) 0%, rgba(4,57,94,.01) 100%);
+  backdrop-filter: blur(12px);
+}
+
+.offcanvas-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(15, 23, 42, .08) !important;
+  background: linear-gradient(135deg, rgba(3,29,68,.08) 0%, rgba(4,57,94,.05) 100%);
+  backdrop-filter: blur(8px);
+}
+
+.offcanvas-title {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  color: rgba(15, 23, 42, .95);
+}
+
+.offcanvas-body {
+  padding: 1rem 1.25rem;
 }
 
 .menu-section-title{
-  font-size: .75rem;
-  letter-spacing: .08em;
+  font-family: "Inter", sans-serif;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba(15, 23, 42, .55);
-  margin: .85rem 0 .35rem;
+  color:#ffffff;
+  margin: 1.25rem 0 .5rem;
+  padding-left: .25rem;
 }
 
 .menu-link{
   display: flex;
   align-items: center;
-  gap: .65rem;
-  padding: .6rem .75rem;
-  border-radius: .85rem;
-  color: rgba(15,23,42,.88);
+  gap: .85rem;
+  padding: .75rem 1rem;
+  border-radius: .95rem;
+  color:#ffffff!important;
   text-decoration: none;
-  transition: transform .08s ease, background-color .12s ease, box-shadow .12s ease;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: .9rem;
+  position: relative;
+  margin-bottom: .35rem;
+  transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.menu-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--brand-deep);
+  border-radius: 0 2px 2px 0;
+  transition: height .2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu-link:hover{
-  background: rgba(4,57,94,.08);
-  transform: translateY(-1px);
-  box-shadow: 0 .25rem .75rem rgba(15,23,42,.06);
+  background: rgba(4,57,94,.06);
+  color: rgba(4,57,94,.95);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(4,57,94,.08);
+  border-color: rgba(4,57,94,.12);
+}
+
+.menu-link:hover::before {
+  height: 60%;
 }
 
 .menu-link.active{
-  background: rgba(4,57,94,.12);
+  background: linear-gradient(135deg, rgba(4,57,94,.12) 0%, rgba(4,57,94,.08) 100%);
   border: 1px solid rgba(4,57,94,.20);
-  color: rgba(15,23,42,.96);
+  color: rgba(4,57,94,1);
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(4,57,94,.12);
+  transform: translateX(2px);
+}
+
+.menu-link.active::before {
+  height: 70%;
+  background: var(--brand-deep);
 }
 
 .menu-icon{
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: .8rem;
-  background: rgba(15,23,42,.06);
+  border-radius: .85rem;
+  background: rgba(15,23,42,.05);
+  transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1rem;
+  color: rgba(15,23,42,.7);
+  flex-shrink: 0;
+}
+
+.menu-link:hover .menu-icon {
+  background: rgba(4,57,94,.1);
+  color: rgba(4,57,94,.9);
+  transform: scale(1.05);
 }
 
 .menu-link.active .menu-icon{
-  background: rgba(4,57,94,.16);
+  background: rgba(4,57,94,.15);
+  color: var(--brand-deep);
+  box-shadow: 0 2px 8px rgba(4,57,94,.15);
+}
+
+.menu-text {
+  font-weight: inherit;
+  letter-spacing: -0.01em;
 }
 
 
@@ -220,6 +294,37 @@ main.app-main{
   border-bottom: 1px solid rgba(15,23,42,.08);
 }
 
+// Card headers con colores de la paleta
+.card-header-brand {
+    background: linear-gradient(135deg, rgba(3,29,68,.1) 0%, rgba(4,57,94,.06) 100%);
+    border-bottom: 2px solid rgba(4,57,94,.15);
+    color: rgba(3,29,68,.95);
+}
+
+.card-header-navy {
+    background: linear-gradient(135deg, rgba(3,29,68,.12) 0%, rgba(3,29,68,.08) 100%);
+    border-bottom: 2px solid rgba(3,29,68,.2);
+    color: rgba(3,29,68,.95);
+}
+
+.card-header-deep {
+    background: linear-gradient(135deg, rgba(4,57,94,.12) 0%, rgba(4,57,94,.08) 100%);
+    border-bottom: 2px solid rgba(4,57,94,.2);
+    color: rgba(4,57,94,.95);
+}
+
+.card-header-sage {
+    background: linear-gradient(135deg, rgba(112,162,136,.12) 0%, rgba(112,162,136,.08) 100%);
+    border-bottom: 2px solid rgba(112,162,136,.2);
+    color: rgba(67,121,98,.95);
+}
+
+.card-header-rose {
+    background: linear-gradient(135deg, rgba(211,82,105,.12) 0%, rgba(211,82,105,.08) 100%);
+    border-bottom: 2px solid rgba(211,82,105,.2);
+    color: rgba(188,58,79,.95);
+}
+
 // Tablas más “enterprise”
 .table{
   --bs-table-striped-bg: rgba(4,57,94,.03);
@@ -276,4 +381,61 @@ main.app-main{
     backdrop-filter: blur(6px);
     border-top: 1px solid rgba(0,0,0,.08);
     padding: .75rem 0;
+}
+
+// ==========================================================
+// 6) Headers de paneles con colores de la paleta (sobrios)
+// ==========================================================
+
+.panel-header-brand {
+    background: linear-gradient(135deg, rgba(3,29,68,.1) 0%, rgba(4,57,94,.06) 100%);
+    border-bottom: 2px solid rgba(4,57,94,.15);
+    color: rgba(3,29,68,.95);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.panel-header-navy {
+    background: linear-gradient(135deg, rgba(3,29,68,.12) 0%, rgba(3,29,68,.08) 100%);
+    border-bottom: 2px solid rgba(3,29,68,.2);
+    color: rgba(3,29,68,.95);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.panel-header-deep {
+    background: linear-gradient(135deg, rgba(4,57,94,.12) 0%, rgba(4,57,94,.08) 100%);
+    border-bottom: 2px solid rgba(4,57,94,.2);
+    color: rgba(4,57,94,.95);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.panel-header-sage {
+    background: linear-gradient(135deg, rgba(112,162,136,.12) 0%, rgba(112,162,136,.08) 100%);
+    border-bottom: 2px solid rgba(112,162,136,.2);
+    color: rgba(67,121,98,.95);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.panel-header-rose {
+    background: linear-gradient(135deg, rgba(211,82,105,.12) 0%, rgba(211,82,105,.08) 100%);
+    border-bottom: 2px solid rgba(211,82,105,.2);
+    color: rgba(188,58,79,.95);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+// Clase para el header dentro del panel (cuando se usa estructura interna)
+.panel > .d-flex.align-items-center.justify-content-between {
+    &.panel-header-brand,
+    &.panel-header-navy,
+    &.panel-header-deep,
+    &.panel-header-sage,
+    &.panel-header-rose {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 1rem 1.25rem;
+        border-radius: 1rem 1rem 0 0;
+    }
 }

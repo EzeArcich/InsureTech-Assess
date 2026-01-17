@@ -23,44 +23,88 @@
                             </div>
                         @endif
 
-                        {!! Form::model($user, ['method' => 'PATCH','route' => ['usuarios.update', $user->id]]) !!}
+                        <form action="{{ route('usuarios.update', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+
+                            {{-- Aquí van tus inputs --}}
+                            {{-- Ejemplo: --}}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nombre:</label>
+                                <input type="text" name="name" id="name"
+                                    value="{{ old('name', $user->name) }}"
+                                    class="form-control">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                Actualizar
+                            </button>
+                        </form>
+
                         <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="name">Nombre</label>
-                                    {!! Form::text('name', null, array('class' => 'form-control')) !!}
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <input type="text"
+                                        name="name"
+                                        id="name"
+                                        class="form-control"
+                                        value="{{ old('name', $user->name ?? '') }}">
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="email">E-mail</label>
-                                    {!! Form::text('email', null, array('class' => 'form-control')) !!}
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email"
+                                        name="email"
+                                        id="email"
+                                        class="form-control"
+                                        value="{{ old('email', $user->email ?? '') }}">
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    {!! Form::password('password', array('class' => 'form-control')) !!}
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password"
+                                        name="password"
+                                        id="password"
+                                        class="form-control">
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="confirm-password">Confirmar Password</label>
-                                    {!! Form::password('confirm-password', array('class' => 'form-control')) !!}
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirmar Password</label>
+                                    <input type="password"
+                                        name="confirm-password"
+                                        id="confirm-password"
+                                        class="form-control">
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="">Roles</label>
-                                    {!! Form::select('roles[]', $roles,$userRole, array('class' => 'form-control')) !!}
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="roles" class="form-label">Roles</label>
+                                    <select name="roles[]" id="roles" class="form-select" multiple>
+                                        @foreach($roles as $id => $name)
+                                            <option value="{{ $id }}"
+                                                {{ in_array($id, old('roles', $userRole ?? [])) ? 'selected' : '' }}>
+                                                {{ $name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <button type="submit" class="btn btn-primary text-dark">Guardar</button>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary text-dark">
+                                    Guardar
+                                </button>
                             </div>
                         </div>
-                        {!! Form::close() !!}
-                        </div>
+
                     </div>
                 </div>
             </div>

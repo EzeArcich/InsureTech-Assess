@@ -1,169 +1,177 @@
 @extends('layouts.app')
 
 @section('content')
-    
-<section class="section">
-        <div class="section-header">
-            <h3 class="page__heading">Editar datos del taller</h3>
+<section class="py-2">
+
+    {{-- Header --}}
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+            <h3 class="mb-0 fw-bold">Editar taller</h3>
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('talleres.index') }}" class="text-decoration-none">Talleres</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Editar</li>
+                </ol>
+            </nav>
         </div>
-        <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/home#">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="https://InsureTechAsses.com/siniestros">Siniestros</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Editar TH</li> 
-  </ol>
-</nav>
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                    <div class="card-header" style="background:linear-gradient(132deg, rgba(2,0,36,1) 0%, rgba(9,51,121,1) 0%, rgba(0,176,255,1) 100%);">
-                                <h4 style="color:white">Datos del taller </h4>
-                                </div>
-                        <div class="card-body">     
-                                                                      
-                            @if ($errors->any())                                                
-                            <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                            <strong>¡Revise los campos!</strong>                        
-                                @foreach ($errors->all() as $error)                                    
-                                    <span class="badge badge-danger">{{ $error }}</span>
-                                @endforeach                        
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            @endif
 
-                            <form action="{{ route('talleres.update',$talleres->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-                                <div class="row">
-                                    
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="taller">Nombre</label>
-                                        <input type="text" name="taller" class="form-control" id="taller" >
-                                        </div>
-                                    </div>   
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="direccion">Direccion</label>
-                                        <input type="text" name="direccion" class="form-control" id="direccion">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="barrio">Barrio</label>
-                                        <input type="text" name="barrio" class="form-control" id="barrio">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="localidad">Localidad</label>
-                                        <input type="text" name="localidad" class="form-control" id="localidad" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="vacaiones">Vacaciones</label>
-                                        <input type="text" name="vacaiones" class="form-control" id="vacaiones" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="descfranq">Descuento de franquicia</label>
-                                        <input type="text" name="descfranq" class="form-control" id="descfranq" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                        <label for="telefonos">Teléfonos</label>
-                                        <input type="text" name="telefonos" class="form-control" id="telefonos" >
-                                        </div>
-                                    </div>   
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="email">E-mail</label>
-                                        <input type="text" name="email" class="form-control" id="email">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="zona">Zona</label>
-                                        <input type="text" name="zona" class="form-control" id="zona">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="grua">Grúa</label>
-                                        <input type="text" name="grua" class="form-control" id="grua" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="traslado">Traslado</label>
-                                        <input type="text" name="traslado" class="form-control" id="traslado" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="granizo">Granizo</label>
-                                        <input type="text" name="granizo" class="form-control" id="granizo" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="ponerep">Pone repuestos</label>
-                                        <input type="text" name="ponerep" class="form-control" id="ponerep" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="razon">Razón</label>
-                                        <input type="text" name="razon" class="form-control" id="razon" >
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                        <label for="cuit">CUIT</label>
-                                        <input type="text" name="cuit" class="form-control" id="cuit" >
-                                        </div>
-                                    </div>
-                                    
-                                      
-                                    
+        <div class="d-flex gap-2">
+            <a href="{{ route('talleres.index') }}" class="btn btn-light border btn-sm rounded-3">
+                <i class="fas fa-arrow-left me-2"></i> Volver
+            </a>
+        </div>
+    </div>
 
-                                    
-
-                                    
-                                    
-                                    
-
-                                   
-                                </div>
-                                </div>
-                                </div>
-                                </div>
-                                
-                                                    <hr> 
-                                    
-                                    <button type="submit" class="btn btn-primary btn-lg">Confirmar Cambios</button>
-
-                                    
-                                    
-                                    </div>
-                                
-                                </div>
-                            </form>
-                        </div>   
-                    </div>    
-                </div>
+    {{-- Errors --}}
+    @if ($errors->any())
+        <div class="alert alert-danger border-0 shadow-sm">
+            <div class="fw-bold mb-2">Revisá estos campos:</div>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach ($errors->all() as $error)
+                    <span class="badge text-bg-danger">{{ $error }}</span>
+                @endforeach
             </div>
         </div>
-    </section>
-    
+    @endif
 
-    
+    <form action="{{ route('talleres.update', $talleres->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
+        {{-- Panel 1: Datos del taller --}}
+        <div class="panel mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 panel-header-deep">
+                <div>
+                    <h5 class="mb-0 fw-bold">Datos del taller</h5>
+                    <small class="text-muted">Información principal del taller</small>
+                </div>
+                <span class="badge text-bg-light border">Alta</span>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-12 col-md-4">
+                    <label for="taller" class="form-label">Nombre del taller</label>
+                    <input type="text" name="taller" id="taller" class="form-control" 
+                           value="{{ old('taller', $talleres->taller) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="razon" class="form-label">Razón social</label>
+                    <input type="text" name="razon" id="razon" class="form-control" 
+                           value="{{ old('razon', $talleres->razon) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="cuit" class="form-label">CUIT</label>
+                    <input type="text" name="cuit" id="cuit" class="form-control" 
+                           value="{{ old('cuit', $talleres->cuit) }}">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="direccion" class="form-label">Dirección</label>
+                    <input type="text" name="direccion" id="direccion" class="form-control" 
+                           value="{{ old('direccion', $talleres->direccion) }}">
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="barrio" class="form-label">Barrio</label>
+                    <input type="text" name="barrio" id="barrio" class="form-control" 
+                           value="{{ old('barrio', $talleres->barrio) }}">
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="localidad" class="form-label">Localidad</label>
+                    <input type="text" name="localidad" id="localidad" class="form-control" 
+                           value="{{ old('localidad', $talleres->localidad) }}">
+                </div>
+
+                <div class="col-12">
+                    <label for="telefonos" class="form-label">Teléfonos</label>
+                    <input type="text" name="telefonos" id="telefonos" class="form-control" 
+                           value="{{ old('telefonos', $talleres->telefonos) }}">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="text" name="email" id="email" class="form-control" 
+                           value="{{ old('email', $talleres->email) }}">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="zona" class="form-label">Zona</label>
+                    <input type="text" name="zona" id="zona" class="form-control" 
+                           value="{{ old('zona', $talleres->zona) }}">
+                </div>
+
+            </div>
+        </div>
+
+        {{-- Panel 2: Servicios y características --}}
+        <div class="panel mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 panel-header-sage">
+                <div>
+                    <h5 class="mb-0 fw-bold">Servicios y características</h5>
+                    <small class="text-muted">Servicios que ofrece el taller</small>
+                </div>
+                <span class="badge text-bg-light border">Servicios</span>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-12 col-md-4">
+                    <label for="grua" class="form-label">Grúa</label>
+                    <input type="text" name="grua" id="grua" class="form-control" 
+                           value="{{ old('grua', $talleres->grua) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="traslado" class="form-label">Traslado</label>
+                    <input type="text" name="traslado" id="traslado" class="form-control" 
+                           value="{{ old('traslado', $talleres->traslado) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="granizo" class="form-label">Granizo</label>
+                    <input type="text" name="granizo" id="granizo" class="form-control" 
+                           value="{{ old('granizo', $talleres->granizo) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="ponerep" class="form-label">Pone repuestos</label>
+                    <input type="text" name="ponerep" id="ponerep" class="form-control" 
+                           value="{{ old('ponerep', $talleres->ponerep) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="vacaciones" class="form-label">Vacaciones</label>
+                    <input type="text" name="vacaciones" id="vacaciones" class="form-control" 
+                           value="{{ old('vacaciones', $talleres->vacaciones) }}">
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="descfranq" class="form-label">Descuento de franquicia</label>
+                    <input type="text" name="descfranq" id="descfranq" class="form-control" 
+                           value="{{ old('descfranq', $talleres->descfranq) }}">
+                </div>
+
+            </div>
+        </div>
+
+        {{-- Actions --}}
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="fas fa-check me-2"></i>
+                Aplicar cambios
+            </button>
+
+            <a href="{{ route('talleres.index') }}" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-times me-2"></i>
+                Cancelar
+            </a>
+        </div>
+
+    </form>
+</section>
 @endsection
