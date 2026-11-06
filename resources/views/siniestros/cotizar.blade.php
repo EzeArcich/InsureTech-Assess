@@ -11,10 +11,10 @@
 @endpush
 
 @section('content')
-<section class="py-2">
+<section class="py-2 app-elevated-section">
 
     {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 app-elevated-heading">
         <div>
             <h3 class="mb-0 fw-bold">Cotizar siniestro</h3>
             <nav aria-label="breadcrumb" class="mt-1">
@@ -46,7 +46,7 @@
     @endif
 
     @can('terceros-siniestro')
-    <form action="{{ route('claims.update', $siniestro->id) }}" method="POST" enctype="multipart/form-data">
+    <form class="app-elevated-form" action="{{ route('claims.update', $siniestro->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -63,18 +63,12 @@
             <div class="row g-3">
 
                 <div class="col-12 d-flex justify-content-between align-items-center">
-                    <label for="link" class="form-label mb-0">Link 2.0</label>
                     <a href="{{ route('claims.show', $siniestro->id) }}" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-paperclip me-1"></i>
                         Adjuntos
                     </a>
                 </div>
-                <div class="col-12">
-                    <input type="text" name="link" id="link" class="form-control"
-                           value="{{ $siniestro->link ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-4">
+<div class="col-12 col-md-4">
                     <label for="claim_number" class="form-label">Siniestro</label>
                     <input type="text" name="claim_number" id="claim_number" class="form-control"
                            value="{{ $siniestro->claim_number ?? '' }}">
@@ -108,13 +102,7 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <label for="short_number" class="form-label">Nro. corto</label>
-                    <input type="text" name="short_number" id="short_number" class="form-control"
-                           value="{{ $siniestro->short_number ?? '' }}">
-                </div>
-
-                <div class="col-md-6">
+<div class="col-md-6">
                     <label for="client_name" class="form-label">Nombre del asegurado</label>
                     <input type="text" name="client_name" id="client_name" class="form-control" required
                            value="{{ old('client_name', $siniestro->client_name) }}">

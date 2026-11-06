@@ -15,6 +15,9 @@
                     'Peritando' => ['Peritando', 'blue', 'claims.assigned'],
                     'IPgestion' => ['En gestión', 'green', 'claims.in_progress'],
                 ];
+                if (auth()->user()->isRestrictedCoordinator()) {
+                    $stateLinks = array_intersect_key($stateLinks, array_flip(['Pendiente', 'Ausente']));
+                }
                 if (auth()->user()->isRoutePlanner()) {
                     $stateLinks = array_intersect_key($stateLinks, array_flip(['Coordinado', 'Peritando']));
                 }
@@ -40,25 +43,38 @@
                     @endif
                 </div>
             </details>
-            @unless(auth()->user()->isRestrictedInspector() || auth()->user()->isRoutePlanner())
             <a href="{{ route('workshops.index') }}" class="{{ request()->routeIs('workshops.*') ? 'is-active' : '' }}"><i class="bi bi-building-check"></i> Talleres</a>
+            @unless(auth()->user()->isRestrictedInspector() || auth()->user()->isRoutePlanner() || auth()->user()->isRestrictedCoordinator())
+
             <a href="{{ route('blogs.index') }}" class="{{ request()->routeIs('blogs.*') ? 'is-active' : '' }}"><i class="bi bi-journal-text"></i> Noticias</a>
-            <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'is-active' : '' }}"><i class="bi bi-gear"></i> Roles</a>
+
             @endunless
-            @if((!auth()->user()->isRestrictedInspector() && !auth()->user()->isRoutePlanner()) || app()->environment('local'))
+            @hasrole('CEO')
+            <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'is-active' : '' }}"><i class="bi bi-gear"></i> Roles</a>
+            @endhasrole
+            @if((!auth()->user()->isRestrictedInspector() && !auth()->user()->isRoutePlanner() && !auth()->user()->isRestrictedCoordinator()) || app()->environment('local'))
             <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'is-active' : '' }}"><i class="bi bi-people"></i> Usuarios</a>
             @endif
-            @hasrole('CEO')
-            <details class="nav-claims {{ request()->routeIs('settings.*') ? 'is-active' : '' }}" @if(request()->routeIs('settings.*')) open @endif>
+            @if(auth()->user()->hasRole('CEO') || auth()->user()->canManageInspectionPayments() || auth()->user()->isRestrictedInspector() || auth()->user()->canManageEmailTemplates())
+            @php($settingsSection = request()->routeIs('settings.*', 'inspection-payments.*', 'email-templates.*'))
+            <details class="nav-claims {{ $settingsSection ? 'is-active' : '' }}" @if($settingsSection) open @endif>
                 <summary><i class="bi bi-gear"></i><span>Configuración</span><i class="bi bi-chevron-down nav-claims-chevron"></i></summary>
-                <div class="nav-claims-links"><a href="{{ route('settings.repair-rates') }}" class="{{ request()->routeIs('settings.repair-rates*') ? 'is-active' : '' }}">Chapa, pintura y mecánica</a><a href="{{ route('settings.inspection-rates') }}" class="{{ request()->routeIs('settings.inspection-rates*') ? 'is-active' : '' }}">Inspecciones</a></div>
+                <div class="nav-claims-links">
+                    @if(auth()->user()->canManageEmailTemplates())
+                    <a href="{{ route('email-templates.index') }}" class="{{ request()->routeIs('email-templates.*') ? 'is-active' : '' }}">Plantillas de correo</a>
+                    @endif
+                    @hasrole('CEO')
+                    <a href="{{ route('settings.repair-rates') }}" class="{{ request()->routeIs('settings.repair-rates*') ? 'is-active' : '' }}">Chapa, pintura y mecánica</a>
+                    <a href="{{ route('settings.inspection-rates') }}" class="{{ request()->routeIs('settings.inspection-rates*') ? 'is-active' : '' }}">Inspecciones</a>
+                    @endhasrole
+                    @if(auth()->user()->canManageInspectionPayments() || auth()->user()->isRestrictedInspector())
+                    <a href="{{ route('inspection-payments.index') }}" class="{{ request()->routeIs('inspection-payments.*') ? 'is-active' : '' }}"><i class="bi bi-cash-stack"></i> {{ auth()->user()->canManageInspectionPayments() ? 'Honorarios' : 'Mis honorarios' }}</a>
+                    @endif
+                </div>
             </details>
-            @endhasrole
+            @endif
             @if(auth()->user()->canPlanInspectionRoutes() || auth()->user()->isRestrictedInspector())
             <a href="{{ route('route-sheets.index') }}" class="{{ request()->routeIs('route-sheets.*') ? 'is-active' : '' }}"><i class="bi bi-map"></i> Hoja de ruta</a>
-            @endif
-            @if(auth()->user()->canManageInspectionPayments() || auth()->user()->isRestrictedInspector())
-            <a href="{{ route('inspection-payments.index') }}" class="{{ request()->routeIs('inspection-payments.*') ? 'is-active' : '' }}"><i class="bi bi-cash-stack"></i> {{ auth()->user()->canManageInspectionPayments() ? 'Honorarios' : 'Mis honorarios' }}</a>
             @endif
         </nav>
         <div class="sidebar-account">

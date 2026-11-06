@@ -1,4 +1,5 @@
-<div class="col-12" id="coordination-location" data-search-url="{{ route('claims.location.search', $siniestro->id) }}" data-tiles="{{ config('services.inspection_map.tile_url') }}">
+<div class="col-12" id="coordination-location" data-nearby-url="{{ route('claims.nearby', $siniestro) }}" data-search-url="{{ route('claims.location.search', $siniestro->id) }}" data-tiles="{{ config('services.inspection_map.tile_url') }}">
+<div id="coordination-nearby" class="panel mb-3" aria-live="polite" hidden></div>
 <h3 class="h6">Ubicación de la pericia presencial</h3>
 <p class="text-muted">Completá dirección y localidad, buscá el domicilio y confirmá el punto antes de pasar a Coordinado. La agenda del perito usará esta ubicación.</p>
 <button class="btn btn-palette-blue mb-2" id="coordination-location-search" type="button">Buscar domicilio en el mapa</button>

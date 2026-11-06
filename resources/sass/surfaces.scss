@@ -1,0 +1,68 @@
+// A shared shape layer also overrides Bootstrap's rounded utility classes.
+@layer app-shape {
+    html, body, body *, body *::before, body *::after, input::file-selector-button {
+        border-radius: 0 !important;
+    }
+}
+
+@mixin elevated-surface {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 12px 32px var(--color-shadow), 0 3px 10px var(--color-shadow);
+}
+
+@mixin overlapping-heading {
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -.75rem -.5rem -5rem;
+        z-index: -1;
+        background: linear-gradient(135deg, var(--color-table-header), var(--color-sidebar-end));
+        pointer-events: none;
+    }
+}
+
+.claims-page {
+    :is(.card, .panel, .claims-table-panel) { @include elevated-surface; }
+
+    .claims-main > .claims-header { @include overlapping-heading; }
+
+    .claims-main > :not(.claims-header):not(.modal):not(script):not(style):not(link) {
+        position: relative;
+    }
+
+    .section > .section-header { @include overlapping-heading; }
+    .section > .section-body { position: relative; }
+}
+
+:is(.app-elevated-section, .claim-edit-elevated) {
+    position: relative;
+
+    > :is(.app-elevated-heading, .claim-edit-heading) { @include overlapping-heading; }
+
+    > :is(.app-elevated-form, #claim-edit-form) {
+        @include elevated-surface;
+        position: relative;
+        z-index: 1;
+        margin-inline: clamp(.25rem, 1.5vw, 1rem);
+        padding: clamp(.75rem, 2vw, 1.5rem);
+    }
+
+    @media (max-width: 650px) {
+        > :is(.app-elevated-heading, .claim-edit-heading)::before { inset-inline: 0; }
+        > :is(.app-elevated-form, #claim-edit-form) { margin-inline: .25rem; }
+    }
+}
+
+// The public login has its own palette; keep that palette when adding depth.
+.welcome .form-card {
+    position: relative;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 32px rgb(20 101 44 / 8%), 0 3px 10px rgb(20 101 44 / 8%);
+}

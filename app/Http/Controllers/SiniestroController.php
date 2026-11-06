@@ -59,6 +59,9 @@ class SiniestroController extends Controller
             'company_id' => ['sometimes', 'nullable', 'integer', 'exists:companies,id'],
             'date' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
         ]);
+        if (Auth::user()->isRestrictedCoordinator() && ! empty($filters['status'])) {
+            abort_unless(in_array($filters['status'], ['Pendiente', 'Ausente'], true), 403);
+        }
         $query = Siniestro::visibleTo(Auth::user());
         if (Auth::user()->isRestrictedInspector() && ! empty($filters['status'])) {
             abort_unless(in_array($filters['status'], ['Peritando', 'IPgestion'], true), 403);
@@ -85,7 +88,7 @@ class SiniestroController extends Controller
     public function pendientes(): View
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::visibleTo(Auth::user())->where('updated_by', $currentUser->id)->where('status', 'Pendiente')->get();
+        $siniestros = Siniestro::visibleTo(Auth::user())->when(! Auth::user()->isRestrictedCoordinator(), fn ($query) => $query->where('updated_by', $currentUser->id))->where('status', 'Pendiente')->get();
 
         return view('siniestros.index', compact('siniestros'));
     }
@@ -93,7 +96,7 @@ class SiniestroController extends Controller
     public function ausentes(): View
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::visibleTo(Auth::user())->where('updated_by', $currentUser->id)->where('status', 'Ausente')->get();
+        $siniestros = Siniestro::visibleTo(Auth::user())->when(! Auth::user()->isRestrictedCoordinator(), fn ($query) => $query->where('updated_by', $currentUser->id))->where('status', 'Ausente')->get();
 
         return view('siniestros.index', compact('siniestros'));
     }
@@ -164,7 +167,9 @@ class SiniestroController extends Controller
         $productores = Productores::all();
         $companies = Company::orderBy('name')->get();
 
-        return view('siniestros.editar', compact('siniestro', 'talleres','users', 'productores', 'relaciones', 'companies'));
+        $emailTemplates = Auth::user()->canManageEmailTemplates() ? \App\Models\EmailTemplate::where('is_active', true)->with('latestVersion')->orderBy('name')->get() : collect();
+
+        return view('siniestros.editar', compact('siniestro', 'talleres','users', 'productores', 'relaciones', 'companies', 'emailTemplates'));
     }
 
     public function inspection(Siniestro $claim): View
@@ -190,6 +195,10 @@ class SiniestroController extends Controller
     {
         $claim = $saveClaim->handle($request->validated(), Siniestro::visibleTo(Auth::user())->findOrFail($id));
         $this->storeUploads($request, $claim);
+
+        if (Auth::user()->isRestrictedCoordinator() && $claim->status === 'Coordinado') {
+            return redirect()->route('claims.index')->with('success', 'Pericia coordinada. Ya está disponible para Hojas de ruta.');
+        }
 
         return redirect()->back()->with('success', 'Siniestro actualizado con éxito');
     }

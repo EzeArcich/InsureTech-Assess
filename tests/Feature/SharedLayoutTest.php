@@ -18,6 +18,8 @@ class SharedLayoutTest extends TestCase
         $this->withoutVite();
         $user = User::factory()->create(['email' => 'admin@gmail.com']);
 
+        $user->assignRole(\Spatie\Permission\Models\Role::findOrCreate('CEO', 'web'));
+
         foreach (['home', 'workshops.index', 'users.index', 'blogs.index', 'roles.index', 'claims.all'] as $route) {
             $this->actingAs($user)->get(route($route))->assertOk()
                 ->assertSee('class="claims-sidebar"', false)->assertSee('class="claims-workspace"', false);

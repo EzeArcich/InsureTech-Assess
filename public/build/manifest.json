@@ -42,10 +42,22 @@
       "_table-options-CvWbzB3G.js"
     ]
   },
+  "resources/js/claim-wizard.js": {
+    "file": "assets/claim-wizard-DwxWVr04.js",
+    "name": "claim-wizard",
+    "src": "resources/js/claim-wizard.js",
+    "isEntry": true
+  },
   "resources/js/coordination-location.js": {
-    "file": "assets/coordination-location-CRonj72E.js",
+    "file": "assets/coordination-location-BK5P78OZ.js",
     "name": "coordination-location",
     "src": "resources/js/coordination-location.js",
+    "isEntry": true
+  },
+  "resources/js/email-templates.js": {
+    "file": "assets/email-templates-BFpQ4eMX.js",
+    "name": "email-templates",
+    "src": "resources/js/email-templates.js",
     "isEntry": true
   },
   "resources/js/inspection.js": {
@@ -61,6 +73,12 @@
       "assets/inspection-DCgFvvHb.css"
     ]
   },
+  "resources/js/producer-email.js": {
+    "file": "assets/producer-email-Dxd5982A.js",
+    "name": "producer-email",
+    "src": "resources/js/producer-email.js",
+    "isEntry": true
+  },
   "resources/js/route-sheets.js": {
     "file": "assets/route-sheets-Gv395PgE.js",
     "name": "route-sheets",
@@ -74,12 +92,21 @@
     "isEntry": true
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-D_yv6BQR.css",
+    "file": "assets/app-COYSNzqC.css",
     "src": "resources/sass/app.scss",
     "isEntry": true,
     "name": "app",
     "names": [
       "app.css"
+    ]
+  },
+  "resources/sass/surfaces.scss": {
+    "file": "assets/surfaces-BAjHp5oY.css",
+    "src": "resources/sass/surfaces.scss",
+    "isEntry": true,
+    "name": "surfaces",
+    "names": [
+      "surfaces.css"
     ]
   }
 }

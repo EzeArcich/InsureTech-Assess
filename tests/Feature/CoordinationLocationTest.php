@@ -62,7 +62,7 @@ class CoordinationLocationTest extends TestCase
     public function test_changing_address_invalidates_old_coordinates_and_requires_a_new_point_for_coordinated_claims(): void
     {
         $coordinator = User::factory()->create();
-        $coordinator->assignRole(Role::findOrCreate('Coordinaciones', 'web'));
+        $coordinator->assignRole(Role::findOrCreate('CEO', 'web'));
         $claim = Claim::factory()->create(['status' => 'Coordinado', 'inspection_mode' => 'presencial']);
         $claim->forceFill(['inspection_address' => 'Original 123', 'inspection_latitude' => -34, 'inspection_longitude' => -58])->save();
         $this->actingAs($coordinator)->putJson('/claims/'.$claim->id, ['city' => 'Otra localidad'])->assertUnprocessable()->assertJsonValidationErrors('inspection_latitude');

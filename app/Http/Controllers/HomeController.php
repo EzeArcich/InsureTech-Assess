@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function index(): View
     {
         $counts = Claim::visibleTo(auth()->user())->without(['company', 'client', 'inspector'])->selectRaw('status, COUNT(*) as total')->groupBy('status')->get();
-        $statusCounts = collect(auth()->user()->isRestrictedInspector() ? ['Peritando', 'IPgestion'] : (auth()->user()->isRoutePlanner() ? ['Coordinado', 'Peritando'] : ['Pendiente', 'Ausente', 'Coordinado', 'Peritando', 'IPgestion']))
+        $statusCounts = collect(auth()->user()->isRestrictedInspector() ? ['Peritando', 'IPgestion'] : (auth()->user()->isRoutePlanner() ? ['Coordinado', 'Peritando'] : (auth()->user()->isRestrictedCoordinator() ? ['Pendiente', 'Ausente'] : ['Pendiente', 'Ausente', 'Coordinado', 'Peritando', 'IPgestion'])))
             ->mapWithKeys(fn (string $status): array => [$status => 0]);
         foreach ($counts as $count) {
             $key = $count->status === null || $count->status === '' ? '__unset__' : $count->status;

@@ -20,7 +20,6 @@
                         
                         @can('perito-siniestro')
                             <th>Fecha IP</th>
-                            <th>Nro Corto</th>
                         @endcan
                         
                         <th>Siniestro</th>
@@ -61,7 +60,6 @@
                             
                             @can('perito-siniestro')
                                 <td>{{ $siniestro->inspection_date }}</td>
-                                <td>{{ $siniestro->short_number }}</td>
                             @endcan
                             
                             <td class="fw-semibold">{{ $siniestro->claim_number }}</td>

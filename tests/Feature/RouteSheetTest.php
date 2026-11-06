@@ -27,7 +27,7 @@ class RouteSheetTest extends TestCase
         $this->get('/clients/'.$pending->client_id)->assertNotFound();
         $this->get('/claims/coordinated')->assertOk()->assertViewIs('route-sheets.index')->assertSee($coordinated->claim_number);
         $this->get('/claims?status=Coordinado')->assertOk()->assertViewIs('route-sheets.index');
-        foreach (['/roles', '/blogs', '/workshops', '/settings/rates', '/inspection-payments', '/claims/'.$active->id.'/edit'] as $url) {
+        foreach (['/roles', '/blogs', '/settings/rates', '/inspection-payments', '/claims/'.$active->id.'/edit'] as $url) {
             $this->get($url)->assertForbidden();
         }
         $this->put('/claims/'.$active->id, ['status' => 'IPgestion'])->assertForbidden();

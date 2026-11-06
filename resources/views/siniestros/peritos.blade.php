@@ -20,7 +20,6 @@
                         <th>Inspector</th>
                         <th>Compañía</th>
                         <th>Fecha IP</th>
-                        <th>Nro Corto</th>
                         <th>Dirección</th>
                         <th>Localidad</th>
                         <th>Patente</th>
@@ -37,7 +36,6 @@
                             @include('siniestros.partials._person_links')
                             <td>{{ $siniestro->company?->name }}</td>
                             <td>{{ $siniestro->inspection_date ? date('d-m-Y', strtotime($siniestro->inspection_date)) : '-' }}</td>
-                            <td>{{ $siniestro->short_number }}</td>
                             <td>{{ $siniestro->address }}</td>
                             <td>{{ $siniestro->city }}</td>
                             <td>{{ $siniestro->license_plate }}</td>

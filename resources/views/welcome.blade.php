@@ -56,6 +56,7 @@
         @media(max-width:900px) { .welcome { grid-template-columns:minmax(0,1fr) minmax(0,.65fr); } .content { padding:32px; } .visual-curve { left:-105px; } .feature-stack { left:90px; } .feature span { display:none; } }
         @media(max-width:650px) { .welcome { display:block; } .content { min-height:100vh; padding:28px 24px; } .main { margin:auto; padding:55px 0; } .visual { display:none; } .brand-name { font-size:21px; } h1 { font-size:42px; } }
     </style>
+    @vite('resources/sass/surfaces.scss')
 </head>
 <body>
 @php

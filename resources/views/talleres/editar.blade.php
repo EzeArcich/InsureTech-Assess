@@ -2,10 +2,10 @@
 @section('page-title', 'Talleres')
 
 @section('content')
-<section class="py-2">
+<section class="py-2 app-elevated-section">
 
     {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 app-elevated-heading">
         <div>
             <h3 class="mb-0 fw-bold">Editar taller</h3>
             <nav aria-label="breadcrumb" class="mt-1">
@@ -36,7 +36,7 @@
         </div>
     @endif
 
-    <form action="{{ route('workshops.update', $talleres->id) }}" method="POST" enctype="multipart/form-data">
+    <form class="app-elevated-form" action="{{ route('workshops.update', $talleres->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -106,6 +106,15 @@
                            value="{{ old('area', $talleres->area) }}">
                 </div>
 
+                <div class="col-12">
+                    <label for="opening_hours" class="form-label">Horarios de atención</label>
+                    <textarea name="opening_hours" id="opening_hours" class="form-control" rows="3" maxlength="1000"
+                              placeholder="Lunes a viernes de 8 a 12 y de 14 a 18. Sábados de 9 a 13."
+                              aria-describedby="opening-hours-help">{{ old('opening_hours', $talleres->opening_hours) }}</textarea>
+                    <div id="opening-hours-help" class="form-text">Indicá los días y horarios de atención, incluidos los cortes al mediodía.</div>
+                    @error('opening_hours')<div class="text-danger">{{ $message }}</div>@enderror
+                </div>
+
             </div>
         </div>
 
@@ -157,6 +166,14 @@
                            value="{{ old('deductible_discount', $talleres->deductible_discount) }}">
                 </div>
 
+                <div class="col-12">
+                    <input type="hidden" name="is_approved" value="0">
+                    <div class="form-check">
+                        <input class="form-check-input" id="is_approved" type="checkbox" name="is_approved" value="1" @checked(old('is_approved', $talleres->is_approved))>
+                        <label class="form-check-label" for="is_approved">Taller homologado</label>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -173,6 +190,6 @@
             </a>
         </div>
 
-    <div class="mb-3"><input type="hidden" name="is_approved" value="0"><label><input type="checkbox" name="is_approved" value="1" @checked(old('is_approved', $talleres->is_approved))> Taller homologado</label></div><div class="mb-3"><label class="form-label">Horarios</label><textarea name="opening_hours" class="form-control">{{ old('opening_hours', $talleres->opening_hours) }}</textarea></div></form>
+    </form>
 </section>
 @endsection

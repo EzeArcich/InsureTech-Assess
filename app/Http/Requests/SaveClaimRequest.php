@@ -78,6 +78,11 @@ class SaveClaimRequest extends FormRequest
             $rules[$field] = ['sometimes', 'nullable', 'string', 'max:191'];
         }
 
+        if ($this->user()?->isRestrictedCoordinator()) {
+            $rules['status'] = ['sometimes', 'required', 'in:Pendiente,Ausente,Coordinado'];
+            $rules['inspector_id'] = ['prohibited'];
+        }
+
         return $rules;
     }
     /** @return array<string, mixed> */

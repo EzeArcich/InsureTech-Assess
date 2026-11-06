@@ -76,6 +76,10 @@ class Claim extends Model
             $query->whereIn('status', ['Coordinado', 'Peritando']);
         }
 
+        if ($user->isRestrictedCoordinator()) {
+            $query->whereIn('status', ['Pendiente', 'Ausente']);
+        }
+
         return $query;
     }
 

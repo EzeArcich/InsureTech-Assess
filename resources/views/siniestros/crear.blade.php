@@ -13,10 +13,10 @@
 @endpush
 
 @section('content')
-<section class="py-2">
+<section class="py-2 app-elevated-section">
 
     {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 app-elevated-heading">
         <div>
             <h3 class="mb-0 fw-bold">Ingresar siniestro</h3>
             <nav aria-label="breadcrumb" class="mt-1">
@@ -47,7 +47,7 @@
         </div>
     @endif
 
-    <form action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data">
+    <form class="app-elevated-form" action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- Panel 1: Datos del siniestro --}}
@@ -62,13 +62,7 @@
 
             <div class="row g-3">
 
-                <div class="col-12">
-                    <label for="link" class="form-label">Link 2.0</label>
-                    <input type="text" name="link" id="link" class="form-control"
-                           value="{{ $siniestro->link ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-3">
+<div class="col-12 col-md-3">
                     <label for="claim_number" class="form-label">Siniestro</label>
                     <input type="text" name="claim_number" id="claim_number" class="form-control"
                            value="{{ $siniestro->claim_number ?? '' }}">
@@ -91,13 +85,7 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-3">
-                    <label for="short_number" class="form-label">Nro. corto</label>
-                    <input type="text" name="short_number" id="short_number" class="form-control"
-                           value="{{ $siniestro->short_number ?? '' }}">
-                </div>
-
-                <div class="col-md-6">
+<div class="col-md-6">
                     <label for="client_name" class="form-label">Nombre del asegurado</label>
                     <input type="text" name="client_name" id="client_name" class="form-control" required
                            value="{{ old('client_name', $siniestro->client_name) }}">
@@ -138,7 +126,8 @@
                 {{-- Productor --}}
                 <div class="col-12 col-md-6">
                     <label for="producer_name" class="form-label">Productor</label>
-                    <div class="input-group">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="input-group producer-picker">
                         <input type="hidden" name="producer_id" id="producer_id" value="{{ $siniestro->producer_id }}">
                         <input type="text" class="form-control name" id="producer_name" name="producer_name"
                                value="{{ $siniestro->producer_name ?? '' }}">
@@ -149,35 +138,11 @@
                             <i class="fas fa-search-plus"></i>
                         </button>
                     </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="emailPas" class="form-label">Email del PAS</label>
-                    <input type="text" name="producer_email" class="form-control" id="emailPas"
-                           value="{{ $siniestro->producer_email ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="cc" class="form-label">En copia</label>
-                    <input type="text" name="cc" class="form-control" id="cc" value="{{ $siniestro->cc ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="cc2" class="form-label">Segundo en copia</label>
-                    <input type="text" name="cc2" class="form-control" id="cc2" value="{{ $siniestro->cc2 ?? '' }}">
-                </div>
-
-                <div class="col-12">
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-outline-primary"
-                                onclick="Correo(event)">
-                            <i class="fas fa-envelope me-2"></i>
-                            Contacto vía mail
-                        </button>
+                    <button class="btn btn-palette-gray" type="button" disabled title="Guardá el siniestro para enviar un correo al productor"><i class="bi bi-envelope"></i> Correo</button>
                     </div>
                 </div>
 
-            </div>
+</div>
         </div>
 
         {{-- Panel 2: Datos de coordinación --}}
@@ -474,7 +439,6 @@ function productorData(id){
         success: function(data){
             $('#producer_id').val(data.id);
             $('#producer_name').val(data.name);
-            $('#emailPas').val(data.email);
         }
     })
 }
@@ -491,35 +455,5 @@ function tallerData(id){
     })
 }
 
-function Correo(event){
-    event.preventDefault();
-
-    const siniestro   = $('#claim_number').val();
-    const emailPas    = $('#emailPas').val();
-    const coordinador = $('#coordinator').val();
-    const patente     = $('#license_plate').val();
-    const cc          = $('#cc').val();
-    const cc2         = $('#cc2').val();
-    const nrocorto    = $('#short_number').val();
-
-    $.ajaxSetup({
-        headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-    });
-
-    $.ajax({
-        type: "POST",
-        data: { claim_number: siniestro, emailPas, license_plate: patente, coordinator: coordinador, cc, cc2, short_number: nrocorto },
-        url: "/coordination/emails",
-        success: function(){
-            Swal.fire({
-                icon: 'success',
-                position: 'top-end',
-                showConfirmButton: false,
-                title: 'Correo enviado con éxito',
-                timer: 1200
-            });
-        }
-    });
-}
 </script>
 @endsection

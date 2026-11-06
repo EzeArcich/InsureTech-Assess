@@ -28,8 +28,14 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
     Route::post('/users/{user}/impersonate', \App\Http\Controllers\ImpersonationController::class)
         ->whereNumber('user')->name('users.impersonate');
     Route::resource('users', UsuarioController::class);
-    Route::resource('roles', RolController::class);
+    Route::resource('roles', RolController::class)->middleware('role:CEO');
     Route::resource('blogs', BlogController::class);
+    Route::middleware('role:CEO|Administrativo|Coordinaciones')->group(function (): void {
+        Route::post('/email-templates/{email_template}/versions/{version}/restore', [\App\Http\Controllers\EmailTemplateController::class, 'restore'])->name('email-templates.restore');
+        Route::resource('email-templates', \App\Http\Controllers\EmailTemplateController::class);
+        Route::post('/claims/{claim}/producer-email/preview', [\App\Http\Controllers\ProducerEmailController::class, 'preview'])->name('claims.producer-email.preview');
+        Route::post('/claims/{claim}/producer-email', [\App\Http\Controllers\ProducerEmailController::class, 'send'])->middleware('throttle:10,1')->name('claims.producer-email.send');
+    });
 
     Route::get('/route-sheets', [\App\Http\Controllers\RouteSheetController::class, 'index'])->name('route-sheets.index');
     Route::put('/route-sheets/{claim}/assignment', [\App\Http\Controllers\RouteSheetController::class, 'assign'])->name('route-sheets.assign');
@@ -81,6 +87,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
         Route::get('/assignments', [SiniestroController::class, 'asignaciones'])->name('assignments');
         Route::get('/assignments/data', [SiniestroController::class, 'allData'])->name('assignments.data');
         Route::get('/datatable', [DataTableController::class, 'paraderivar'])->name('datatable');
+        Route::get('/{claim}/nearby', \App\Http\Controllers\NearbyInspectionController::class)->whereNumber('claim')->name('nearby');
         Route::post('/{claim}/location-search', \App\Http\Controllers\InspectionGeocodingController::class)->whereNumber('claim')->name('location.search');
         Route::post('/check', [SiniestroController::class, 'check'])->name('check');
         Route::post('/data', [SiniestroController::class, 'storeData'])->name('data.store');
@@ -96,8 +103,8 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
     Route::prefix('coordination')->name('coordination.')->group(function (): void {
         Route::get('/contact', [CoordinacionesController::class, 'index'])->name('contact.index');
         Route::post('/contact', [CoordinacionesController::class, 'store'])->name('contact.store');
-        Route::post('/producer-email', [CoordinacionesController::class, 'contacto'])->name('producer_email');
-        Route::post('/emails', [CoordinacionesController::class, 'correo'])->name('emails.store');
+        Route::post('/producer-email', [CoordinacionesController::class, 'contacto'])->middleware('role:CEO|Administrativo|Coordinaciones')->name('producer_email');
+        Route::post('/emails', [CoordinacionesController::class, 'correo'])->middleware('role:CEO|Administrativo|Coordinaciones')->name('emails.store');
         Route::post('/inspection-emails', [CoordinacionesController::class, 'correoEdu'])->name('inspection_emails.store');
     });
 });

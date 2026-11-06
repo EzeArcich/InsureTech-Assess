@@ -39,7 +39,6 @@
 
                         @can('peritos-siniestro')
                             <th>Fecha IP</th>
-                            <th>Nro Corto</th>
                             <th>Dirección</th>
                             <th>Localidad</th>
                         @endcan
@@ -81,7 +80,6 @@
 
                             @can('peritos-siniestro')
                                 <td>{{ $siniestro->inspection_date ? date('d-m-Y', strtotime($siniestro->inspection_date)) : '-' }}</td>
-                                <td>{{ $siniestro->short_number }}</td>
                                 <td>{{ $siniestro->address }}</td>
                                 <td>{{ $siniestro->city }}</td>
                             @endcan

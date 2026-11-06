@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasRole('Hojas de ruta') && ! $this->can('view-all-claims');
     }
 
+    public function isRestrictedCoordinator(): bool
+    {
+        return $this->hasRole('Coordinaciones') && ! $this->hasRole('CEO');
+    }
+
     public function canCoordinateInspections(): bool
     {
         return ! $this->isRestrictedInspector() && ! $this->isRoutePlanner()
@@ -80,5 +85,9 @@ class User extends Authenticatable
     public function canManageInspectionPayments(): bool
     {
         return $this->hasAnyRole(['CEO', 'Administrativo']);
+    }
+    public function canManageEmailTemplates(): bool
+    {
+        return $this->hasAnyRole(['CEO', 'Administrativo', 'Coordinaciones']);
     }
 }

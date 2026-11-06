@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('page-title', 'Historial de plantilla')
+@section('content')
+<div class="panel mb-3"><h2 class="h4">{{ $template->name }}</h2><p>{{ $template->is_active ? 'Activa' : 'Inactiva' }} · {{ $versions->count() }} versiones</p><div class="table-actions"><a class="btn btn-palette-blue" href="{{ route('email-templates.edit', $template) }}">Editar</a><a class="btn btn-palette-gray" href="{{ route('email-templates.index') }}">Volver al listado</a></div></div>
+@foreach($versions as $version)<details class="panel mb-3" @if($loop->first) open @endif><summary>Versión {{ $version->number }} · {{ $version->created_at->format('d/m/Y H:i') }}</summary><h3 class="h6 mt-3">{{ $version->subject }}</h3><iframe class="email-template-preview" title="Versión {{ $version->number }}" sandbox srcdoc="{{ '<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body>'.$version->body.'</body></html>' }}"></iframe><p class="text-muted">Las variables se completan con los datos del siniestro en la vista previa del envío.</p>@unless($loop->first)<form method="POST" action="{{ route('email-templates.restore', [$template, $version]) }}">@csrf<button class="btn btn-palette-yellow btn-sm">Restaurar como nueva versión</button></form>@endunless</details>@endforeach
+@endsection

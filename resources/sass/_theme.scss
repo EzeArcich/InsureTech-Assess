@@ -181,3 +181,27 @@
 
 .inspection-map { height: min(60vh, 560px); min-height: 320px; border: 1px solid var(--color-border); border-radius: .75rem; z-index: 0; }
 .inspection-map .leaflet-popup-content a { color: var(--color-primary); font-weight: 600; }
+
+.email-template-editor { min-height: 300px; background: var(--color-surface); color: var(--color-text); }
+.email-template-preview { width: 100%; min-height: 280px; border: 1px solid var(--color-border); border-radius: .5rem; background: var(--color-surface); }
+
+.producer-picker { flex: 1 1 14rem; width: auto; }
+.claim-wizard-tabs { display: flex; flex-wrap: wrap; gap: .75rem; }
+.claim-wizard-tab {
+    flex: 1 1 15rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: .75rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-align: left;
+    small { display: block; margin-top: .2rem; color: var(--color-text-muted); }
+    &.is-active { border-color: var(--color-primary); background: var(--color-green-soft); color: var(--color-heading); }
+    &:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+}
+.claim-wizard-number { display: grid; place-items: center; flex: 0 0 2rem; height: 2rem; border-radius: 50%; background: var(--color-gray-soft); }
+.claim-wizard-tab.is-active .claim-wizard-number { background: var(--color-primary); color: var(--color-on-primary); }
+[data-claim-wizard] [hidden] { display: none !important; }

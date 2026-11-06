@@ -9,7 +9,9 @@
 @section('content')
 <x-table-panel>
     <x-slot:actions>
+@hasanyrole('CEO|Administrativo')
 <a class="claims-create" href="{{ route('workshops.create') }}"><i class="bi bi-plus-lg"></i> Nuevo taller</a>
+@endhasanyrole
     </x-slot:actions>
 <table class="table align-middle w-100 app-data-table" data-standard-table>
                 <thead class="table-success">
@@ -28,7 +30,9 @@
                         <th>Pone repuestos</th>
                         <th>Vacaciones</th>
                         <th>Desc. franquicia</th>
+                        @hasanyrole('CEO|Administrativo')
                         <th class="text-center" style="width: 140px;">Acciones</th>
+                        @endhasanyrole
                     </tr>
                 </thead>
                 
@@ -49,6 +53,7 @@
                             <td>{{ $taller->repair_availability }}</td>
                             <td>{{ $taller->holidays }}</td>
                             <td>{{ $taller->deductible_discount }}</td>
+                            @hasanyrole('CEO|Administrativo')
                             <td>
                                 <div class="table-actions justify-content-center">
                                     <a href="{{ route('workshops.edit', $taller->id) }}"
@@ -71,6 +76,7 @@
                                     </form>
                                 </div>
                             </td>
+                            @endhasanyrole
                         </tr>
                     @endforeach
                 </tbody>

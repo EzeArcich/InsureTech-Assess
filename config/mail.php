@@ -39,10 +39,9 @@ return [
             'host' => env('MAIL_HOST', 'smtp.hostinger.com'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'TLS'),
-            'username' => env('derivaciones@InsureTechAsses.com'),
-            'password' => env('Michaki88@'),
-            'timeout' => null,
-            // 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 apikei de sendgird
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => 15,
             
         ],
 

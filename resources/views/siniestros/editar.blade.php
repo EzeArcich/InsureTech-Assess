@@ -14,11 +14,13 @@
 @endpush
 
 @section('content')
+@unless(auth()->user()->isRestrictedCoordinator())
 <a class="btn btn-palette-blue mb-3" href="{{ route('claims.inspection', $siniestro->id) }}">Mano de obra y repuestos</a>
-<section class="py-2">
+@endunless
+<section class="py-2 claim-edit-elevated">
 
     {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 claim-edit-heading">
         <div>
             <h3 class="mb-0 fw-bold">Editar siniestro</h3>
             <nav aria-label="breadcrumb" class="mt-1">
@@ -71,12 +73,17 @@
     @endcanany
 
     @canany(['editar-siniestro', 'coordinate-inspections'])
-    <form action="{{ route('claims.update', $siniestro->id) }}" method="POST" enctype="multipart/form-data">
+    <form id="claim-edit-form" data-claim-wizard data-initial-step="{{ $errors->hasAny(['notes', 'workshop_name', 'phone', 'address', 'city', 'status', 'inspection_date', 'inspection_time', 'inspection_address', 'inspection_latitude', 'inspection_longitude', 'urls', 'contact', 'inspector_notes']) ? 'coordination' : 'claim' }}" action="{{ route('claims.update', $siniestro->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
+        <nav class="claim-wizard-tabs mb-3" role="tablist" aria-label="Pasos de edición del siniestro" data-wizard-navigation hidden>
+            <button class="claim-wizard-tab" id="claim-step-tab" type="button" role="tab" data-wizard-tab="claim" aria-controls="claim-step-panel" aria-selected="true"><span class="claim-wizard-number">1</span><span>Datos del siniestro<small>Asegurado, compañía y productor</small></span></button>
+            <button class="claim-wizard-tab" id="coordination-step-tab" type="button" role="tab" data-wizard-tab="coordination" aria-controls="coordination-step-panel" aria-selected="false"><span class="claim-wizard-number">2</span><span>Coordinación<small>Domicilio, mapa y fecha de la pericia</small></span></button>
+        </nav>
+
         {{-- Panel 1: Datos del siniestro --}}
-        <div class="panel mb-3">
+        <div class="panel mb-3" id="claim-step-panel" data-wizard-panel="claim" role="tabpanel" aria-labelledby="claim-step-tab">
             <div class="d-flex align-items-center justify-content-between mb-3 panel-header-deep">
                 <div>
                     <h5 class="mb-0 fw-bold">Datos del siniestro</h5>
@@ -87,22 +94,16 @@
 
             <div class="row g-3">
 
-                <div class="col-12">
-                    <label for="link" class="form-label">Link 2.0</label>
-                    <input type="text" name="link" id="link" class="form-control"
-                           value="{{ $siniestro->link ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-4">
+<div class="col-12 col-md-4">
                     <label for="claim_number" class="form-label">Siniestro</label>
                     <input type="text" name="claim_number" id="claim_number" class="form-control"
-                           value="{{ $siniestro->claim_number ?? '' }}">
+                           value="{{ old('claim_number', $siniestro->claim_number) }}">
                 </div>
 
                 <div class="col-12 col-md-4">
                     <label for="license_plate" class="form-label">Patente</label>
                     <input type="text" name="license_plate" id="license_plate" class="form-control"
-                           value="{{ $siniestro->license_plate ?? '' }}">
+                           value="{{ old('license_plate', $siniestro->license_plate) }}">
                 </div>
 
                 <div class="col-12 col-md-4">
@@ -115,16 +116,10 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <label for="short_number" class="form-label">Nro. corto</label>
-                    <input type="text" name="short_number" id="short_number" class="form-control"
-                           value="{{ $siniestro->short_number ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-4">
+<div class="col-12 col-md-4">
                     <label for="reason" class="form-label">Motivo</label>
                     <select class="form-select" id="reason" name="reason">
-                        <option value="{{ $siniestro->reason ?? '' }}" selected>
+                        <option value="{{ old('reason', $siniestro->reason) }}" selected>
                             {{ $siniestro->reason ?? 'Seleccionar...' }}
                         </option>
                         <option value="Todo riesgo">Todo riesgo</option>
@@ -150,7 +145,7 @@
                 <div class="col-12 col-md-4">
                     <label for="client_type" class="form-label">Tipo de cliente</label>
                     <select class="form-select" id="client_type" name="client_type">
-                        <option value="{{ $siniestro->client_type ?? '' }}" selected>
+                        <option value="{{ old('client_type', $siniestro->client_type) }}" selected>
                             {{ $siniestro->client_type ?? 'Seleccionar...' }}
                         </option>
                         <option value="Asegurado">Asegurado</option>
@@ -175,10 +170,11 @@
                 {{-- Productor --}}
                 <div class="col-12 col-md-6">
                     <label for="producer_name" class="form-label">Productor</label>
-                    <div class="input-group">
-                        <input type="hidden" name="producer_id" id="producer_id" value="{{ $siniestro->producer_id }}">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="input-group producer-picker">
+                        <input type="hidden" name="producer_id" id="producer_id" value="{{ old('producer_id', $siniestro->producer_id) }}">
                         <input type="text" class="form-control name" id="producer_name" name="producer_name"
-                               value="{{ $siniestro->producer_name ?? '' }}">
+                               value="{{ old('producer_name', $siniestro->producer_name) }}">
                         <button class="btn btn-outline-primary"
                                 type="button"
                                 data-bs-toggle="modal"
@@ -186,39 +182,17 @@
                             <i class="fas fa-search-plus"></i>
                         </button>
                     </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="emailPas" class="form-label">Email del PAS</label>
-                    <input type="text" name="producer_email" class="form-control" id="emailPas"
-                           value="{{ $siniestro->producer_email ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="cc" class="form-label">En copia</label>
-                    <input type="text" name="cc" class="form-control" id="cc" value="{{ $siniestro->cc ?? '' }}">
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label for="cc2" class="form-label">Segundo en copia</label>
-                    <input type="text" name="cc2" class="form-control" id="cc2" value="{{ $siniestro->cc2 ?? '' }}">
-                </div>
-
-                <div class="col-12">
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-outline-primary"
-                                onclick="Correo(event)">
-                            <i class="fas fa-envelope me-2"></i>
-                            Contacto vía mail
-                        </button>
+                    @if(auth()->user()->canManageEmailTemplates())
+                        <button class="btn btn-palette-blue" type="button" data-bs-toggle="modal" data-bs-target="#producer-email-modal" aria-label="Enviar correo al productor"><i class="bi bi-envelope"></i> Correo</button>
+                        @endif
                     </div>
                 </div>
 
-            </div>
+</div>
         </div>
 
         {{-- Panel 2: Datos de coordinación --}}
-        <div class="panel mb-3 DatCord">
+        <div class="panel mb-3 DatCord" id="coordination-step-panel" data-wizard-panel="coordination" role="tabpanel" aria-labelledby="coordination-step-tab">
             <div class="d-flex align-items-center justify-content-between mb-3 panel-header-sage">
                 <div>
                     <h5 class="mb-0 fw-bold">Datos de coordinación</h5>
@@ -231,7 +205,7 @@
 
                 <div class="col-12">
                     <label for="notes" class="form-label">Observaciones</label>
-                    <textarea class="form-control" name="notes" id="notes" rows="3">{{ $siniestro->notes ?? '' }}</textarea>
+                    <textarea class="form-control" name="notes" id="notes" rows="3">{{ old('notes', $siniestro->notes) }}</textarea>
                 </div>
 
                 {{-- Taller --}}
@@ -239,7 +213,7 @@
                     <label for="workshop_name" class="form-label">Nombre del taller</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="workshop_name" name="workshop_name"
-                               value="{{ $siniestro->workshop_name ?? '' }}">
+                               value="{{ old('workshop_name', $siniestro->workshop_name) }}">
                         <button class="btn btn-outline-primary"
                                 type="button"
                                 data-bs-toggle="modal"
@@ -252,13 +226,13 @@
                 <div class="col-12 col-md-3">
                     <label for="email" class="form-label">E-mail</label>
                     <input type="text" name="email" class="form-control" id="email"
-                           value="{{ $siniestro->email ?? '' }}">
+                           value="{{ old('email', $siniestro->email) }}">
                 </div>
 
                 <div class="col-12 col-md-3">
                     <label for="phone" class="form-label">Teléfono</label>
                     <input type="text" name="phone" class="form-control" id="phone"
-                           value="{{ $siniestro->phone ?? '' }}">
+                           value="{{ old('phone', $siniestro->phone) }}">
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -286,20 +260,22 @@
                         </option>
                         <option value="Coordinado">Coordinado</option>
                         <option value="Ausente">Ausente</option>
-                        @can('derivar-siniestro')
+                        @if(auth()->user()->can('derivar-siniestro') && !auth()->user()->isRestrictedCoordinator())
                             <option value="Peritando">Derivado a inspector</option>
-                        @endcan
+                        @endif
+                        @unless(auth()->user()->isRestrictedCoordinator())
                         <option value="Reclamo de repuestos">Reclamo de repuestos</option>
                         <option value="Actualizacion de valores">Actualización de valores</option>
                         <option value="Cargar ampliacion">Cargar ampliación</option>
                         <option value="Baja">Baja</option>
+                        @endunless
                     </select>
                 </div>
 
                 <div class="col-12 col-md-4">
                     <label for="inspection_date" class="form-label">Fecha IP</label>
                     <input type="date" name="inspection_date" class="form-control" id="inspection_date"
-                           value="{{ $siniestro->inspection_date?->format('Y-m-d') ?? '' }}">
+                           value="{{ old('inspection_date', $siniestro->inspection_date?->format('Y-m-d')) }}">
                 </div>
 
                 <div class="col-12 col-md-4">
@@ -313,7 +289,7 @@
                 <div class="col-12 col-md-4">
                     <label for="inspection_time" class="form-label">Rango horario</label>
                     <input type="text" name="inspection_time" class="form-control" id="inspection_time"
-                           value="{{ $siniestro->inspection_time ?? '' }}">
+                           value="{{ old('inspection_time', $siniestro->inspection_time) }}">
                 </div>
 
                 <div class="col-12 col-md-4">
@@ -324,16 +300,21 @@
                 <div class="col-12 col-md-4">
                     <label for="contact" class="form-label">Contacto para negociar</label>
                     <input type="text" class="form-control" id="contact" name="contact"
-                           value="{{ $siniestro->contact ?? '' }}">
+                           value="{{ old('contact', $siniestro->contact) }}">
                 </div>
 
                 <div class="col-12">
                     <label for="inspector_notes" class="form-label">Comentarios para el perito</label>
-                    <textarea class="form-control" name="inspector_notes" id="inspector_notes" rows="3">{{ $siniestro->inspector_notes ?? '' }}</textarea>
+                    <textarea class="form-control" name="inspector_notes" id="inspector_notes" rows="3">{{ old('inspector_notes', $siniestro->inspector_notes) }}</textarea>
                 </div>
 
                 <input id="id" type="hidden" value="{{ $siniestro->id ?? '' }}">
             </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3" data-wizard-navigation hidden>
+            <button class="btn btn-palette-gray" type="button" data-wizard-previous>Anterior</button>
+            <button class="btn btn-palette-green" type="button" data-wizard-next>Continuar a Coordinación <i class="bi bi-arrow-right"></i></button>
         </div>
 
         {{-- Actions --}}
@@ -434,6 +415,10 @@
         </div>
     </div>
 </div>
+
+@if(auth()->user()->canManageEmailTemplates())
+@include('siniestros.partials._producer_email_modal')
+@endif
 @endsection
 
 
@@ -487,7 +472,6 @@ function productorData(id){
         success: function(data){
             $('#producer_id').val(data.id);
             $('#producer_name').val(data.name);
-            $('#emailPas').val(data.email);
         }
     })
 }
@@ -507,41 +491,11 @@ function tallerData(id){
     })
 }
 
-function Correo(event){
-    event.preventDefault();
-
-    const siniestro   = $('#claim_number').val();
-    const emailPas    = $('#emailPas').val();
-    const coordinador = $('#coordinator').val();
-    const patente     = $('#license_plate').val();
-    const cc          = $('#cc').val();
-    const cc2         = $('#cc2').val();
-    const nrocorto    = $('#short_number').val();
-
-    $.ajaxSetup({
-        headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-    });
-
-    $.ajax({
-        type: "POST",
-        data: { claim_number: siniestro, emailPas, license_plate: patente, coordinator: coordinador, cc, cc2, short_number: nrocorto },
-        url: "/coordination/emails",
-        success: function(){
-            Swal.fire({
-                icon: 'success',
-                position: 'top-end',
-                showConfirmButton: false,
-                title: 'Correo enviado con éxito',
-                timer: 1200
-            });
-        }
-    });
-}
 </script>
 
 @endsection
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-@vite('resources/js/coordination-location.js')
+@vite(['resources/js/claim-wizard.js', 'resources/js/coordination-location.js'])
 @endpush
