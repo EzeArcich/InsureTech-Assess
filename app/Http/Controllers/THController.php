@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TH;
+use App\Http\Requests\SaveWorkshopRequest;
 use Carbon\Carbon;
 
 class THController extends Controller
@@ -15,7 +16,7 @@ class THController extends Controller
      */
     public function index()
     {
-        $talleres = TH::paginate(100);
+        $talleres = TH::orderBy('id')->get();
 
           //return DB::select('select localidad from siniestros'); //---> Devuelve los datos de la columna estados
     
@@ -41,10 +42,10 @@ class THController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SaveWorkshopRequest $request)
     {
-        TH::create($request->all());
-        return redirect()->route('talleres.index');
+        TH::create($request->workshopAttributes());
+        return redirect()->route('workshops.index');
     }
 
     /**
@@ -64,8 +65,9 @@ class THController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(TH $talleres)
+    public function edit(TH $workshop)
     {
+        $talleres = $workshop;
         $taller = TH::all();
         return view('talleres.editar', compact('taller', 'talleres'));
     }
@@ -77,10 +79,10 @@ class THController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SaveWorkshopRequest $request, int $id)
     {
-        $taller->update($request->all());
-        return redirect()->route('talleres.index');
+        TH::findOrFail($id)->update($request->workshopAttributes());
+        return redirect()->route('workshops.index');
     }
 
     /**
@@ -91,7 +93,7 @@ class THController extends Controller
      */
     public function destroy($id)
     {
-        $taller->delete();
-        return redirect()->route('talleres.index');
+        TH::findOrFail($id)->delete();
+        return redirect()->route('workshops.index');
     }
 }

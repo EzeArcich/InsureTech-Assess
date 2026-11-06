@@ -2,437 +2,277 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Siniestro;
+use App\Http\Requests\SaveClaimRequest;
+use App\Models\Client;
+use App\Models\Company;
 use App\Models\File;
-use App\Models\TH;
-use App\Models\User;
+use App\Models\Inspector;
 use App\Models\Productores;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-
-//Carbon
+use App\Models\Siniestro;
+use App\Models\TH;
+use App\Services\SaveClaim;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-
-//mail
-use App\Mail\ContactanosMailable;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use Yajra\DataTables\DataTables;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+use Closure;
+use Symfony\Component\HttpFoundation\Response;
 
 class SiniestroController extends Controller
 {
-
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:ver-siniestro|crear-siniestro|editar-siniestro|borrar-siniestro|ceo-siniestro')->only('index');
+        $this->middleware(function (Request $request, Closure $next): Response {
+            if ($request->user()->isRestrictedInspector() || $request->user()->isRoutePlanner() || $request->user()->canCoordinateInspections()) {
+                return $next($request);
+            }
+            abort_unless($request->user()->canAny(['ver-siniestro', 'crear-siniestro', 'editar-siniestro', 'borrar-siniestro', 'ceo-siniestro']), 403);
+
+            return $next($request);
+        })->only('index');
         $this->middleware('permission:crear-siniestro|ceo-siniestro', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-siniestro|derivar-siniestro|peritos-siniestro|terceros-siniestro|cotizar-siniestro|ceo-siniestro', ['only'=>['edit','update']]);
+        $this->middleware(function (Request $request, Closure $next): Response {
+            abort_unless($request->user()->isRestrictedInspector() || $request->user()->canCoordinateInspections() || $request->user()->canAny([
+                'editar-siniestro', 'derivar-siniestro', 'peritos-siniestro', 'terceros-siniestro', 'cotizar-siniestro', 'ceo-siniestro',
+            ]), 403);
+
+            return $next($request);
+        })->only(['edit', 'update']);
         $this->middleware('permission:borrar-siniestro', ['only'=>['destroy']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(): View
     {
-         $siniestros = Siniestro::where('estado', 'pendiente')->orWhere('estado', 'Ausente')->paginate(10);          
-         return view('siniestros.index', compact('siniestros'));
-  
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-
-    public function pendientes()
-    {
-        $currentUser = Auth::user();
-        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Pendiente')->paginate(10);  
-        
+        if (Auth::user()->isRoutePlanner()) {
+            $status = request('status', 'Peritando');
+            abort_unless(in_array($status, ['Peritando', 'Coordinado'], true), 403);
+            if ($status === 'Coordinado') {
+                return app(RouteSheetController::class)->index(request());
+            }
+            request()->merge(['status' => 'Peritando']);
+        }
+        $filters = request()->validate([
+            'status' => ['sometimes', 'nullable', 'string', 'max:191'],
+            'company_id' => ['sometimes', 'nullable', 'integer', 'exists:companies,id'],
+            'date' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+        ]);
+        $query = Siniestro::visibleTo(Auth::user());
+        if (Auth::user()->isRestrictedInspector() && ! empty($filters['status'])) {
+            abort_unless(in_array($filters['status'], ['Peritando', 'IPgestion'], true), 403);
+        }
+        if (! empty($filters['status'])) {
+            if ($filters['status'] === '__unset__') {
+                $query->where(fn ($query) => $query->whereNull('status')->orWhere('status', ''));
+            } else {
+                $query->where('status', $filters['status']);
+            }
+        } elseif (empty($filters['company_id']) && ! Auth::user()->isRestrictedInspector()) {
+            $query->whereIn('status', ['Pendiente', 'Ausente']);
+        }
+        if (! empty($filters['company_id'])) {
+            $query->where('company_id', $filters['company_id']);
+        }
+        if (! empty($filters['date'])) {
+            $query->whereDate('inspection_date', $filters['date']);
+        }
+        $siniestros = $query->orderBy('inspection_date')->orderBy('id')->get();
         return view('siniestros.index', compact('siniestros'));
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function ausentes()
+    public function pendientes(): View
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::where('updated_by', $currentUser->id)->where('estado', 'Ausente')->paginate(10);       
-        
-        
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('updated_by', $currentUser->id)->where('status', 'Pendiente')->get();
+
         return view('siniestros.index', compact('siniestros'));
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function peritos()
+    public function ausentes(): View
     {
         $currentUser = Auth::user();
-        $siniestros = Siniestro::where('inspector', $currentUser->name)->where('estado', 'Peritando')->orderBy('fechaip')->get();
-        return view('siniestros.peritos', compact('siniestros'));
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('updated_by', $currentUser->id)->where('status', 'Ausente')->get();
 
+        return view('siniestros.index', compact('siniestros'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function peritosgestion()
+    public function peritos(): View
     {
-        $currentUser = Auth::user();
-        $siniestros = Siniestro::where('inspector', $currentUser->name)->where('estado', 'IPgestion')->orderBy('fechaip')->get();
-        return view('siniestros.peritos', compact('siniestros'));
+        request()->merge(['status' => 'Peritando']);
 
+        return $this->index();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function terceros()
+    public function peritosgestion(): View
     {
-        $siniestros = Siniestro::where('cliente', 'Tercero')->get();        
-         return view('siniestros.terceros', compact('siniestros'));
+        request()->merge(['status' => 'IPgestion']);
 
+        return $this->index();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function cotizaciones()
+    public function terceros(): View
     {
-        $siniestros = Siniestro::where('cliente', 'Cotizacion')->get();        
-         return view('siniestros.cotizaciones', compact('siniestros'));
-
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('client_type', 'Tercero')->get();
+        return view('siniestros.terceros', compact('siniestros'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-   
-    public function create(Siniestro $siniestro)
+    public function cotizaciones(): View
     {
-        $users = User::all();
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('client_type', 'Cotizacion')->get();
+        return view('siniestros.cotizaciones', compact('siniestros'));
+    }
+
+    public function create(Siniestro $claim): View
+    {
+        $siniestro = $claim;
+        $users = Inspector::orderBy('name')->get();
         $talleres = TH::all();
         $siniestros = Siniestro::all();
         $productores = Productores::all();
+        $companies = Company::orderBy('name')->get();
 
-        return view('siniestros.crear', compact('talleres','users', 'siniestros', 'siniestro','productores'));
+        return view('siniestros.crear', compact('talleres', 'users', 'siniestros', 'siniestro', 'productores', 'companies'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-    public function store(Request $request)
+    public function store(SaveClaimRequest $request, SaveClaim $saveClaim): RedirectResponse
     {
-        $nrosiniestro= $request->siniestro;
-        if($request->hasFile('imagen')){
-        $file = $request->file('imagen');
-        $fileName= pathinfo($request->file('imagen')->getClientOriginalName(), PATHINFO_FILENAME).'-'.$request->siniestro.'.'.$request->file('imagen')->getClientOriginalExtension();
-        $request->imagen = $fileName;
-        $file->move(("cover/"),$fileName);
+        $claim = $saveClaim->handle($request->validated());
+        $this->storeUploads($request, $claim);
 
-       }
-       
-       
-       $siniestro = Siniestro::create([
-        'siniestro' => $request->siniestro,
-        'patente' => $request->patente,
-        'imagen' => $request->imagen,
-        'observaciones' => $request->observaciones,
-        'compania' => $request->compania,
-        'estado' => $request->estado,
-        'nrocorto' => $request->nrocorto,
-        'cliente' => $request->cliente
-
-       ]);
-        
-
-        
-
-        if($request->hasFile('urls')){
-            $files=$request->file('urls');
-            foreach ($files as $file) {
-                $urlName=time().'_'.$file->getClientOriginalName();
-                $request['siniestro_id']=$siniestro->id;
-                $request['url']=$urlName;
-                $file->move(("urls"),$urlName);
-                File::create($request->all());
-            }
-        } 
-
-       
-        return redirect()->route('siniestros.index')
-        ->with('success','Siniestro cargado con éxtio');
+        return redirect()->route('claims.index')->with('success', 'Siniestro cargado con éxito');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Siniestro $siniestro)
+    public function show(Siniestro $claim): View
     {
-        
-        
-        $files = File::where('siniestro_id', $siniestro->id)->get();
-        return view('siniestros.show', compact('files','siniestro'));
-        
+        $siniestro = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
+        $files = File::where('claim_id', $siniestro->id)->get();
+        return view('siniestros.show', compact('files', 'siniestro'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-    public function edit(Siniestro $siniestro)
+    public function edit(Siniestro $claim): View
     {
-        $relaciones = Siniestro::where('patente', $siniestro->patente)->where('estado', 'Pendiente')->get();
-        $users = User::all();
+        $siniestro = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
+        if (Auth::user()->isRestrictedInspector()) {
+            $siniestro->load('company.rates', 'parts', 'workshop');
+            return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id))]);
+        }
+        $relaciones = Siniestro::visibleTo(Auth::user())->where('license_plate', $siniestro->license_plate)->where('status', 'Pendiente')->get();
+        $users = Inspector::orderBy('name')->get();
         $talleres = TH::all();
         $productores = Productores::all();
-        
-        
-        return view('siniestros.editar', compact('siniestro', 'talleres','users', 'productores', 'relaciones'));
+        $companies = Company::orderBy('name')->get();
+
+        return view('siniestros.editar', compact('siniestro', 'talleres','users', 'productores', 'relaciones', 'companies'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-     
-
-   
-    public function derivar(Siniestro $siniestro)
+    public function inspection(Siniestro $claim): View
     {
-        
-         $siniestros = Siniestro::where('estado', 'coordinado')->orderBy('localidad')->get();
+        $siniestro = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
+        abort_unless(Auth::user()->isRestrictedInspector() || Auth::user()->canAny(['editar-siniestro', 'ceo-siniestro', 'peritos-siniestro']), 403);
+        $siniestro->load('company.rates', 'parts', 'workshop');
 
-         return view('siniestros.derivar', compact('siniestros'));
-
-        
+        return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id))]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-     
-
-    public function update(Request $request, $id) // Siniestro, $siniestro ivan antes de las modificaciones para multiples archivos
+    public function derivar(Siniestro $claim): View
     {
-       
+        $siniestro = $claim;
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('status', 'Coordinado')->orderBy(Client::select('city')->whereColumn('clients.id', 'claims.client_id'))->get();
 
-        $siniestro=Siniestro::findOrFail($id);
-        $nrosiniestro= $siniestro->siniestro;
-        if($request->hasFile('imagen')){
-            if(File::exists("imagen/".$siniestro->imagen)){
-                File::delete("imagen/".$siniestro->imagen);
-            }
-            $file=$request->file("imagen");
-            $siniestro->imagen=time()."_".$file->getClientOriginalName();
-            $file->move(("imagen/$nrosiniestro"),$siniestro->imagen);
-            $request['imagen']=$siniestro->imagen;
-        }
+         $users = Inspector::orderBy('name')->get();
 
-       
-
-        if($request->hasFile('urls')){
-            $files=$request->file('urls');
-            foreach ($files as $file) {
-                $urlName=time().'_'.' '.$nrosiniestro.' '.$file->getClientOriginalName();
-                $request['siniestro_id']=$id;
-                $request['url']=$urlName;
-                $file->move(("urls/$nrosiniestro"),$urlName);
-                File::create($request->all());
-            }
-        }
-
-       
-        $siniestro->update( $request->all());
-        return redirect()->back()
-        ->with('success','Siniestro actualizado con éxito');
-
-        
-          
+        return view('siniestros.derivar', compact('siniestros', 'users'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-
-
-
-    
-
-    public function destroy($id)
+    public function update(SaveClaimRequest $request, int $id, SaveClaim $saveClaim): RedirectResponse
     {
-        $siniestros=Siniestro::findOrFail($id);
+        $claim = $saveClaim->handle($request->validated(), Siniestro::visibleTo(Auth::user())->findOrFail($id));
+        $this->storeUploads($request, $claim);
 
-        if($siniestros->exists("imagen/".$siniestros->imagen)){
-            $siniestros->delete("imagen/".$siniestros->imagen);
-        }
-
-        $files=File::where("siniestro_id",$siniestros->id)->get();
-        foreach($files as $file){
-            if ($file->exists("urls/".$file->url)) { // Hay que corregir el código para que borre las imagenes de las carpetas
-                $file->delete("urls/".$file->url);
-            }
-
-        }
-
-        $siniestros->delete();
-        return redirect()->route('siniestros.index');
-
-
-        // $siniestro->delete(); asi estaba funcionando bien, con este
-        
+        return redirect()->back()->with('success', 'Siniestro actualizado con éxito');
     }
 
-    public function tallerData($id){
+    public function destroy(int $id): RedirectResponse
+    {
+        $claim = Siniestro::visibleTo(Auth::user())->findOrFail($id);
+        DB::transaction(function () use ($claim): void {
+            $claim = Siniestro::lockForUpdate()->findOrFail($claim->id);
+            if ($claim->inspectionPayment()->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['claim' => 'No se puede eliminar un siniestro con honorarios registrados.']);
+            }
+            $client = $claim->client;
+            $claim->delete();
+            $client?->delete();
+        });
+
+        return redirect()->route('claims.index');
+    }
+
+    public function tallerData(int $id): JsonResponse
+    {
         $taller = TH::findOrFail($id);
         return response()->json($taller);
     }
 
-    public function editData($id){
-        $data = Siniestro::findOrFail($id);
+    public function editData(int $id): JsonResponse
+    {
+        $data = Siniestro::visibleTo(Auth::user())->findOrFail($id);
         return response()->json($data);
     }
 
-    public function userData($id){
-        $users = User::findOrFail($id);
-        return response()->json($users);
+    public function allUserData(): JsonResponse
+    {
+        return response()->json(Inspector::orderBy('name')->get());
     }
 
-    public function productoresData($id){
+    public function userData(int $id): JsonResponse
+    {
+        $inspector = Inspector::findOrFail($id);
+        abort_if(Auth::user()->isRestrictedInspector() && $inspector->user_id !== Auth::id(), 404);
+
+        return response()->json($inspector);
+    }
+
+    public function productoresData(int $id): JsonResponse
+    {
         $productores = Productores::findOrFail($id);
         return response()->json($productores);
     }
 
-    public function storeData(Request $request){
-        $data = Siniestro::insert($request->all());
-
-        return response()->json($data);
-    }
-
-    public function updateData(Request $request, $id)
+    public function storeData(SaveClaimRequest $request, SaveClaim $saveClaim): JsonResponse
     {
-        $request->validate([
-            
-            
-        ]);
-
-        $data=Siniestro::findOrFail($id);
-        if($request->hasFile('imagen')){
-            if(File::exists("imagen/".$data->imagen)){
-                File::delete("imagen/".$data->imagen);
-            }
-            $file=$request->file("imagen");
-            $data->imagen=time()."_".$file->getClientOriginalName();
-            $file->move(("imagen"),$data->imagen);
-            $request['imagen']=$data->imagen;
-        }
-
-            
-
-        if($request->hasFile('urls')){
-            $files=$request->file('urls');
-            foreach ($files as $file) {
-                $urlName=time().'_'.$file->getClientOriginalName();
-                $request['siniestro_id']=$id;
-                $request['url']=$urlName;
-                $file->move(("urls"),$urlName);
-                File::create($request->all());
-            }
-        }
-
-        
-
-
-
-
-        $data = Siniestro::findOrFail($id)->update(( $request->all()));
-        return response()->json($data);
-
-        /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
+        return response()->json($saveClaim->handle($request->validated()));
     }
 
-    public function asignaciones(){
-        
-        
-        $siniestros = Siniestro::where('estado','coordinado')->get();
+    public function updateData(SaveClaimRequest $request, int $id, SaveClaim $saveClaim): JsonResponse
+    {
+        $claim = $saveClaim->handle($request->validated(), Siniestro::visibleTo(Auth::user())->findOrFail($id));
+        $this->storeUploads($request, $claim);
 
-        $users = User::all();
+        return response()->json($claim->fresh());
+    }
 
-        
-        
+    public function asignaciones(): View
+    {
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('status','Coordinado')->get();
+
+        $users = Inspector::orderBy('name')->get();
+
         return view('teacher.index', compact('siniestros', 'users'));
     }
 
-    //------------allData-------------
-    public function allData(){
-          
-        $data = Siniestro::where('estado','coordinado')->latest()->get();
-        
+    public function allData(): JsonResponse
+    {
+        $data = Siniestro::visibleTo(Auth::user())->where('status','Coordinado')->latest()->get();
 
-           return response()->json($data);
-  
+        return response()->json($data);
     }
 
-    public function derivaciones(Siniestro $siniestro)
+    public function derivaciones(Siniestro $claim): View
     {
-        
-        
-
+        $siniestro = $claim;
         $date = new Carbon('tomorrow');
         if( $date->dayOfWeek == Carbon::SATURDAY || $date->dayOfWeek == Carbon::SUNDAY || $date->dayOfWeek == Carbon::FRIDAY ){
         $date = $date->next('Monday');
@@ -440,52 +280,34 @@ class SiniestroController extends Controller
 
         $siguiente = $date->toDateString();
 
-        $siniestros = Siniestro::where('estado', 'coordinado')->where('fechaip', $siguiente)->get();
-        $users = User::all();
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('status', 'Coordinado')->where('inspection_date', $siguiente)->get();
+        $users = Inspector::orderBy('name')->get();
 
-        
-
-         return view('siniestros.derivar', compact('siniestros', 'users'));
-
-        
+        return view('siniestros.derivar', compact('siniestros', 'users'));
     }
 
-    public function coordinados()
+    public function coordinados(): View
     {
-        $siniestros = Siniestro::where('estado', 'coordinado')->get();
+        if (Auth::user()->isRoutePlanner()) {
+            return app(RouteSheetController::class)->index(request());
+        }
+        $siniestros = Siniestro::visibleTo(Auth::user())->where('status', 'Coordinado')->get();
         return view('siniestros.index', compact('siniestros'));
     }
 
-    public function check(Request $request)
+    public function check(Request $request): string
     {
-        if($request->get('patente'))
-        {
-            $patente = $request->get('patente');
-            $data = DB::table("siniestros")
-            ->where('patente', $patente)
-            ->count();
-
-            if($data > 0)
-            {
-                echo 'not_unique';
-            }
-            else
-            {
-                echo 'unique';
-            }
-        }
+        return Siniestro::visibleTo(Auth::user())->where('license_plate', $request->input('license_plate'))->exists() ? 'not_unique' : 'unique';
     }
 
-    
-
-    
-         
-
-       
-
-        
-
-
-        
-    
+    private function storeUploads(SaveClaimRequest $request, \App\Models\Claim $claim): void
+    {
+        if ($request->hasFile('image')) {
+            $claim->image = $request->file('image')->store('claims/'.$claim->id.'/covers', 'public');
+            $claim->save();
+        }
+        foreach ($request->file('urls', []) as $file) {
+            $claim->files()->create(['url' => $file->store('claims/'.$claim->id.'/attachments', 'public')]);
+        }
+    }
 }

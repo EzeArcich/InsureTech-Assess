@@ -90,11 +90,11 @@
 
 
     function clearData(){
-    $('#siniestro').val('');
-    $('#fechaip').val('');
+    $('#claim_number').val('');
+    $('#inspection_date').val('');
     $('#inspector').val('');
-    $('#localidad').val('');
-    $('#direccion').val('');
+    $('#city').val('');
+    $('#address').val('');
     $('#email').val('');
     $('#nameError').text('');
     $('#titleError').text('');
@@ -119,14 +119,12 @@
         $.ajax({
             type:"get",
             dataType:"json",
-            url:"/teacher/edit/"+id,
+            url:"/claims/" + id + "/data",
             success: function(data){
                 $('#id').val(data.id);
-                $('#siniestro').val(data.siniestro);
-                $('#fechaip').val(data.fechaip);
-                $('#patente').val(data.patente);
-                $('#direccion').val(data.direccion);
-                $('#localidad').val(data.localidad);
+                $('#claim_number').val(data.claim_number);
+                $('#inspection_date').val(data.inspection_date);
+                $('#license_plate').val(data.license_plate);
                 console.log(data);
             }
         })
@@ -143,13 +141,14 @@
         $.ajax({
             type:"get",
             dataType:"json",
-            url:"/teacher/productores/"+id,
+            url:"/producers/" + id + "/data",
             success: function(data){
             
 
                 // $('#id_inspector').val(data.id);
-                $('#nombre').val(data.nombre);
-                $('#emailPas').val(data.correo);
+                $('#producer_id').val(data.id);
+            $('#producer_name').val(data.name);
+                $('#emailPas').val(data.email);
                 
             
 
@@ -167,16 +166,13 @@
         $.ajax({
             type:"get",
             dataType:"json",
-            url:"/teacher/taller/"+id,
+            url:"/workshops/" + id + "/data",
             success: function(data){
             
 
                 // $('#id_inspector').val(data.id);
-                $('#nombretaller').val(data.taller);
-                $('#telefono').val(data.telefonos);
+                $('#workshop_name').val(data.name);
                 $('#email').val(data.email);
-                $('#direccion').val(data.direccion);
-                $('#localidad').val(data.localidad);
                 
             
 
@@ -186,7 +182,7 @@
     }
 
     function goTo() {
-        let link = "https://InsureTechAsses.com/siniestros/pendientes";
+        let link = "/claims/pending";
         window.location.replace(link);
     };
 
@@ -198,25 +194,25 @@
     event.preventDefault();
     var id = $('#id').val();
     var link = $('#link').val();
-    var siniestro =  $('#siniestro').val();
-    var patente = $('#patente').val();
-    var nrocorto = $('#nrocorto').val();
-    var cliente = $('#cliente').val();
-    var modalidad = $('#modalidad').val();
-    //  var imagen = $('#imagen').val();
-    var motivo = $('#motivo').val();
-    var correo = $('#correo').val();
-    var observaciones = $('#observaciones').val();
+    var siniestro =  $('#claim_number').val();
+    var patente = $('#license_plate').val();
+    var nrocorto = $('#short_number').val();
+    var cliente = $('#client_type').val();
+    var modalidad = $('#inspection_mode').val();
+    //  var imagen = $('#image').val();
+    var motivo = $('#reason').val();
+    var correo = $('#email').val();
+    var observaciones = $('#notes').val();
     var email = $('#email').val();
-    var nombretaller = $('#nombretaller').val();
-    var telefonos = $('#telefono').val();
-    var direccion = $('#direccion').val();
-    var localidad = $('#localidad').val();
-    var estado = $('#estado').val();
-    var fechaip = $('#fechaip').val();
-    var enviarorden = $('#enviarorden').val();
-    var horario = $('#horario').val();
-    var comentariosparaip = $('#comentariosparaip').val();
+    var nombretaller = $('#workshop_name').val();
+    var telefonos = $('#phone').val();
+    var direccion = $('#address').val();
+    var localidad = $('#city').val();
+    var estado = $('#status').val();
+    var fechaip = $('#inspection_date').val();
+    var enviarorden = $('#send_order').val();
+    var horario = $('#inspection_time').val();
+    var comentariosparaip = $('#inspector_notes').val();
     var comentariosdelperitovisita = $('#comentariosdelperitovisita').val();
     var comentariosdelperitofinales = $('#comentariosdelperitofinales').val();
     
@@ -237,10 +233,10 @@
     $.ajax({
         type: "PUT",
         
-        data: {modalidad:modalidad, motivo:motivo, fechaip:fechaip, patente:patente, siniestro:siniestro, localidad:localidad, direccion:direccion, email:email, estado:estado,
-        observaciones:observaciones, nombretaller:nombretaller, telefono:telefonos, localidad:localidad, enviarorden:enviarorden, horario:horario, comentariosparaip:comentariosparaip, link:link,
-        nrocorto:nrocorto, cliente:cliente, comentariosdelperitovisita:comentariosdelperitovisita, comentariosdelperitofinales:comentariosdelperitofinales},
-        url: "/teacher/update/"+id,
+        data: {producer_id: $('#producer_id').val(), inspection_mode:modalidad, reason:motivo, inspection_date:fechaip, license_plate:patente, claim_number:siniestro, city:localidad, address:direccion, email:email, status:estado,
+        notes:observaciones, workshop_name:nombretaller, phone:telefonos, city:localidad, send_order:enviarorden, inspection_time:horario, inspector_notes:comentariosparaip, link:link,
+        short_number:nrocorto, client_type:cliente, comentariosdelperitovisita:comentariosdelperitovisita, comentariosdelperitofinales:comentariosdelperitofinales},
+        url: "/claims/" + id + "/data",
         success: function(data){
                 Swal.fire({
                 icon: 'success',
@@ -266,10 +262,10 @@
 
         event.preventDefault();
         // var id = $('#id').val();
-        var siniestro =  $('#siniestro').val();
+        var siniestro =  $('#claim_number').val();
         var emailPas = $('#emailPas').val();
-        var coordinador = $('#coordinador').val();
-        var patente = $('#patente').val();
+        var coordinador = $('#coordinator').val();
+        var patente = $('#license_plate').val();
         
         $.ajaxSetup({
         headers:{
@@ -281,8 +277,8 @@
         $.ajax({
             type: "POST",
             
-            data: {siniestro:siniestro, emailPas:emailPas, patente:patente, coordinador:coordinador},
-            url: "/correo",
+            data: {claim_number:siniestro, emailPas:emailPas, license_plate:patente, coordinator:coordinador},
+            url: "/coordination/emails",
             success: function(response){
                     
                 Swal.fire({
@@ -309,25 +305,25 @@
 
         event.preventDefault();
         // var id = $('#id').val();
-        var siniestro =  $('#siniestro').val();
+        var siniestro =  $('#claim_number').val();
         var email = $('#email').val();
-        var fechaip = $('#fechaip').val();
-        var patente = $('#patente').val();
-        var nrocorto =  $('#nrocorto').val();
-        var comentariosparaip = $('#comentariosparaip').val();
-        var telefono = $('#telefono').val();
-        var localidad = $('#localidad').val();
-        var direccion =  $('#direccion').val();
-        var modalidad = $('#modalidad').val();
+        var fechaip = $('#inspection_date').val();
+        var patente = $('#license_plate').val();
+        var nrocorto =  $('#short_number').val();
+        var comentariosparaip = $('#inspector_notes').val();
+        var telefono = $('#phone').val();
+        var localidad = $('#city').val();
+        var direccion =  $('#address').val();
+        var modalidad = $('#inspection_mode').val();
         var link = $('#link').val();
-        // var nombretaller = $('#nombretaller').val();
-        var motivo = $('#motivo').val();
-        var horario = $('#horario').val();
-        var cliente = $('#cliente').val();
-        var enviarorden = $('#enviarorden').val();
-        var imagen = $('#imagen').val();
-        var contacto = $('#contacto').val();
-        var lugar = $('#lugar').val();
+        // var nombretaller = $('#workshop_name').val();
+        var motivo = $('#reason').val();
+        var horario = $('#inspection_time').val();
+        var cliente = $('#client_type').val();
+        var enviarorden = $('#send_order').val();
+        var imagen = $('#image').val();
+        var contacto = $('#contact').val();
+        var lugar = $('#location').val();
 
 
 
@@ -344,9 +340,9 @@
         $.ajax({
             type: "POST",
             
-            data: {siniestro:siniestro, email:email, fechaip:fechaip, patente:patente, nrocorto:nrocorto, comentariosparaip:comentariosparaip, telefono:telefono, localidad:localidad, direccion:direccion,
-            modalidad:modalidad, motivo:motivo, horario:horario, enviarorden:enviarorden, cliente:cliente, link:link, imagen:imagen, lugar:lugar, contacto:contacto},
-            url: "/correoEdu",
+            data: {claim_number:siniestro, email:email, inspection_date:fechaip, license_plate:patente, short_number:nrocorto, inspector_notes:comentariosparaip, phone:telefono, city:localidad, address:direccion,
+            inspection_mode:modalidad, reason:motivo, inspection_time:horario, send_order:enviarorden, client_type:cliente, link:link, image:imagen, location:lugar, contact:contacto},
+            url: "/coordination/inspection-emails",
             success: function(response){
                     
                 Swal.fire({

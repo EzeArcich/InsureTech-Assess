@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/claims/assignments/libs/fancybox/3.5.7/jquery.fancybox.css">
 <style>
     #fotos {
         border-radius: 15px;
@@ -33,14 +33,14 @@
             <nav aria-label="breadcrumb" class="mt-1">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/siniestros') }}" class="text-decoration-none">Siniestros</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('claims.index') }}" class="text-decoration-none">Siniestros</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Adjuntos</li>
                 </ol>
             </nav>
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ url('/siniestros') }}" class="btn btn-light border btn-sm rounded-3">
+            <a href="{{ route('claims.index') }}" class="btn btn-light border btn-sm rounded-3">
                 <i class="fas fa-arrow-left me-2"></i> Volver
             </a>
         </div>
@@ -52,10 +52,10 @@
             @foreach($files as $file)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="foto-card panel">
-                        <a href="../urls/{{ $siniestro->siniestro }}/{{ $file->url }}" 
+                        <a href="{{ Storage::disk('public')->url($file->url) }}"
                            class="fancybox" 
                            data-fancybox="gallery1">
-                            <img src="../urls/{{ $siniestro->siniestro }}/{{ $file->url }}" 
+                            <img src="{{ Storage::disk('public')->url($file->url) }}"
                                  class="img-fluid w-100" 
                                  id="fotos" 
                                  alt="{{ $file->url }} - Vista preliminar no disponible - Click para descargar archivo" 
@@ -78,5 +78,5 @@
 @endsection
 
 @section('javas')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/claims/assignments/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 @endsection

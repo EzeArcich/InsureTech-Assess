@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page-title', 'Usuarios')
 
 @section('content')
 <section class="section">
@@ -26,7 +27,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('usuarios.store') }}" method="POST">
+                        <form action="{{ route('users.store') }}" method="POST">
                             @csrf
 
                             <div class="row">

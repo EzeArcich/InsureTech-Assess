@@ -1,12 +1,80 @@
 {
+  "_bootstrap.esm-Dumif2LN.js": {
+    "file": "assets/bootstrap.esm-Dumif2LN.js",
+    "name": "bootstrap.esm"
+  },
+  "_jquery-BZOalPbs.js": {
+    "file": "assets/jquery-BZOalPbs.js",
+    "name": "jquery"
+  },
+  "_table-options-CvWbzB3G.js": {
+    "file": "assets/table-options-CvWbzB3G.js",
+    "name": "table-options",
+    "imports": [
+      "_jquery-BZOalPbs.js"
+    ],
+    "css": [
+      "assets/table-options-DPJPQY3S.css"
+    ]
+  },
+  "_table-options-DPJPQY3S.css": {
+    "file": "assets/table-options-DPJPQY3S.css",
+    "src": "_table-options-DPJPQY3S.css"
+  },
+  "resources/js/admin-claims.js": {
+    "file": "assets/admin-claims-CeKUZSpa.js",
+    "name": "admin-claims",
+    "src": "resources/js/admin-claims.js",
+    "isEntry": true,
+    "imports": [
+      "_table-options-CvWbzB3G.js",
+      "_jquery-BZOalPbs.js"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-SdLWl-i2.js",
+    "file": "assets/app-CJaCOaw9.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap.esm-Dumif2LN.js",
+      "_jquery-BZOalPbs.js",
+      "_table-options-CvWbzB3G.js"
+    ]
+  },
+  "resources/js/coordination-location.js": {
+    "file": "assets/coordination-location-CRonj72E.js",
+    "name": "coordination-location",
+    "src": "resources/js/coordination-location.js",
+    "isEntry": true
+  },
+  "resources/js/inspection.js": {
+    "file": "assets/inspection-jVK-uRes.js",
+    "name": "inspection",
+    "src": "resources/js/inspection.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-BZOalPbs.js",
+      "_bootstrap.esm-Dumif2LN.js"
+    ],
+    "css": [
+      "assets/inspection-DCgFvvHb.css"
+    ]
+  },
+  "resources/js/route-sheets.js": {
+    "file": "assets/route-sheets-Gv395PgE.js",
+    "name": "route-sheets",
+    "src": "resources/js/route-sheets.js",
+    "isEntry": true
+  },
+  "resources/js/settings-rates.js": {
+    "file": "assets/settings-rates-Bn69xvt0.js",
+    "name": "settings-rates",
+    "src": "resources/js/settings-rates.js",
     "isEntry": true
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-d4YQsH1K.css",
+    "file": "assets/app-D_yv6BQR.css",
     "src": "resources/sass/app.scss",
     "isEntry": true,
     "name": "app",

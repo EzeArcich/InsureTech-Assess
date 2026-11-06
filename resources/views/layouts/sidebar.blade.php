@@ -12,12 +12,12 @@
     
     <div class="sidebar-brand">
     <h5 class="text-center pt-3">InsureTech Assess</h5>
-        <a href="{{ url('/home') }}"></a>
+        <a href="{{ route('home') }}"></a>
     </div>
     
     <div class="sidebar-brand sidebar-brand-sm">
         <h5 class="text-center pt-2">IA</h5>
-        <a href="{{ url('/home') }}" class="small-sidebar-text">
+        <a href="{{ route('home') }}" class="small-sidebar-text">
             <!-- <img class="navbar-brand-full" src="{{ asset('img/DAG.png') }}" width="45px" alt=""/> -->
         </a>
     </div>

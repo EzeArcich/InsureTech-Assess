@@ -1,35 +1,22 @@
 @extends('layouts.app')
+@section('page-title', 'Todos los talleres')
+@section('page-description', 'Talleres homologados y no homologados.')
+
+@section('header-tools')
+<label class="claims-global-search" for="claims-global-search"><i class="bi bi-search"></i><input id="claims-global-search" type="search" placeholder="Buscar taller, localidad o email…"></label>
+@endsection
 
 @section('content')
-<section class="p-2">
-
-    {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-        <div>
-            <h3 class="mb-0 fw-bold">Talleres homologados</h3>
-            <nav aria-label="breadcrumb" class="mt-1">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Talleres</li>
-                </ol>
-            </nav>
-        </div>
-
-        <a class="btn btn-brand btn-sm" href="{{ route('talleres.create') }}">
-            <i class="fas fa-plus me-2"></i>
-            Nuevo taller
-        </a>
-    </div>
-
-    {{-- Panel principal --}}
-    <div class="panel">
-        <div class="table-responsive">
-            <table class="table table-sm table-hover align-middle mb-0 tablita w-100">
+<x-table-panel>
+    <x-slot:actions>
+<a class="claims-create" href="{{ route('workshops.create') }}"><i class="bi bi-plus-lg"></i> Nuevo taller</a>
+    </x-slot:actions>
+<table class="table align-middle w-100 app-data-table" data-standard-table>
                 <thead class="table-success">
                     <tr>
                         <th class="d-none">ID</th>
                         <th>Taller</th>
-                        <th>Dirección</th>
+                        <th>Homologación</th><th>Horarios</th><th>Dirección</th>
                         <th>Barrio</th>
                         <th>Localidad</th>
                         <th>Teléfonos</th>
@@ -49,34 +36,34 @@
                     @foreach ($talleres as $taller)
                         <tr>
                             <td class="d-none">{{ $taller->id }}</td>
-                            <td class="fw-semibold">{{ $taller->taller }}</td>
-                            <td>{{ $taller->direccion }}</td>
-                            <td>{{ $taller->barrio }}</td>
-                            <td>{{ $taller->localidad }}</td>
-                            <td>{{ $taller->telefonos }}</td>
+                            <td class="fw-semibold">{{ $taller->name }}</td>
+                            <td><span class="role-badge">{{ $taller->is_approved ? "Homologado" : "No homologado" }}</span></td><td>{{ $taller->opening_hours }}</td><td>{{ $taller->address }}</td>
+                            <td>{{ $taller->neighborhood }}</td>
+                            <td>{{ $taller->city }}</td>
+                            <td>{{ $taller->phone }}</td>
                             <td>{{ $taller->email }}</td>
-                            <td>{{ $taller->zona }}</td>
-                            <td>{{ $taller->grua }}</td>
-                            <td>{{ $taller->traslado }}</td>
-                            <td>{{ $taller->granizo }}</td>
-                            <td>{{ $taller->ponerep }}</td>
-                            <td>{{ $taller->vacaciones }}</td>
-                            <td>{{ $taller->descfranq }}</td>
+                            <td>{{ $taller->area }}</td>
+                            <td>{{ $taller->towing }}</td>
+                            <td>{{ $taller->transport }}</td>
+                            <td>{{ $taller->hail }}</td>
+                            <td>{{ $taller->repair_availability }}</td>
+                            <td>{{ $taller->holidays }}</td>
+                            <td>{{ $taller->deductible_discount }}</td>
                             <td>
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <a href="{{ route('talleres.edit', $taller->id) }}"
-                                       class="btn btn-outline-primary btn-sm px-3">
+                                <div class="table-actions justify-content-center">
+                                    <a href="{{ route('workshops.edit', $taller->id) }}"
+                                       class="btn btn-palette-blue btn-sm px-3">
                                         <i class="fas fa-pen me-1"></i>
                                         Editar
                                     </a>
 
-                                    <form action="{{ route('talleres.destroy', $taller->id) }}"
+                                    <form action="{{ route('workshops.destroy', $taller->id) }}"
                                           method="POST"
                                           class="m-0 p-0">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="btn btn-outline-danger btn-sm px-3"
+                                                class="btn btn-palette-orange btn-sm px-3"
                                                 onclick="return confirm('¿Seguro que querés borrar este taller?')">
                                             <i class="fas fa-trash me-1"></i>
                                             Borrar
@@ -88,51 +75,5 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
-    </div>
-</section>
-@endsection
-
-@section('javas')
-<script>
-    $(function () {
-        $('.tablita').DataTable({
-            paging: true,
-            pageLength: 25,
-            info: true,
-            searching: true,
-            order: [],
-            responsive: true,
-            processing: true,
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'copy',
-                    className: 'btn btn-light btn-sm',
-                    text: '<i class="fas fa-copy me-1"></i> Copiar'
-                },
-                {
-                    extend: 'csv',
-                    className: 'btn btn-light btn-sm',
-                    text: '<i class="fas fa-file-csv me-1"></i> CSV'
-                },
-                {
-                    extend: 'excel',
-                    className: 'btn btn-light btn-sm',
-                    text: '<i class="fas fa-file-excel me-1"></i> Excel'
-                },
-                {
-                    extend: 'pdf',
-                    className: 'btn btn-light btn-sm',
-                    text: '<i class="fas fa-file-pdf me-1"></i> PDF'
-                },
-                {
-                    extend: 'print',
-                    className: 'btn btn-light btn-sm',
-                    text: '<i class="fas fa-print me-1"></i> Imprimir'
-                }
-            ]
-        });
-    });
-</script>
+</x-table-panel>
 @endsection

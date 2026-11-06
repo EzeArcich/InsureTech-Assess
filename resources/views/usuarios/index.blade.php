@@ -1,66 +1,71 @@
 @extends('layouts.app')
+@section('page-title', 'Usuarios')
+@section('page-description', 'Administración de usuarios y roles.')
+
+@section('header-tools')
+<label class="claims-global-search" for="claims-global-search"><i class="bi bi-search"></i><input id="claims-global-search" type="search" placeholder="Buscar en el listado…"></label>
+@endsection
 
 @section('content')
-<section class="section">
-  <div class="section-header">
-      <h3 class="page__heading">Usuarios</h3>
-  </div>
-      <div class="section-body">
-          <div class="row">
-              <div class="col-lg-12">
-                  <div class="card">
-                      <div class="card-body">                           
-                          <a class="btn btn-primary" href="{{ route('usuarios.create') }}">Nuevo</a>        
-                         
-                            <table class="table table-striped mt-2">
-                              <thead style="background-color:background:linear-gradient(to right, hsla(234, 94%, 39%, 0.977), #023cfb,hsl(213, 99%, 49%))">                                     
-                                  <th style="display: none;">ID</th>
-                                  <th style="color:#fff;">Nombre</th>
-                                  <th style="color:#fff;">E-mail</th>
-                                  <th style="color:#fff;">Teléfono</th>
-                                  <th style="color:#fff;">Rol</th>
-                                  <th style="color:#fff;">Acciones</th>                                                                   
-                              </thead>
+<x-table-panel>
+    <x-slot:actions>
+@unless(auth()->user()->isRestrictedInspector())
+<a class="claims-create" href="{{ route('users.create') }}"><i class="bi bi-plus-lg"></i> Nuevo usuario</a>
+@endunless
+    </x-slot:actions>
+<table class="table align-middle w-100 app-data-table" data-standard-table>
+                              <thead>
+                                  <tr><th class="d-none">ID</th>
+                                  <th>Nombre</th>
+                                  <th>E-mail</th>
+                                  <th>Teléfono</th>
+                                  <th>Rol</th>
+                                  <th>Acciones</th>
+                              </tr></thead>
                               <tbody>
                                 @foreach ($usuarios as $usuario)
                                   <tr>
-                                    <td style="display: none;">{{ $usuario->id }}</td>
+                                    <td class="d-none">{{ $usuario->id }}</td>
                                     <td>{{ $usuario->name }}</td>
                                     <td>{{ $usuario->email }}</td>
-                                    <td>{{ $usuario->telefono }}</td>
+                                    <td>{{ $usuario->phone }}</td>
                                     <td>
-                                      @if(!empty($usuario->getRoleNames()))
-                                        @foreach($usuario->getRoleNames() as $rolNombre)                                       
-                                          <h5><span class="badge badge-dark">{{ $rolNombre }}</span></h5>
-                                        @endforeach
-                                      @endif
+                                      <div class="d-flex flex-wrap gap-1">
+                                          @forelse($usuario->getRoleNames() as $rolNombre)
+                                              <span class="role-badge">{{ $rolNombre }}</span>
+                                          @empty
+                                              <span class="text-muted">Sin rol</span>
+                                          @endforelse
+                                      </div>
                                     </td>
 
-                                    <td>                                  
-                                      <a class="btn btn-info" href="{{ route('usuarios.edit',$usuario->id) }}">Editar</a>
+                                    <td>
+                                      <div class="table-actions">
+                                      @unless(auth()->user()->isRestrictedInspector())
+                                      <a class="btn btn-palette-blue btn-sm" href="{{ route('users.edit',$usuario->id) }}">Editar</a>
+                                      @endunless
 
-                                      <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
+                                      @if(app()->environment('local') && auth()->id() !== $usuario->id)
+                                              <form action="{{ route('users.impersonate', $usuario->id) }}" method="POST" class="m-0">
+                                                  @csrf
+                                                  <button type="submit" class="btn btn-palette-green btn-sm"><i class="bi bi-person-check me-1"></i>Ingresar como</button>
+                                              </form>
+                                      @endif
+
+                                      @unless(auth()->user()->isRestrictedInspector())
+                                      <form action="{{ route('users.destroy', $usuario->id) }}" method="POST" class="m-0">
                                           @csrf
                                           @method('DELETE')
-                                          <button type="submit" class="btn btn-danger">
+                                          <button type="submit" class="btn btn-palette-orange btn-sm">
                                               Borrar
                                           </button>
                                       </form>
-
+                                      @endunless
+                                      </div>
                                     </td>
                                   </tr>
                                 @endforeach
                               </tbody>
                             </table>
-                            <!-- Centramos la paginacion a la derecha -->
-                          <div class="pagination justify-content-end">
-                            {!! $usuarios->links() !!}
-                          </div>     
-                            
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-    </section>
+</x-table-panel>
 @endsection

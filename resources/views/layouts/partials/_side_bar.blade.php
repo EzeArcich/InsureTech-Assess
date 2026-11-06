@@ -1,123 +1,75 @@
-    {{-- OFFCANVAS MENU --}}
-    <div class="offcanvas offcanvas-start app-offcanvas"
-         tabindex="-1"
-         id="appOffcanvas"
-         aria-labelledby="appOffcanvasLabel">
-        <div class="offcanvas-header border-bottom bg-primary">
-            <div>
-                <h5 class="offcanvas-title mb-0 fw-bold text-white" id="appOffcanvasLabel">Navegación</h5>
-                <small class="d-block mt-1 text-white">Accesos rápidos</small>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-
-        <div class="offcanvas-body bg-info">
-
-            {{-- Sección general --}}
-            <div class="menu-section-title">General</div>
-
-            <a class="menu-link {{ Request::is('home') ? 'active' : '' }}" href="{{ url('/home') }}">
-                <span class="menu-icon"><i class="bi bi-speedometer"></i></span>
-                <span class="menu-text">Dashboard</span>
-            </a>
-
-            <a class="menu-link {{ Request::is('talleres*') ? 'active' : '' }}" href="{{ url('/talleres') }}">
-                <span class="menu-icon"><i class="bi bi-tools"></i></span>
-                <span class="menu-text">Talleres homologados</span>
-            </a>
-
-            <a class="menu-link {{ Request::is('siniestros') && !Request::is('siniestros/*') ? 'active' : '' }}" href="{{ url('/siniestros') }}">
-                <span class="menu-icon"><i class="bi bi-exclamation-circle"></i></i></span>
-                <span class="menu-text">Siniestros</span>
-            </a>
-
-            {{-- Coordinaciones --}}
-            @hasrole('Coordinaciones')
-                <div class="menu-section-title mt-3">Coordinaciones</div>
-
-                <a class="menu-link {{ Request::is('blogs') ? 'active' : '' }}" href="{{ url('/blogs') }}">
-                    <span class="menu-icon"><i class="fas fa-blog"></i></span>
-                    <span class="menu-text">Noticias</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('siniestros/pendientes') ? 'active' : '' }}" href="{{ url('/siniestros/pendientes') }}">
-                    <span class="menu-icon"><i class="fas fa-clock"></i></span>
-                    <span class="menu-text">Pendientes</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('siniestros/ausentes') ? 'active' : '' }}" href="{{ url('/siniestros/ausentes') }}">
-                    <span class="menu-icon"><i class="fas fa-calendar-xmark"></i></span>
-                    <span class="menu-text">Ausentes</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('siniestros/terceros') ? 'active' : '' }}" href="{{ url('/siniestros/terceros') }}">
-                    <span class="menu-icon"><i class="fas fa-business-time"></i></span>
-                    <span class="menu-text">Terceros</span>
-                </a>
-            @endhasrole
-
-            {{-- CEO --}}
+    <aside class="claims-sidebar" aria-label="Navegación principal">
+        <a href="{{ route('home') }}" class="claims-brand">
+            <span class="claims-brand-shield"><i class="bi bi-shield-check"></i></span>
+            <span>InsureTech<small>Assess</small></span>
+        </a>
+        <nav class="claims-navigation">
+            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}"><i class="bi bi-house-door"></i> Dashboard</a>
+            @php
+                $claimsSection = request()->routeIs('claims.*', 'clients.*', 'inspectors.*');
+                $claimsListRoute = auth()->user()->can('view-all-claims') ? 'claims.all' : 'claims.index';
+                $stateLinks = [
+                    'Pendiente' => ['Pendientes', 'orange', 'claims.pending'],
+                    'Ausente' => ['Ausentes', 'gray', 'claims.absent'],
+                    'Coordinado' => ['Coordinados', 'yellow', 'claims.coordinated'],
+                    'Peritando' => ['Peritando', 'blue', 'claims.assigned'],
+                    'IPgestion' => ['En gestión', 'green', 'claims.in_progress'],
+                ];
+                if (auth()->user()->isRoutePlanner()) {
+                    $stateLinks = array_intersect_key($stateLinks, array_flip(['Coordinado', 'Peritando']));
+                }
+                if (auth()->user()->isRestrictedInspector()) {
+                    $stateLinks = array_intersect_key($stateLinks, array_flip(['Peritando', 'IPgestion']));
+                    $stateLinks['IPgestion'][0] = 'En gestión';
+                }
+            @endphp
+            <details class="nav-claims {{ $claimsSection ? 'is-active' : '' }}" @if($claimsSection) open @endif>
+                <summary aria-label="Desplegar filtros de siniestros"><i class="bi bi-car-front-fill"></i><span>Siniestros</span><i class="bi bi-chevron-down nav-claims-chevron"></i></summary>
+                <div class="nav-claims-links">
+                    <a href="{{ route($claimsListRoute) }}" class="{{ request()->routeIs($claimsListRoute) && !request()->filled('status') && !request()->filled('company_id') ? 'is-active' : '' }}">
+                        <i class="bi bi-list-ul"></i> {{ auth()->user()->isRestrictedInspector() ? 'Mis inspecciones' : ($claimsListRoute === 'claims.all' ? 'Todos los siniestros' : 'Listado general') }}
+                    </a>
+                    @foreach($stateLinks as $state => [$label, $color, $stateRoute])
+                        @php($isCurrentState = $claimsSection && (request('status') === $state || request()->routeIs($stateRoute)))
+                        <a href="{{ route($claimsListRoute, ['status' => $state]) }}" class="{{ $isCurrentState ? 'is-active' : '' }}" @if($isCurrentState) aria-current="page" @endif>
+                            <span class="nav-state-dot nav-state-dot--{{ $color }}" aria-hidden="true"></span>{{ $label }}
+                        </a>
+                    @endforeach
+                    @if(auth()->user()->isRestrictedInspector())
+                        <a href="{{ route('claims.index', ['status' => 'Peritando', 'date' => now()->toDateString()]) }}"><i class="bi bi-calendar-check"></i>Inspecciones de hoy</a>
+                    @endif
+                </div>
+            </details>
+            @unless(auth()->user()->isRestrictedInspector() || auth()->user()->isRoutePlanner())
+            <a href="{{ route('workshops.index') }}" class="{{ request()->routeIs('workshops.*') ? 'is-active' : '' }}"><i class="bi bi-building-check"></i> Talleres</a>
+            <a href="{{ route('blogs.index') }}" class="{{ request()->routeIs('blogs.*') ? 'is-active' : '' }}"><i class="bi bi-journal-text"></i> Noticias</a>
+            <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'is-active' : '' }}"><i class="bi bi-gear"></i> Roles</a>
+            @endunless
+            @if((!auth()->user()->isRestrictedInspector() && !auth()->user()->isRoutePlanner()) || app()->environment('local'))
+            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'is-active' : '' }}"><i class="bi bi-people"></i> Usuarios</a>
+            @endif
             @hasrole('CEO')
-                <div class="menu-section-title mt-3">Administración</div>
-
-                <a class="menu-link {{ Request::is('usuarios') ? 'active' : '' }}" href="{{ url('/usuarios') }}">
-                    <span class="menu-icon"><i class="fas fa-users"></i></span>
-                    <span class="menu-text">Usuarios</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('roles*') ? 'active' : '' }}" href="{{ url('/roles') }}">
-                    <span class="menu-icon"><i class="fas fa-user-lock"></i></span>
-                    <span class="menu-text">Roles</span>
-                </a>
+            <details class="nav-claims {{ request()->routeIs('settings.*') ? 'is-active' : '' }}" @if(request()->routeIs('settings.*')) open @endif>
+                <summary><i class="bi bi-gear"></i><span>Configuración</span><i class="bi bi-chevron-down nav-claims-chevron"></i></summary>
+                <div class="nav-claims-links"><a href="{{ route('settings.repair-rates') }}" class="{{ request()->routeIs('settings.repair-rates*') ? 'is-active' : '' }}">Chapa, pintura y mecánica</a><a href="{{ route('settings.inspection-rates') }}" class="{{ request()->routeIs('settings.inspection-rates*') ? 'is-active' : '' }}">Inspecciones</a></div>
+            </details>
             @endhasrole
-
-            {{-- Inspecciones --}}
-            @hasrole('Inspecciones')
-                <div class="menu-section-title mt-3">Inspecciones</div>
-
-                <a class="menu-link {{ Request::is('siniestros/coordinados') ? 'active' : '' }}" href="{{ url('/siniestros/coordinados') }}">
-                    <span class="menu-icon"><i class="fas fa-calendar-check"></i></span>
-                    <span class="menu-text">Coordinados</span>
-                </a>
-            @endhasrole
-
-            {{-- Inspectores --}}
-            @hasrole('Inspectores')
-                <div class="menu-section-title mt-3">Inspectores</div>
-
-                <a class="menu-link {{ Request::is('siniestros/cotizaciones') ? 'active' : '' }}" href="{{ url('/siniestros/cotizaciones') }}">
-                    <span class="menu-icon"><i class="fas fa-file-image"></i></span>
-                    <span class="menu-text">Sólo cotizar</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('siniestros/peritos') ? 'active' : '' }}" href="{{ url('/siniestros/peritos') }}">
-                    <span class="menu-icon"><i class="fas fa-list-check"></i></span>
-                    <span class="menu-text">IP asignadas</span>
-                </a>
-
-                <a class="menu-link {{ Request::is('siniestros/peritosgestion') ? 'active' : '' }}" href="{{ url('/siniestros/peritosgestion') }}">
-                    <span class="menu-icon"><i class="fas fa-list-check"></i></span>
-                    <span class="menu-text">IP en gestión</span>
-                </a>
-            @endhasrole
-
-            {{-- Hojas de ruta --}}
-            @hasrole('Hojas de ruta')
-                <div class="menu-section-title mt-3">Hojas de ruta</div>
-
-                <a class="menu-link {{ Request::is('siniestros/derivaciones') ? 'active' : '' }}" href="{{ url('/siniestros/derivaciones') }}">
-                    <span class="menu-icon"><i class="fas fa-person-circle-check"></i></span>
-                    <span class="menu-text">Asignar inspecciones</span>
-                </a>
-            @endhasrole
-
-            <hr class="my-4" style="border-color: rgba(15, 23, 42, .08);">
-
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-success w-100 rounded-3" data-bs-dismiss="offcanvas">
-                    <i class="fas fa-times me-2"></i>
-                    Cerrar menú
-                </button>
+            @if(auth()->user()->canPlanInspectionRoutes() || auth()->user()->isRestrictedInspector())
+            <a href="{{ route('route-sheets.index') }}" class="{{ request()->routeIs('route-sheets.*') ? 'is-active' : '' }}"><i class="bi bi-map"></i> Hoja de ruta</a>
+            @endif
+            @if(auth()->user()->canManageInspectionPayments() || auth()->user()->isRestrictedInspector())
+            <a href="{{ route('inspection-payments.index') }}" class="{{ request()->routeIs('inspection-payments.*') ? 'is-active' : '' }}"><i class="bi bi-cash-stack"></i> {{ auth()->user()->canManageInspectionPayments() ? 'Honorarios' : 'Mis honorarios' }}</a>
+            @endif
+        </nav>
+        <div class="sidebar-account">
+            <hr class="sidebar-account-divider">
+            <div class="sidebar-user">
+                <div class="claims-avatar" aria-hidden="true">{{ collect(explode(' ', auth()->user()->name))->filter()->take(2)->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('') }}</div>
+                <span class="sidebar-user-name" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
             </div>
+            <form action="{{ route('logout') }}" method="POST" class="sidebar-logout-form">
+                @csrf
+                <button class="sidebar-logout" type="submit" title="Cerrar sesión"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Cerrar sesión</span></button>
+            </form>
         </div>
-    </div>
+    </aside>

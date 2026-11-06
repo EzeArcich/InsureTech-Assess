@@ -1,0 +1,183 @@
+:root {
+    // Shared colors
+    --color-mask: #000000;
+    // Brand and surfaces
+    --color-primary-rgb: 56, 105, 24;
+    --color-primary: #386918;
+    --color-text: #25391e;
+    --color-page: #f1f2ed;
+    --color-surface: #fcfbf7;
+    --color-border: #e6e6dc;
+    --color-shadow: #29391614;
+    // Navigation
+    --color-sidebar-start: #f1f3df;
+    --color-sidebar-end: #f9f7e9;
+    --color-sidebar-border: #eeeedf;
+    --color-brand: #214e23;
+    --color-brand-icon: #608f2f;
+    --color-nav-text: #354b34;
+    --color-nav-hover: #e8edce;
+    --color-nav-active: #dce7bc;
+    --color-nav-active-text: #285a24;
+    // Headings and search
+    --color-surface-highlight: #fffdfa;
+    --color-heading: #204419;
+    --color-text-muted: #667a50;
+    --color-search-border: #e8e8df;
+    --color-search-surface: #ffffffa6;
+    --color-search-icon: #6f8855;
+    --color-input-text: #34452c;
+    --color-icon: #557347;
+    // Avatar and primary actions
+    --color-avatar-start: #568d26;
+    --color-avatar-end: #326116;
+    --color-on-primary: #ffffff;
+    --color-avatar-shadow: #42632620;
+    --color-panel-border: #efeee5;
+    --color-panel-surface: #fffefa80;
+    --color-primary-border: #80a54c;
+    --color-primary-start: #64922e;
+    --color-primary-end: #386b17;
+    --color-primary-shadow: #47751b30;
+    // Tables and selection
+    --color-table-text: #343b2f;
+    --color-table-header: #f2f1e5;
+    --color-table-heading: #34432b;
+    --color-table-border: #efeee7;
+    --color-row-hover: #eff3e2;
+    --color-selection: #508024;
+    // Shared state palette
+    --color-orange: #ce6c18;
+    --color-orange-soft: #ffe0ae;
+    --color-gray: #62675c;
+    --color-gray-soft: #e5e6df;
+    --color-yellow: #9b7613;
+    --color-yellow-soft: #ffedac;
+    --color-blue: #276b9a;
+    --color-blue-soft: #c8e8fa;
+    --color-green: #42741e;
+    --color-green-soft: #d7edaf;
+    // Form controls and pagination
+    --color-label: #3d4933;
+    --color-input-border: #dedfce;
+    --color-input-surface: #fffefa;
+    --color-focus: #8eab65;
+    --color-focus-ring: #95b96120;
+    --color-pagination-text: #4f5846;
+    --color-pagination-border: #ececdd;
+    --color-pagination-link: #58713b;
+    --color-pagination-surface: #f8f8ee;
+    --color-pagination-active: #47771d;
+    --color-disabled-text: #a1a78c;
+    --color-disabled-surface: #f8f8ef;
+    // Decorative landscape
+    --color-land-sky: #faf8e9;
+    --color-land-horizon: #d7e3a2;
+    --color-land-hill-far: #c9d48c;
+    --color-land-hill-mid: #a9bb65;
+    --color-land-field-light: #a7bd52;
+    --color-land-field-dark: #466b29;
+    --color-land-hill-near: #73923d;
+    --color-land-shoulder: #c7c99a;
+    --color-land-road: #6b7972;
+    --color-land-marking: #f7efd3;
+    --color-land-tree: #375c2b;
+
+    // Semantic state aliases
+    --status-pending-text: var(--color-orange);
+    --status-pending-bg: var(--color-orange-soft);
+    --status-absent-text: var(--color-gray);
+    --status-absent-bg: var(--color-gray-soft);
+    --status-coordinated-text: var(--color-yellow);
+    --status-coordinated-bg: var(--color-yellow-soft);
+    --status-inspecting-text: var(--color-blue);
+    --status-inspecting-bg: var(--color-blue-soft);
+    --status-progress-text: var(--color-green);
+    --status-progress-bg: var(--color-green-soft);
+}
+
+.status-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 6px;
+    padding: 5px 9px;
+    line-height: 1.15;
+}
+
+.status-badge--pending {
+    color: var(--status-pending-text);
+    background: var(--status-pending-bg);
+}
+
+.status-badge--absent {
+    color: var(--status-absent-text);
+    background: var(--status-absent-bg);
+}
+
+.status-badge--coordinated {
+    color: var(--status-coordinated-text);
+    background: var(--status-coordinated-bg);
+}
+
+.status-badge--inspecting {
+    color: var(--status-inspecting-text);
+    background: var(--status-inspecting-bg);
+}
+
+.status-badge--progress {
+    color: var(--status-progress-text);
+    background: var(--status-progress-bg);
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    white-space: nowrap;
+}
+
+@each $color in (green, orange, blue, gray, yellow) {
+    .btn-palette-#{$color} {
+        --bs-btn-color: var(--color-#{$color});
+        --bs-btn-bg: var(--color-#{$color}-soft);
+        --bs-btn-border-color: var(--color-#{$color}-soft);
+        --bs-btn-hover-color: var(--color-on-primary);
+        --bs-btn-hover-bg: var(--color-#{$color});
+        --bs-btn-hover-border-color: var(--color-#{$color});
+        --bs-btn-active-color: var(--color-on-primary);
+        --bs-btn-active-bg: var(--color-#{$color});
+        --bs-btn-active-border-color: var(--color-#{$color});
+        --bs-btn-focus-shadow-rgb: var(--color-primary-rgb);
+    }
+}
+
+.role-badge {
+    display: inline-block;
+    padding: .4em .7em;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-heading);
+    background: var(--color-green-soft);
+}
+
+.claims-page .select2-container--default {
+    .select2-selection--multiple {
+        border-color: var(--color-border);
+        background: var(--color-surface);
+        min-height: 2.5rem;
+        .select2-selection__choice {
+            background: var(--color-green-soft);
+            color: var(--color-text);
+            border-color: var(--color-border);
+        }
+    }
+    &.select2-container--focus .select2-selection--multiple { border-color: var(--color-primary); }
+    .select2-results__option--highlighted[aria-selected] { background: var(--color-primary); color: var(--color-on-primary); }
+}
+
+.inspection-map { height: min(60vh, 560px); min-height: 320px; border: 1px solid var(--color-border); border-radius: .75rem; z-index: 0; }
+.inspection-map .leaflet-popup-content a { color: var(--color-primary); font-weight: 600; }

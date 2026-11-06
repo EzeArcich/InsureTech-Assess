@@ -23,11 +23,11 @@
                                 @foreach ($talleres as $taller)
                                     <tr>
                                         <td class="d-none">{{ $taller->id }}</td>
-                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->taller }}</td>
-                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->telefonos }}</td>
+                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->name }}</td>
+                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->phone }}</td>
                                         <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->email }}</td>
-                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->direccion }}</td>
-                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->localidad }}</td>
+                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->address }}</td>
+                                        <td onclick="selectedRow3(); tallerData('{{ $taller->id }}')">{{ $taller->city }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

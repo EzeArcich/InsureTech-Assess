@@ -1,26 +1,23 @@
 @extends('layouts.app')
+@section('page-title', 'Roles')
+@section('page-description', 'Administración de roles y permisos.')
+
+@section('header-tools')
+<label class="claims-global-search" for="claims-global-search"><i class="bi bi-search"></i><input id="claims-global-search" type="search" placeholder="Buscar en el listado…"></label>
+@endsection
 
 @section('content')
-<section class="section">
-    <div class="section-header">
-        <h3 class="page__heading">Roles</h3>
-    </div>
-
-    <div class="section-body">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-
-                        @hasrole('CEO')
-                            <a class="btn btn-primary" href="{{ route('roles.create') }}">Nuevo</a>
-                        @endhasrole
-
-                        <table class="table table-striped mt-2">
-                            <thead style="background: linear-gradient(to right, hsla(234, 94%, 39%, 0.977), #023cfb, hsl(213, 99%, 49%));">
+<x-table-panel>
+    <x-slot:actions>
+@hasrole('CEO')
+<a class="claims-create" href="{{ route('roles.create') }}"><i class="bi bi-plus-lg"></i> Nuevo rol</a>
+@endhasrole
+    </x-slot:actions>
+<table class="table align-middle w-100 app-data-table" data-standard-table>
+                            <thead>
                                 <tr>
-                                    <th style="color:#000;">Rol</th>
-                                    <th style="color:#000;">Acciones</th>
+                                    <th>Rol</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
 
@@ -29,37 +26,28 @@
                                     <tr>
                                         <td>{{ $role->name }}</td>
                                         <td>
+                                            <div class="table-actions">
                                             @hasrole('CEO')
-                                                <a class="btn btn-primary" href="{{ route('roles.edit', $role->id) }}">
+                                                <a class="btn btn-palette-blue btn-sm" href="{{ route('roles.edit', $role->id) }}">
                                                     Editar
                                                 </a>
                                             @endhasrole
 
                                             @hasrole('CEO')
                                                 <form action="{{ route('roles.destroy', $role->id) }}"
-                                                      method="POST"
-                                                      style="display:inline;">
+                                                      method="POST" class="m-0">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-palette-orange btn-sm">
                                                         Borrar
                                                     </button>
                                                 </form>
                                             @endhasrole
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
-                        <div class="d-flex justify-content-end">
-                            {{ $roles->links() }}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+</x-table-panel>
 @endsection

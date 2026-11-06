@@ -46,7 +46,7 @@ class fileController extends Controller
 
          File::create([
             'url' => $url,
-            'siniestro_id' => $siniestros->id
+            'claim_id' => $siniestros->id
             
         ]);
           
@@ -93,7 +93,7 @@ class fileController extends Controller
 
         File::create([
             'url' => $url,
-            'siniestro_id' =>  $siniestros['id'] ,
+            'claim_id' =>  $siniestros['id'] ,
             
         ]);
     }

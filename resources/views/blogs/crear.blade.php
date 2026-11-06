@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page-title', 'Noticias')
 
 @section('content')
     <section class="section">
@@ -28,15 +29,15 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
-                                   <label for="titulo">Título</label>
-                                   <input type="text" name="titulo" class="form-control">
+                                   <label for="title">Título</label>
+                                   <input type="text" name="title" class="form-control">
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                     
                                 <div class="form-floating">
-                                <textarea class="form-control" name="contenido" style="height: 100px"></textarea>
-                                <label for="contenido">Contenido</label>
+                                <textarea class="form-control" name="content" style="height: 100px"></textarea>
+                                <label for="content">Contenido</label>
                                 </div>
                             
                             <button type="submit" class="btn btn-primary">Guardar</button>                            

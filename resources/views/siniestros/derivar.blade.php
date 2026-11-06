@@ -20,14 +20,14 @@
             <nav aria-label="breadcrumb" class="mt-1">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/siniestros') }}" class="text-decoration-none">Siniestros</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('claims.index') }}" class="text-decoration-none">Siniestros</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Derivar</li>
                 </ol>
             </nav>
         </div>
 
         <div class="d-flex gap-2">
-            <span class="badge text-bg-primary">Total: {{ $cant_total }}</span>
+            <span class="badge text-bg-primary">Total: {{ $siniestros->count() }}</span>
         </div>
     </div>
 
@@ -42,46 +42,47 @@
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-info btn-sm position-relative">
-                            TH <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $cant_th }}</span>
+                            TH <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $siniestros->where('inspection_mode', 'presencial')->count() }}</span>
                         </button>
                         <button class="btn btn-info btn-sm position-relative">
-                            Foto <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $cant_foto }}</span>
+                            Foto <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $siniestros->where('inspection_mode', 'foto')->count() }}</span>
                         </button>
                         <button class="btn btn-info btn-sm position-relative">
-                            Foto/Pres. <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $cant_caba }}</span>
+                            Foto/Pres. <span class="badge text-bg-light position-absolute top-0 start-100 translate-middle rounded-pill">{{ $siniestros->where('inspection_mode', 'foto y presupuesto')->count() }}</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-sm table-hover align-middle mb-0 siniestros w-100">
+                    <table class="table align-middle w-100 app-data-table siniestros" data-standard-table data-duplicate-column="6">
                         <thead>
                             <tr>
                                 <th class="d-none">ID</th>
                                 <th>Siniestro</th>
+                        <th>Asegurado</th>
+                        <th>Inspector</th>
                                 <th>Fecha IP</th>
                                 <th>Modalidad</th>
                                 <th>Patente</th>
                                 <th>Domicilio</th>
                                 <th>Localidad</th>
-                                <th>Inspector</th>
-                            </tr>
+                                </tr>
                         </thead>
                         <tbody>
                             @foreach ($siniestros as $siniestro)
                                 <tr data-id="{{ $siniestro->id }}" class="pick-siniestro">
                                     <td class="d-none">{{ $siniestro->id }}</td>
-                                    <td class="fw-semibold">{{ $siniestro->siniestro }}</td>
-                                    <td>{{ $siniestro->fechaip }}</td>
+                                    <td class="fw-semibold">{{ $siniestro->claim_number }}</td>
+                            @include('siniestros.partials._person_links')
+                                    <td>{{ $siniestro->inspection_date }}</td>
                                     <td>
                                         <span class="badge text-bg-light border">
-                                            {{ $siniestro->modalidad }}
+                                            {{ $siniestro->inspection_mode }}
                                         </span>
                                     </td>
-                                    <td>{{ $siniestro->patente }}</td>
-                                    <td>{{ $siniestro->direccion }}</td>
-                                    <td>{{ $siniestro->localidad }}</td>
-                                    <td>{{ $siniestro->inspector ?? '-' }}</td>
+                                    <td>{{ $siniestro->license_plate }}</td>
+                                    <td>{{ $siniestro->address }}</td>
+                                    <td>{{ $siniestro->city }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -106,34 +107,34 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="siniestro" class="form-label">Siniestro</label>
-                            <input type="text" name="siniestro" id="siniestro" class="form-control">
+                            <label for="claim_number" class="form-label">Siniestro</label>
+                            <input type="text" name="claim_number" id="claim_number" class="form-control">
                         </div>
 
                         <div class="col-12">
-                            <label for="fechaip" class="form-label">Fecha de inspección</label>
-                            <input type="date" name="fechaip" id="fechaip" class="form-control">
+                            <label for="inspection_date" class="form-label">Fecha de inspección</label>
+                            <input type="date" name="inspection_date" id="inspection_date" class="form-control">
                         </div>
 
                         <div class="col-12">
-                            <label for="direccion" class="form-label">Dirección</label>
-                            <input type="text" name="direccion" id="direccion" class="form-control">
+                            <label for="address" class="form-label">Dirección</label>
+                            <input type="text" name="address" id="address" class="form-control">
                         </div>
 
                         <div class="col-12">
-                            <label for="localidad" class="form-label">Localidad</label>
-                            <input type="text" name="localidad" id="localidad" class="form-control">
+                            <label for="city" class="form-label">Localidad</label>
+                            <input type="text" name="city" id="city" class="form-control">
                         </div>
 
                         <div class="col-12">
-                            <label for="patente" class="form-label">Patente</label>
-                            <input type="text" name="patente" id="patente" class="form-control">
+                            <label for="license_plate" class="form-label">Patente</label>
+                            <input type="text" name="license_plate" id="license_plate" class="form-control">
                         </div>
 
                         <div class="col-12">
                             <label for="inspector" class="form-label">Inspector</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="inspector" name="inspector">
+                                <input type="number" class="form-control" id="inspector" name="inspector_id" readonly>
                                 <button class="btn btn-outline-primary"
                                         type="button"
                                         data-bs-toggle="modal"
@@ -148,7 +149,7 @@
                             <input type="text" name="email" id="email" class="form-control">
                         </div>
 
-                        <input type="hidden" name="estado" id="estado" value="Peritando">
+                        <input type="hidden" name="status" id="status" value="Peritando">
                         <input id="id" type="hidden">
 
                         <div class="col-12">
@@ -179,8 +180,7 @@
                         <thead>
                             <tr>
                                 <th class="d-none">ID</th>
-                                <th>Inspector</th>
-                                <th>E-mail</th>
+                                    <th>E-mail</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -208,24 +208,10 @@
 <script>
 $(function () {
     // DataTables
-    $('.siniestros').DataTable({
-        pageLength: 10,
-        pagingType: "simple",
-        lengthChange: false,
-        responsive: true,
-        processing: true,
-        rowCallback: function( row, data, index ) {
-            var allData = this.api().column(4).data().toArray();
-            if (allData.indexOf(data[4]) != allData.lastIndexOf(data[4])) {
-                $(row).css('background-color', '#E8DE3E');
-            }
-        }
-    });
-
     $('.inspectores').DataTable({
         pageLength: 10,
         pagingType: "simple",
-        lengthChange: false,
+        lengthChange: true,
         responsive: true,
         processing: true,
     });
@@ -255,14 +241,14 @@ function editData(id){
     $.ajax({
         type:"get",
         dataType:"json",
-        url:"/teacher/edit/"+id,
+        url:"/claims/" + id + "/data",
         success: function(data){
             $('#id').val(data.id);
-            $('#siniestro').val(data.siniestro);
-            $('#fechaip').val(data.fechaip);
-            $('#patente').val(data.patente);
-            $('#direccion').val(data.direccion);
-            $('#localidad').val(data.localidad);
+            $('#claim_number').val(data.claim_number);
+            $('#inspection_date').val(data.inspection_date);
+            $('#license_plate').val(data.license_plate);
+            $('#address').val(data.address);
+            $('#city').val(data.city);
             $('#email').val(data.email || '');
         }
     })
@@ -272,9 +258,9 @@ function userData(id){
     $.ajax({
         type:"get",
         dataType:"json",
-        url:"/teacher/users/"+id,
+        url:"/inspectors/" + id + "/data",
         success: function(data){
-            $('#inspector').val(data.name);
+            $('#inspector').val(data.id);
             $('#email').val(data.email);
         }
     })
@@ -283,14 +269,14 @@ function userData(id){
 function updateData(event){
     event.preventDefault();
     var id = $('#id').val();
-    var siniestro = $('#siniestro').val();
-    var fechaip = $('#fechaip').val();
+    var siniestro = $('#claim_number').val();
+    var fechaip = $('#inspection_date').val();
     var inspector = $('#inspector').val();
-    var localidad = $('#localidad').val();
-    var estado = $('#estado').val();
-    var direccion = $('#direccion').val();
+    var localidad = $('#city').val();
+    var estado = $('#status').val();
+    var direccion = $('#address').val();
     var email = $('#email').val(); 
-    var patente = $('#patente').val();
+    var patente = $('#license_plate').val();
 
     $.ajaxSetup({
         headers:{
@@ -302,10 +288,10 @@ function updateData(event){
         type: "PUT",
         dataType: "json",
         data: {
-            inspector:inspector, fechaip:fechaip, estado:estado, patente:patente, 
-            siniestro:siniestro, localidad:localidad, direccion:direccion, email:email
+            inspector_id:inspector, inspection_date:fechaip, status:estado, license_plate:patente,
+            claim_number:siniestro, city:localidad, address:direccion, email:email
         },
-        url: "/teacher/update/"+id,
+        url: "/claims/" + id + "/data",
         success: function(response){
             setTimeout(function() {
                 location.reload();
@@ -321,13 +307,13 @@ function updateData(event){
             
             // Limpiar formulario
             $('#id').val('');
-            $('#siniestro').val('');
-            $('#fechaip').val('');
+            $('#claim_number').val('');
+            $('#inspection_date').val('');
             $('#inspector').val('');
-            $('#localidad').val('');
-            $('#direccion').val('');
+            $('#city').val('');
+            $('#address').val('');
             $('#email').val('');
-            $('#patente').val('');
+            $('#license_plate').val('');
         }
     })
 }

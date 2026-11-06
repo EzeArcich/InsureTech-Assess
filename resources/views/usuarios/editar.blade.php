@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page-title', 'Usuarios')
 
 @section('content')
     <section class="section">
@@ -23,7 +24,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('usuarios.update', $user->id) }}" method="POST">
+                        <form action="{{ route('users.update', $user->id) }}" method="POST">
                             @csrf
                             @method('PATCH')
 

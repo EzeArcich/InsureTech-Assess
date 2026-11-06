@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page-title', 'Talleres')
 
 @section('content')
 <section class="py-2">
@@ -10,14 +11,14 @@
             <nav aria-label="breadcrumb" class="mt-1">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('talleres.index') }}" class="text-decoration-none">Talleres</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('workshops.index') }}" class="text-decoration-none">Talleres</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Crear</li>
                 </ol>
             </nav>
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('talleres.index') }}" class="btn btn-light border btn-sm rounded-3">
+            <a href="{{ route('workshops.index') }}" class="btn btn-light border btn-sm rounded-3">
                 <i class="fas fa-arrow-left me-2"></i> Volver
             </a>
         </div>
@@ -35,7 +36,7 @@
         </div>
     @endif
 
-    <form action="{{ route('talleres.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('workshops.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- Panel 1: Datos del taller --}}
@@ -51,38 +52,38 @@
             <div class="row g-3">
 
                 <div class="col-12 col-md-4">
-                    <label for="taller" class="form-label">Nombre del taller</label>
-                    <input type="text" name="taller" id="taller" class="form-control" value="{{ old('taller') }}">
+                    <label for="name" class="form-label">Nombre del taller</label>
+                    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="razon" class="form-label">Razón social</label>
-                    <input type="text" name="razon" id="razon" class="form-control" value="{{ old('razon') }}">
+                    <label for="business_name" class="form-label">Razón social</label>
+                    <input type="text" name="business_name" id="business_name" class="form-control" value="{{ old('business_name') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="cuit" class="form-label">CUIT</label>
-                    <input type="text" name="cuit" id="cuit" class="form-control" value="{{ old('cuit') }}">
+                    <label for="tax_id" class="form-label">CUIT</label>
+                    <input type="text" name="tax_id" id="tax_id" class="form-control" value="{{ old('tax_id') }}">
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="direccion" class="form-label">Dirección</label>
-                    <input type="text" name="direccion" id="direccion" class="form-control" value="{{ old('direccion') }}">
+                    <label for="address" class="form-label">Dirección</label>
+                    <input type="text" name="address" id="address" class="form-control" value="{{ old('address') }}">
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="barrio" class="form-label">Barrio</label>
-                    <input type="text" name="barrio" id="barrio" class="form-control" value="{{ old('barrio') }}">
+                    <label for="neighborhood" class="form-label">Barrio</label>
+                    <input type="text" name="neighborhood" id="neighborhood" class="form-control" value="{{ old('neighborhood') }}">
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="localidad" class="form-label">Localidad</label>
-                    <input type="text" name="localidad" id="localidad" class="form-control" value="{{ old('localidad') }}">
+                    <label for="city" class="form-label">Localidad</label>
+                    <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}">
                 </div>
 
                 <div class="col-12">
-                    <label for="telefonos" class="form-label">Teléfonos</label>
-                    <input type="text" name="telefonos" id="telefonos" class="form-control" value="{{ old('telefonos') }}">
+                    <label for="phone" class="form-label">Teléfonos</label>
+                    <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}">
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -91,8 +92,8 @@
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="zona" class="form-label">Zona</label>
-                    <input type="text" name="zona" id="zona" class="form-control" value="{{ old('zona') }}">
+                    <label for="area" class="form-label">Zona</label>
+                    <input type="text" name="area" id="area" class="form-control" value="{{ old('area') }}">
                 </div>
 
             </div>
@@ -111,33 +112,33 @@
             <div class="row g-3">
 
                 <div class="col-12 col-md-4">
-                    <label for="grua" class="form-label">Grúa</label>
-                    <input type="text" name="grua" id="grua" class="form-control" value="{{ old('grua') }}">
+                    <label for="towing" class="form-label">Grúa</label>
+                    <input type="text" name="towing" id="towing" class="form-control" value="{{ old('towing') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="traslado" class="form-label">Traslado</label>
-                    <input type="text" name="traslado" id="traslado" class="form-control" value="{{ old('traslado') }}">
+                    <label for="transport" class="form-label">Traslado</label>
+                    <input type="text" name="transport" id="transport" class="form-control" value="{{ old('transport') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="granizo" class="form-label">Granizo</label>
-                    <input type="text" name="granizo" id="granizo" class="form-control" value="{{ old('granizo') }}">
+                    <label for="hail" class="form-label">Granizo</label>
+                    <input type="text" name="hail" id="hail" class="form-control" value="{{ old('hail') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="ponerep" class="form-label">Pone repuestos</label>
-                    <input type="text" name="ponerep" id="ponerep" class="form-control" value="{{ old('ponerep') }}">
+                    <label for="repair_availability" class="form-label">Pone repuestos</label>
+                    <input type="text" name="repair_availability" id="repair_availability" class="form-control" value="{{ old('repair_availability') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="vacaciones" class="form-label">Vacaciones</label>
-                    <input type="text" name="vacaciones" id="vacaciones" class="form-control" value="{{ old('vacaciones') }}">
+                    <label for="holidays" class="form-label">Vacaciones</label>
+                    <input type="text" name="holidays" id="holidays" class="form-control" value="{{ old('holidays') }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="descfranq" class="form-label">Descuento de franquicia</label>
-                    <input type="text" name="descfranq" id="descfranq" class="form-control" value="{{ old('descfranq') }}">
+                    <label for="deductible_discount" class="form-label">Descuento de franquicia</label>
+                    <input type="text" name="deductible_discount" id="deductible_discount" class="form-control" value="{{ old('deductible_discount') }}">
                 </div>
 
             </div>
@@ -150,12 +151,12 @@
                 Crear taller
             </button>
 
-            <a href="{{ route('talleres.index') }}" class="btn btn-outline-secondary px-4">
+            <a href="{{ route('workshops.index') }}" class="btn btn-outline-secondary px-4">
                 <i class="fas fa-times me-2"></i>
                 Cancelar
             </a>
         </div>
 
-    </form>
+    <div class="mb-3"><input type="hidden" name="is_approved" value="0"><label><input type="checkbox" name="is_approved" value="1" @checked(old('is_approved', false))> Taller homologado</label></div><div class="mb-3"><label class="form-label">Horarios</label><textarea name="opening_hours" class="form-control">{{ old('opening_hours', '') }}</textarea></div></form>
 </section>
 @endsection

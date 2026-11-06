@@ -30,16 +30,16 @@ class CoordinacionesController extends Controller
          
          $siniestro = Siniestro::paginate(1000);
 
-         $this->siniestro = $siniestro;
+         $this->claim_number = $siniestro;
          
         
-        // $email = $this->siniestro['mailperito'];
+        // $email = $this->claim_number['mailperito'];
         
 
         $correo = new ContactanosMailable($request->all());
         Mail::to('test-oomo0v99w@srv1.mail-tester.com')->send($correo);
 
-        return redirect()->route('siniestros.index');
+        return redirect()->route('claims.index');
 
         
     }
@@ -49,10 +49,10 @@ class CoordinacionesController extends Controller
          
         $siniestro = Siniestro::paginate(1000);
 
-        $this->siniestro = $siniestro;
+        $this->claim_number = $siniestro;
         
        
-    //    $email = $this->siniestro['mailPAS'];
+    //    $email = $this->claim_number['mailPAS'];
 
        
        
@@ -60,20 +60,20 @@ class CoordinacionesController extends Controller
        $correo = new ContactanosMailable($request->all());
        Mail::to('test-oomo0v99w@srv1.mail-tester.com')->send($correo);
 
-       return redirect()->route('siniestros.index');
+       return redirect()->route('claims.index');
 
        
    }
 
     public function correo(Request $request){ // Request $request
 
-        $siniestro = $request->siniestro;
+        $siniestro = $request->claim_number;
         $cc = $request->cc;
         $cc2 = $request->cc2;
-        $nrocorto = $request->nrocorto;
+        $nrocorto = $request->short_number;
         $email = $request->emailPas;
-        $patente = $request->patente;
-        $usuario = $request->coordinador;
+        $patente = $request->license_plate;
+        $usuario = $request->coordinator;
         $file = $request->file;
 
         $asunto = "Estudio InsureTech Assess  - Siniestro: $siniestro- Patente: $patente - $nrocorto";
@@ -164,25 +164,25 @@ class CoordinacionesController extends Controller
 
         public function correoEdu(Request $request){ // Request $request
 
-            $siniestro = $request->siniestro;
+            $siniestro = $request->claim_number;
             $email = $request->email;
-            $patente = $request->patente;
-            $fechaip = $request->fechaip;
-            $nrocorto = $request->nrocorto;
-            $comentariosparaip = $request->comentariosparaip;
-            $telefono = $request->telefono;
-            $localidad = $request->localidad;
-            $direccion = $request->direccion;
-            $modalidad = $request->modalidad;
-            $imagen = $request->imagen;
+            $patente = $request->license_plate;
+            $fechaip = $request->inspection_date;
+            $nrocorto = $request->short_number;
+            $comentariosparaip = $request->inspector_notes;
+            $telefono = $request->phone;
+            $localidad = $request->city;
+            $direccion = $request->address;
+            $modalidad = $request->inspection_mode;
+            $imagen = $request->image;
             $link = $request->link;
-            $lugar = $request->lugar;
-            // $nombretaller = $request->nombretaller;
-            $motivo = $request->motivo;
-            $horario = $request->horario;
-            $cliente = $request->cliente;
-            $enviarorden = $request->enviarorden;
-            $contacto = $request->contacto;
+            $lugar = $request->location;
+            // $nombretaller = $request->workshop_name;
+            $motivo = $request->reason;
+            $horario = $request->inspection_time;
+            $cliente = $request->client_type;
+            $enviarorden = $request->send_order;
+            $contacto = $request->contact;
     
             $asunto = "Inspeccion - Siniestro: $siniestro- Patente: $patente $nrocorto // $fechaip";
     
@@ -357,7 +357,7 @@ class CoordinacionesController extends Controller
             $mail->isHTML(true);
             $mail->Subject = $asunto;
             $mail->Body = $cuerpodelmail;
-            // $mail->AddEmbeddedImage($imagen, 'imagen');
+            // $mail->AddEmbeddedImage($imagen, 'image');
             $dt = $mail->Send();
     
                     if($dt){

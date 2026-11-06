@@ -22,14 +22,14 @@
             <nav aria-label="breadcrumb" class="mt-1">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/siniestros') }}" class="text-decoration-none">Siniestros</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('claims.index') }}" class="text-decoration-none">Siniestros</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Crear</li>
                 </ol>
             </nav>
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ url('/siniestros') }}" class="btn btn-light border btn-sm rounded-3">
+            <a href="{{ route('claims.index') }}" class="btn btn-light border btn-sm rounded-3">
                 <i class="fas fa-arrow-left me-2"></i> Volver
             </a>
         </div>
@@ -47,7 +47,7 @@
         </div>
     @endif
 
-    <form action="{{ route('siniestros.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('claims.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- Panel 1: Datos del siniestro --}}
@@ -69,35 +69,49 @@
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="siniestro" class="form-label">Siniestro</label>
-                    <input type="text" name="siniestro" id="siniestro" class="form-control"
-                           value="{{ $siniestro->siniestro ?? '' }}">
+                    <label for="claim_number" class="form-label">Siniestro</label>
+                    <input type="text" name="claim_number" id="claim_number" class="form-control"
+                           value="{{ $siniestro->claim_number ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="patente" class="form-label">Patente</label>
-                    <input type="text" name="patente" id="patente" class="form-control"
-                           value="{{ $siniestro->patente ?? '' }}">
+                    <label for="license_plate" class="form-label">Patente</label>
+                    <input type="text" name="license_plate" id="license_plate" class="form-control"
+                           value="{{ $siniestro->license_plate ?? '' }}">
                     <div id="error_patente" class="form-text"></div>
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="compania" class="form-label">Compañía</label>
-                    <input type="text" name="compania" id="compania" class="form-control"
-                           value="{{ $siniestro->compania ?? '' }}">
+                    <label for="company_id" class="form-label">Compañía</label>
+                    <select name="company_id" id="company_id" class="form-select" required>
+                        <option value="">Seleccionar compañía...</option>
+                        @foreach($companies as $company)
+                            <option value="{{ $company->id }}" @selected(old('company_id', $siniestro->company_id) == $company->id)>{{ $company->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="nrocorto" class="form-label">Nro. corto</label>
-                    <input type="text" name="nrocorto" id="nrocorto" class="form-control"
-                           value="{{ $siniestro->nrocorto ?? '' }}">
+                    <label for="short_number" class="form-label">Nro. corto</label>
+                    <input type="text" name="short_number" id="short_number" class="form-control"
+                           value="{{ $siniestro->short_number ?? '' }}">
                 </div>
 
+                <div class="col-md-6">
+                    <label for="client_name" class="form-label">Nombre del asegurado</label>
+                    <input type="text" name="client_name" id="client_name" class="form-control" required
+                           value="{{ old('client_name', $siniestro->client_name) }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="client_email" class="form-label">Email del asegurado</label>
+                    <input type="email" name="client_email" id="client_email" class="form-control"
+                           value="{{ old('client_email', $siniestro->client?->email) }}">
+                </div>
                 <div class="col-12 col-md-3">
-                    <label for="cliente" class="form-label">Cliente</label>
-                    <select class="form-select" id="cliente" name="cliente">
-                        <option value="{{ $siniestro->cliente ?? '' }}" selected>
-                            {{ $siniestro->cliente ?? 'Seleccionar...' }}
+                    <label for="client_type" class="form-label">Tipo de cliente</label>
+                    <select class="form-select" id="client_type" name="client_type">
+                        <option value="{{ $siniestro->client_type ?? '' }}" selected>
+                            {{ $siniestro->client_type ?? 'Seleccionar...' }}
                         </option>
                         <option value="Asegurado">Asegurado</option>
                         <option value="Tercero">Tercero</option>
@@ -106,10 +120,10 @@
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="motivo" class="form-label">Motivo</label>
-                    <select class="form-select" id="motivo" name="motivo">
-                        <option value="{{ $siniestro->motivo ?? '' }}" selected>
-                            {{ $siniestro->motivo ?? 'Seleccionar...' }}
+                    <label for="reason" class="form-label">Motivo</label>
+                    <select class="form-select" id="reason" name="reason">
+                        <option value="{{ $siniestro->reason ?? '' }}" selected>
+                            {{ $siniestro->reason ?? 'Seleccionar...' }}
                         </option>
                         <option value="Todo riesgo">Todo riesgo</option>
                         <option value="ampliacion">Ampliación</option>
@@ -123,10 +137,11 @@
 
                 {{-- Productor --}}
                 <div class="col-12 col-md-6">
-                    <label for="nombre" class="form-label">Productor</label>
+                    <label for="producer_name" class="form-label">Productor</label>
                     <div class="input-group">
-                        <input type="text" class="form-control name" id="nombre" name="nombre"
-                               value="{{ $siniestro->nombre ?? '' }}">
+                        <input type="hidden" name="producer_id" id="producer_id" value="{{ $siniestro->producer_id }}">
+                        <input type="text" class="form-control name" id="producer_name" name="producer_name"
+                               value="{{ $siniestro->producer_name ?? '' }}">
                         <button class="btn btn-outline-primary"
                                 type="button"
                                 data-bs-toggle="modal"
@@ -138,8 +153,8 @@
 
                 <div class="col-12 col-md-6">
                     <label for="emailPas" class="form-label">Email del PAS</label>
-                    <input type="text" name="correo" class="form-control" id="emailPas"
-                           value="{{ $siniestro->correo ?? '' }}">
+                    <input type="text" name="producer_email" class="form-control" id="emailPas"
+                           value="{{ $siniestro->producer_email ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -178,16 +193,16 @@
             <div class="row g-3">
 
                 <div class="col-12">
-                    <label for="observaciones" class="form-label">Observaciones</label>
-                    <textarea class="form-control" name="observaciones" id="observaciones" rows="3">{{ $siniestro->observaciones ?? '' }}</textarea>
+                    <label for="notes" class="form-label">Observaciones</label>
+                    <textarea class="form-control" name="notes" id="notes" rows="3">{{ $siniestro->notes ?? '' }}</textarea>
                 </div>
 
                 {{-- Taller --}}
                 <div class="col-12 col-md-6">
-                    <label for="nombretaller" class="form-label">Nombre del taller</label>
+                    <label for="workshop_name" class="form-label">Nombre del taller</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="nombretaller" name="nombretaller"
-                               value="{{ $siniestro->nombretaller ?? '' }}">
+                        <input type="text" class="form-control" id="workshop_name" name="workshop_name"
+                               value="{{ $siniestro->workshop_name ?? '' }}">
                         <button class="btn btn-outline-primary"
                                 type="button"
                                 data-bs-toggle="modal"
@@ -204,31 +219,31 @@
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" name="telefono" class="form-control" id="telefono"
-                           value="{{ $siniestro->telefono ?? '' }}">
+                    <label for="phone" class="form-label">Teléfono</label>
+                    <input type="text" name="phone" class="form-control" id="phone"
+                           value="{{ $siniestro->phone ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="direccion" class="form-label">Dirección</label>
-                    <input type="text" name="direccion" class="form-control" id="direccion"
-                           value="{{ $siniestro->direccion ?? '' }}">
+                    <label for="address" class="form-label">Dirección</label>
+                    <input type="text" name="address" class="form-control" id="address"
+                           value="{{ $siniestro->address ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="localidad" class="form-label">Localidad</label>
-                    <input type="text" name="localidad" class="form-control" id="localidad"
-                           value="{{ $siniestro->localidad ?? '' }}">
+                    <label for="city" class="form-label">Localidad</label>
+                    <input type="text" name="city" class="form-control" id="city"
+                           value="{{ $siniestro->city ?? '' }}">
                 </div>
 
                 {{-- Coordinador hidden --}}
-                <input type="hidden" name="coordinador" id="coordinador" value="{{ auth()->user()->name }}">
+                <input type="hidden" name="coordinator" id="coordinator" value="{{ auth()->user()->name }}">
 
                 <div class="col-12 col-md-4">
-                    <label for="modalidad" class="form-label">Tipo de inspección</label>
-                    <select class="form-select" id="modalidad" name="modalidad">
-                        <option value="{{ $siniestro->modalidad ?? '' }}" selected>
-                            {{ $siniestro->modalidad ?? 'Seleccionar...' }}
+                    <label for="inspection_mode" class="form-label">Tipo de inspección</label>
+                    <select class="form-select" id="inspection_mode" name="inspection_mode">
+                        <option value="{{ $siniestro->inspection_mode ?? '' }}" selected>
+                            {{ $siniestro->inspection_mode ?? 'Seleccionar...' }}
                         </option>
                         <option value="presencial">Presencial</option>
                         <option value="videollamada">Videollamada</option>
@@ -238,8 +253,8 @@
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="estado" class="form-label">Estado</label>
-                    <select class="form-select" id="estado" name="estado">
+                    <label for="status" class="form-label">Estado</label>
+                    <select class="form-select" id="status" name="status">
                         <option value="Pendiente" selected>Pendiente</option>
                         <option value="Coordinado">Coordinado</option>
                         <option value="Ausente">Ausente</option>
@@ -254,33 +269,33 @@
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="fechaip" class="form-label">Fecha IP</label>
-                    <input type="date" name="fechaip" class="form-control" id="fechaip"
-                           value="{{ $siniestro->fechaip ?? '' }}">
+                    <label for="inspection_date" class="form-label">Fecha IP</label>
+                    <input type="date" name="inspection_date" class="form-control" id="inspection_date"
+                           value="{{ $siniestro->inspection_date?->format('Y-m-d') ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="enviarorden" class="form-label">Enviar orden</label>
-                    <select class="form-select" id="enviarorden" name="enviarorden">
+                    <label for="send_order" class="form-label">Enviar orden</label>
+                    <select class="form-select" id="send_order" name="send_order">
                         <option value="si" selected>Si</option>
                         <option value="no">No</option>
                     </select>
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="horario" class="form-label">Rango horario</label>
-                    <input type="text" name="horario" class="form-control" id="horario"
-                           value="{{ $siniestro->horario ?? '' }}">
+                    <label for="inspection_time" class="form-label">Rango horario</label>
+                    <input type="text" name="inspection_time" class="form-control" id="inspection_time"
+                           value="{{ $siniestro->inspection_time ?? '' }}">
                 </div>
 
                 <div class="col-12 col-md-4">
-                    <label for="imagen" class="form-label">Cover</label>
-                    <input type="file" name="imagen" class="form-control">
+                    <label for="image" class="form-label">Cover</label>
+                    <input type="file" name="image" class="form-control">
                 </div>
 
                 <div class="col-12">
-                    <label for="comentariosparaip" class="form-label">Comentarios para el perito</label>
-                    <textarea class="form-control" name="comentariosparaip" id="comentariosparaip" rows="3">{{ $siniestro->comentariosparaip ?? '' }}</textarea>
+                    <label for="inspector_notes" class="form-label">Comentarios para el perito</label>
+                    <textarea class="form-control" name="inspector_notes" id="inspector_notes" rows="3">{{ $siniestro->inspector_notes ?? '' }}</textarea>
                 </div>
 
                 <input id="id" type="hidden" value="{{ $siniestro->id ?? '' }}">
@@ -328,9 +343,9 @@
                             @foreach ($productores as $productor)
                                 <tr data-id="{{ $productor->id }}" class="pick-productor">
                                     <td class="d-none">{{ $productor->id }}</td>
-                                    <td>{{ $productor->nombre }}</td>
-                                    <td>{{ $productor->telefono }}</td>
-                                    <td>{{ $productor->correo }}</td>
+                                    <td>{{ $productor->name }}</td>
+                                    <td>{{ $productor->phone }}</td>
+                                    <td>{{ $productor->email }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -369,9 +384,9 @@
                             @foreach ($talleres as $taller)
                                 <tr data-id="{{ $taller->id }}" class="pick-taller">
                                     <td class="d-none">{{ $taller->id }}</td>
-                                    <td>{{ $taller->taller }}</td>
-                                    <td>{{ $taller->localidad }}</td>
-                                    <td>{{ $taller->direccion }}</td>
+                                    <td>{{ $taller->name }}</td>
+                                    <td>{{ $taller->city }}</td>
+                                    <td>{{ $taller->address }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -392,21 +407,21 @@
 <script>
 $(function () {
     // Check patente
-    $('#patente').on('blur', function(){
+    $('#license_plate').on('blur', function(){
         const patente = $(this).val();
         const _token = $('meta[name="csrf-token"]').attr('content');
 
         $.ajax({
-            url: "{{ route('siniestros.check') }}",
+            url: "{{ route('claims.check') }}",
             method: "POST",
-            data: { patente, _token },
+            data: { license_plate: patente, _token },
             success: function(result) {
                 if (result === 'unique') {
                     $('#error_patente').html('<span class="badge text-bg-success">Primer siniestro con esta patente</span>');
-                    $('#patente').removeClass('is-invalid').addClass('is-valid');
+                    $('#license_plate').removeClass('is-invalid').addClass('is-valid');
                 } else {
                     $('#error_patente').html('<span class="badge text-bg-warning">Ya existe un siniestro con esta patente</span>');
-                    $('#patente').removeClass('is-valid').addClass('is-invalid');
+                    $('#license_plate').removeClass('is-valid').addClass('is-invalid');
                 }
             }
         });
@@ -416,7 +431,7 @@ $(function () {
     $('.productores').DataTable({
         pageLength: 15,
         pagingType: "simple",
-        lengthChange: false,
+        lengthChange: true,
         responsive: true,
         processing: true,
     });
@@ -424,7 +439,7 @@ $(function () {
     $('.talleres').DataTable({
         pageLength: 10,
         pagingType: "simple",
-        lengthChange: false,
+        lengthChange: true,
         responsive: true,
         processing: true,
     });
@@ -455,10 +470,11 @@ function productorData(id){
     $.ajax({
         type:"get",
         dataType:"json",
-        url:"/teacher/productores/"+id,
+        url:"/producers/" + id + "/data",
         success: function(data){
-            $('#nombre').val(data.nombre);
-            $('#emailPas').val(data.correo);
+            $('#producer_id').val(data.id);
+            $('#producer_name').val(data.name);
+            $('#emailPas').val(data.email);
         }
     })
 }
@@ -467,13 +483,10 @@ function tallerData(id){
     $.ajax({
         type:"get",
         dataType:"json",
-        url:"/teacher/taller/"+id,
+        url:"/workshops/" + id + "/data",
         success: function(data){
-            $('#nombretaller').val(data.taller);
-            $('#telefono').val(data.telefonos);
+            $('#workshop_name').val(data.name);
             $('#email').val(data.email);
-            $('#direccion').val(data.direccion);
-            $('#localidad').val(data.localidad);
         }
     })
 }
@@ -481,13 +494,13 @@ function tallerData(id){
 function Correo(event){
     event.preventDefault();
 
-    const siniestro   = $('#siniestro').val();
+    const siniestro   = $('#claim_number').val();
     const emailPas    = $('#emailPas').val();
-    const coordinador = $('#coordinador').val();
-    const patente     = $('#patente').val();
+    const coordinador = $('#coordinator').val();
+    const patente     = $('#license_plate').val();
     const cc          = $('#cc').val();
     const cc2         = $('#cc2').val();
-    const nrocorto    = $('#nrocorto').val();
+    const nrocorto    = $('#short_number').val();
 
     $.ajaxSetup({
         headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
@@ -495,8 +508,8 @@ function Correo(event){
 
     $.ajax({
         type: "POST",
-        data: { siniestro, emailPas, patente, coordinador, cc, cc2, nrocorto },
-        url: "/correo",
+        data: { claim_number: siniestro, emailPas, license_plate: patente, coordinator: coordinador, cc, cc2, short_number: nrocorto },
+        url: "/coordination/emails",
         success: function(){
             Swal.fire({
                 icon: 'success',

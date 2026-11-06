@@ -2,37 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Wildside\Userstamps\Userstamps;
-use App\Models\File;
-use App\Models\User;
+use Database\Factories\ClaimFactory;
 
-
-
-class Siniestro extends Model
+class Siniestro extends Claim
 {
-    use HasFactory;
-    use Userstamps;
-   
-    // protected $fillable = ['created_by', 'lugar', 'enviado', 'nrocorto', 'nombretaller', 'imagen', 'url_siniestro', 'telefonoperito', 'emailperito', 'file', 'updated_by', 'deleted_by', 'siniestro', 'patente', 'cliente', 'fechaip', 'estado', 'modalidad',
-    // 'observaciones', 'fechacierre', 'compania', 'asignado_a', 'contacto', 'codigoinspeccion', 'inspector', 'direccion', 'localidad', 'telefono', 'motivo', 'link', 'enviarorden', 'email'];
-     protected $guarded = ['siniestro_id'];
+    protected $table = 'claims';
 
-   
-
-   public function files()
-   {
-       return $this->hasMany('App\models\File');
-   }
-
-   public function User()
+    protected static function newFactory(): ClaimFactory
     {
-        return $this->BelongsTo('App\models\User');
+        return ClaimFactory::new()->model(static::class);
     }
-
-
 }
-
-    
-

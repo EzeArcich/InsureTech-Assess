@@ -27,7 +27,7 @@ class RolController extends Controller
     public function index(Request $request)
     {        
          //Con paginación
-         $roles = Role::paginate(5);
+         $roles = Role::orderBy('id')->get();
          return view('roles.index',compact('roles'));
          //al usar esta paginacion, recordar poner en el el index.blade.php este codigo  {!! $roles->links() !!} 
     }

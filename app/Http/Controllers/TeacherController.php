@@ -19,43 +19,16 @@ class TeacherController extends Controller
 
      //------------allData-------------
      public function allUser(){
-         $data = User::orderBy('fechaip','DESC')->get();
+         $data = User::orderBy('name')->get();
         
          return response()->json($data);
      }
 
     //-----------storeData------------
 
-    public function storeData(Request $request){
-        $request->validate([
-            // 'siniestro' => 'required',
-            // 'fechaip' => 'required',
-            // 'institute' => 'required',
-        ]);
-
-
-        $data = Siniestro::insert([
-            'siniestro' => $request->siniestro,
-             'link' => $request->link,
-             'patente' => $request->patente,
-             'cliente' => $request->cliente,
-             'fechaip' => $request->fechaip,
-             'estado' => $request->estado,
-             'modalidad' => $request->modalidad,
-             'lugar' => $request->lugar,
-             'direccion' => $request->direccion,
-             'nombredeltaller' => $request->nombredeltaller,
-             'telefono' => $request->telefono,
-             'localidad' => $request->localidad,
-             'email' => $request->email,
-             'motivo' => $request->motivo,
-             'enviarorden' => $request->enviarorden,
-             'observaciones' => $request->observaciones,
-             'comentariosparaip' => $request->comentariosparaip,
-            
-        ]);
-
-        return response()->json($data);
+    public function storeData(\App\Http\Requests\SaveClaimRequest $request, \App\Services\SaveClaim $saveClaim)
+    {
+        return response()->json($saveClaim->handle($request->validated()));
     }
 
      public function editData($id){

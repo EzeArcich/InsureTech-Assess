@@ -1,11 +1,11 @@
 <h1>dejanos un mensaje</h1>
 
-<form action="{{route('contactanos.store')}}" method="POST">
+<form action="{{route('coordination.contact.store')}}" method="POST">
 @csrf
 <label for="">
     Nombre:
     <br>
-    <input type="text" name="localidad">
+    <input type="text" name="city">
 </label>
 <br>
 
@@ -16,18 +16,18 @@
 <label for="">
     Correo:
     <br>
-    <input type="text" name="patente">
+    <input type="text" name="license_plate">
 </label>
 <br>
 
-@error('correo')
+@error('email')
     <p><strong>{{$message}}</strong></p>
 @enderror
 
 <label for="">
     Mensaje:
     <br>
-    <textarea name="observaciones"  rows="4"></textarea>
+    <textarea name="notes"  rows="4"></textarea>
 </label>
 <br>
 

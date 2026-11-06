@@ -1,44 +1,41 @@
 @extends('layouts.app')
+@section('page-title', 'Noticias')
+@section('page-description', 'Listado de noticias y publicaciones.')
+
+@section('header-tools')
+<label class="claims-global-search" for="claims-global-search"><i class="bi bi-search"></i><input id="claims-global-search" type="search" placeholder="Buscar en el listado…"></label>
+@endsection
 
 @section('content')
-    <section class="section">
-        <div class="section-header">
-            <h3 class="page__heading">Noticias</h3>
-        </div>
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                
-            
-                        @can('crear-blog')
-                        <a class="btn btn-primary" href="{{ route('blogs.create') }}">Nuevo</a>
-                        @endcan
-            
-                        <table class="table table-striped mt-2">
-                                <thead style="background-color:background:linear-gradient(to right, hsla(234, 94%, 39%, 0.977), #023cfb,hsl(213, 99%, 49%))">                                     
-                                    <th style="display: none;">ID</th>
-                                    <th style="color:#fff;">Titulo</th>
-                                    <th style="color:#fff;">Contenido</th>                                    
-                                    <th style="color:#fff;">Acciones</th>                                                                   
-                              </thead>
+<x-table-panel>
+    <x-slot:actions>
+@can('crear-blog')
+<a class="claims-create" href="{{ route('blogs.create') }}"><i class="bi bi-plus-lg"></i> Nueva noticia</a>
+@endcan
+    </x-slot:actions>
+<table class="table align-middle w-100 app-data-table" data-standard-table>
+                                <thead>
+                                    <tr><th class="d-none">ID</th>
+                                    <th>Titulo</th>
+                                    <th>Contenido</th>
+                                    <th>Acciones</th>
+                              </tr></thead>
                               <tbody>
                             @foreach ($blogs as $blog)
                             <tr>
-                                <td style="display: none;">{{ $blog->id }}</td>                                
-                                <td>{{ $blog->titulo }}</td>
-                                <td>{{ $blog->contenido }}</td>
+                                <td class="d-none">{{ $blog->id }}</td>
+                                <td>{{ $blog->title }}</td>
+                                <td>{{ $blog->content }}</td>
                                 <td>
-                                    <form action="{{ route('blogs.destroy',$blog->id) }}" method="POST">                                        
+                                    <form action="{{ route('blogs.destroy',$blog->id) }}" method="POST" class="table-actions m-0">
                                         @can('editar-blog')
-                                        <a class="btn btn-info" href="{{ route('blogs.edit',$blog->id) }}">Editar</a>
+                                        <a class="btn btn-palette-blue btn-sm" href="{{ route('blogs.edit',$blog->id) }}">Editar</a>
                                         @endcan
 
                                         @csrf
                                         @method('DELETE')
                                         @can('borrar-blog')
-                                        <button type="submit" class="btn btn-danger">Borrar</button>
+                                        <button type="submit" class="btn btn-palette-orange btn-sm">Borrar</button>
                                         @endcan
                                     </form>
                                 </td>
@@ -46,15 +43,5 @@
                             @endforeach
                             </tbody>
                         </table>
-
-                        <!-- Ubicamos la paginacion a la derecha -->
-                        <div class="pagination justify-content-end">
-                            {!! $blogs->links() !!}
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+</x-table-panel>
 @endsection

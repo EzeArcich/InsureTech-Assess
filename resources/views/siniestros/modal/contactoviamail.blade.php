@@ -1,4 +1,4 @@
-<form action="{{route('correo')}}" method="post" enctype="multipart/form-data">
+<form action="{{route('coordination.emails.store')}}" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="modal fade text-left" id="ModalContactoViaMail" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -16,8 +16,8 @@
                     <hr>
                             <div class="col-xs-4 col-sm-4 col-md-4">
                                 <div class="form-group">
-                                   <label for="siniestro">Siniestro</label>
-                                   <input type="text" name="siniestro" id="siniestro" class="form-control" value="{{ $siniestro->siniestro }}">
+                                   <label for="claim_number">Siniestro</label>
+                                   <input type="text" name="claim_number" id="claim_number" class="form-control" value="{{ $siniestro->claim_number }}">
                                 </div>
                             </div>
                             <div class="col-xs-4 col-sm-4 col-md-4">
@@ -28,8 +28,8 @@
                             </div>
 
                             <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <label for="plantilla">Plantilla</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="plantilla" name="plantilla"" value="{{ $siniestro->plantilla }}">
+                                    <label for="template">Plantilla</label>
+                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="template" name="template"" value="{{ $siniestro->template }}">
                                             <option selected value="emails.contactomail">Contacto PAS</option>
                                             <!-- <option value="emails.derivacion">Para Edu</option> -->
                                             
@@ -38,22 +38,22 @@
                                 
                             <div class="col-xs-4 col-sm-4 col-md-4">
                                 <div class="form-group">
-                                <label for="patente">Patente</label>
-                                    <input type="text" name="patente" id="patente" class="form-control" value="{{ $siniestro->patente }}">
+                                <label for="license_plate">Patente</label>
+                                    <input type="text" name="license_plate" id="license_plate" class="form-control" value="{{ $siniestro->license_plate }}">
                                 </div>
                             </div>
 
                             <div class="col-xs-3 col-sm-3 col-md-3">
                                 <div class="form-group">
-                                    <label for="fechaip">Fecha IP</label>
-                                    <input type="date" name="fechaip" class="form-control" value="{{ $siniestro->fechaip }}" >
+                                    <label for="inspection_date">Fecha IP</label>
+                                    <input type="date" name="inspection_date" class="form-control" value="{{ $siniestro->inspection_date }}" >
                                 </div>
                             </div>
 
                             <div class="col-xs-4 col-sm-4 col-md-4" hide="true">
                                         <div class="form-group">
-                                        <label for="coordinador">Coordinador</label>
-                                        <input type="text" name="coordinador" id="coordinador" class="form-control" value="{{\Illuminate\Support\Facades\Auth::user()->name}}">
+                                        <label for="coordinator">Coordinador</label>
+                                        <input type="text" name="coordinator" id="coordinator" class="form-control" value="{{\Illuminate\Support\Facades\Auth::user()->name}}">
                                         </div>
                                     </div>
                             <hr>
@@ -64,33 +64,33 @@
                             
                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                         <div class="form-group">
-                                        <label for="fechaip">Fecha IP</label>
-                                        <input type="date" name="fechaip" class="form-control"  value="{{ $siniestro->fechaip }}">
+                                        <label for="inspection_date">Fecha IP</label>
+                                        <input type="date" name="inspection_date" class="form-control"  value="{{ $siniestro->inspection_date }}">
                                         </div>
                                     </div>  
                                     
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <div class="form-group">
-                                        <label for="nombretaller">Nombre del taller</label>
-                                        <input type="text" name="nombretaller"  class="form-control" value="{{ $siniestro->nombretaller }}">
+                                        <label for="workshop_name">Nombre del taller</label>
+                                        <input type="text" name="workshop_name"  class="form-control" value="{{ $siniestro->workshop_name }}">
                                         </div>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <div class="form-group">
-                                        <label for="direccion">Dirección</label>
-                                        <input type="text" name="direccion"  class="form-control" value="{{ $siniestro->direccion }}">
+                                        <label for="address">Dirección</label>
+                                        <input type="text" name="address"  class="form-control" value="{{ $siniestro->address }}">
                                         </div>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <div class="form-group">
-                                        <label for="telefono">Teléfono</label>
-                                        <input type="text" name="telefono"  class="form-control" value="{{ $siniestro->telefono }}">
+                                        <label for="phone">Teléfono</label>
+                                        <input type="text" name="phone"  class="form-control" value="{{ $siniestro->phone }}">
                                         </div>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <div class="form-group">
-                                        <label for="localidad">Localidad</label>
-                                        <input type="text" name="localidad"  class="form-control" value="{{ $siniestro->localidad }}">
+                                        <label for="city">Localidad</label>
+                                        <input type="text" name="city"  class="form-control" value="{{ $siniestro->city }}">
                                         </div>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
@@ -102,8 +102,8 @@
                                     
                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                         <div class="form-group">
-                                        <label for="enviarorden">Enviar orden</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="enviarorden" name="enviarorden" value="{{ $siniestro->enviarorden }}">
+                                        <label for="send_order">Enviar orden</label>
+                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="send_order" name="send_order" value="{{ $siniestro->send_order }}">
                                             <option selected value="si">Si</option>
                                             <option value="no">No</option>
                                         </select>
@@ -111,13 +111,13 @@
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <div class="form-group">
-                                        <label for="horario">Rango horario</label>
-                                        <input type="text" name="horario"  class="form-control" value="{{ $siniestro->horario }}">
+                                        <label for="inspection_time">Rango horario</label>
+                                        <input type="text" name="inspection_time"  class="form-control" value="{{ $siniestro->inspection_time }}">
                                         </div>
                                     </div>
                                     <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <label for="lugar">Lugar de inspección</label>
-                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" for="lugar" name="lugar" value="{{ $siniestro->lugar }}">
+                                    <label for="location">Lugar de inspección</label>
+                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" for="location" name="location" value="{{ $siniestro->location }}">
                                             <option selected>--seleccionar</option>
                                             <option value="TH">Taller homologado</option>
                                             <option value="Taller del asegurado">Taller del asegurado</option>
@@ -125,8 +125,8 @@
                                         </select>
                                     </div>
                                     <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <label for="modalidad">Tipo de inspeccion</label>
-                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" for="modalidad" name="modalidad" value="{{ $siniestro->modalidad }}">
+                                    <label for="inspection_mode">Tipo de inspeccion</label>
+                                    <select class="form-select col-xs-12 col-sm-12 col-md-12" aria-label="Default select example" for="inspection_mode" name="inspection_mode" value="{{ $siniestro->inspection_mode }}">
                                             <option selected >--seleccionar--</option>
                                             <option value="presencial">Presencial</option>
                                             <option value="videollamada">Videollamada</option>
@@ -136,8 +136,8 @@
                                     </div>
                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                         <div class="form-group">
-                                        <label for="motivo">Motivo</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="motivo" name="motivo" value="{{ $siniestro->motivo }}">
+                                        <label for="reason">Motivo</label>
+                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="reason" name="reason" value="{{ $siniestro->reason }}">
                                             <option selected >--seleccionar--</option>
                                             <option value="Todo riesgo">Todo riesgo</option>
                                             <option value="ampliacion">Ampliacion</option>
@@ -150,8 +150,8 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <label for="cliente">Cliente</label>
-                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="cliente" name="cliente" value="{{ $siniestro->cliente }}">
+                                    <label for="client_type">Cliente</label>
+                                        <select class="form-select col-xs-12 col-sm-12 col-md-12"  aria-label="Default select example" for="client_type" name="client_type" value="{{ $siniestro->client_type }}">
                                             <option selected >--seleccionar--</option>
                                             <option value="Asegurado">Asegurado</option>
                                             <option value="Tercero">Tercero</option>
@@ -160,9 +160,9 @@
 
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-12">           
-                                        <label for="observaciones">Observaciones</label>    
+                                        <label for="notes">Observaciones</label>
                                         <div class="form-floating">
-                                        <textarea class="form-control" name="observaciones" style="height:100px" ">{{ $siniestro->observaciones }}</textarea>
+                                        <textarea class="form-control" name="notes" style="height:100px" ">{{ $siniestro->notes }}</textarea>
                                         </div>
                                     </div> -->
 
@@ -192,10 +192,10 @@
 
 event.preventDefault();
 // var id = $('#id').val();
-var siniestro =  $('#siniestro').val();
+var siniestro =  $('#claim_number').val();
 var emailPas = $('#emailPas').val();
-var coordinador = $('#coordinador').val();
-var patente = $('#patente').val();
+var coordinador = $('#coordinator').val();
+var patente = $('#license_plate').val();
  
  $.ajaxSetup({
 headers:{
@@ -207,8 +207,8 @@ headers:{
  $.ajax({
      type: "POST",
      dataType: "json",
-     data: {siniestro:siniestro, emailPas:emailPas, patente:patente, coordinador:coordinador},
-     url: "/correo",
+     data: {claim_number:siniestro, emailPas:emailPas, license_plate:patente, coordinator:coordinador},
+     url: "/coordination/emails",
      success: function(response){
         Swal.fire({
              icon: 'success',

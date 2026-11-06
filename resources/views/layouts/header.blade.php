@@ -24,7 +24,7 @@
 
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <div class="dropdown-title">Panel</div>
-                <a class="dropdown-item has-icon edit-profile d-flex align-items-center" href="{{ route('usuarios.edit', ['usuario' => \Auth::id()]) }}">
+                <a class="dropdown-item has-icon edit-profile d-flex align-items-center" href="{{ route('users.edit', ['user' => \Auth::id()]) }}">
                     <i class="fa fa-user"></i><h5 class="mb-0 ms-2">Editar perfil</h5>
                 </a>
                 <a class="dropdown-item has-icon d-flex align-items-center" data-toggle="modal" style="cursor:pointer;" data-target="#changePasswordModal" data-id="{{ \Auth::id() }}">

@@ -21,9 +21,9 @@
                                 @foreach ($productores as $productor)
                                     <tr>
                                         <td class="d-none">{{ $productor->id }}</td>
-                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->nombre }}</td>
-                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->telefono }}</td>
-                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->correo }}</td>
+                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->name }}</td>
+                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->phone }}</td>
+                                        <td onclick="selectedRow(); productorData('{{ $productor->id }}')">{{ $productor->email }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

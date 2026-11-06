@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'inspection_map' => [
+        'geocoding_url' => env('INSPECTION_GEOCODING_URL', 'https://nominatim.openstreetmap.org/search'),
+        'country_code' => env('INSPECTION_GEOCODING_COUNTRY', 'ar'),
+        'tile_url' => env('INSPECTION_MAP_TILE_URL', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

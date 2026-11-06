@@ -4,20 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Siniestro;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class File extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url','siniestro_id'];
+    protected $fillable = ['url', 'claim_id'];
 
-    
-    public function siniestro()
+    public function claim(): BelongsTo
     {
-        return $this->BelongsTo('App\models\Siniestro');
+        return $this->belongsTo(Claim::class);
     }
-
-
 }

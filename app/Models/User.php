@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Siniestro;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 //Agregamos spatie
@@ -48,8 +48,37 @@ class User extends Authenticatable
     ];
 
 
-    public function siniestros()
+    public function claims(): HasMany
     {
-        return $this->hasMany('App\models\Siniestro');
+        return $this->hasMany(Claim::class, 'created_by');
+    }
+
+    public function siniestros(): HasMany
+    {
+        return $this->claims();
+    }
+    public function isRestrictedInspector(): bool
+    {
+        return $this->hasRole('Inspectores') && ! $this->can('view-all-claims');
+    }
+    public function isRoutePlanner(): bool
+    {
+        return $this->hasRole('Hojas de ruta') && ! $this->can('view-all-claims');
+    }
+
+    public function canCoordinateInspections(): bool
+    {
+        return ! $this->isRestrictedInspector() && ! $this->isRoutePlanner()
+            && ($this->hasAnyRole(['CEO', 'Coordinaciones']) || $this->canAny(['editar-siniestro', 'ceo-siniestro']));
+    }
+
+    public function canPlanInspectionRoutes(): bool
+    {
+        return $this->hasAnyRole(['CEO', 'Hojas de ruta']);
+    }
+
+    public function canManageInspectionPayments(): bool
+    {
+        return $this->hasAnyRole(['CEO', 'Administrativo']);
     }
 }

@@ -23,7 +23,7 @@ class BlogController extends Controller
     public function index()
     {       
          //Con paginación
-         $blogs = Blog::paginate(5);
+         $blogs = Blog::orderBy('id')->get();
          return view('blogs.index',compact('blogs'));
          //al usar esta paginacion, recordar poner en el el index.blade.php este codigo  {!! $blogs->links() !!}    
     }
@@ -47,8 +47,8 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         request()->validate([
-            'titulo' => 'required',
-            'contenido' => 'required',
+            'title' => 'required',
+            'content' => 'required',
         ]);
     
         Blog::create($request->all());
@@ -88,8 +88,8 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
          request()->validate([
-            'titulo' => 'required',
-            'contenido' => 'required',
+            'title' => 'required',
+            'content' => 'required',
         ]);
     
         $blog->update($request->all());

@@ -1,40 +1,40 @@
 @extends('layouts.app')
+@section('page-title', auth()->user()->isRestrictedInspector() ? 'Mis inspecciones' : 'Siniestros')
+@section('page-description', 'Listado de siniestros según el filtro seleccionado.')
+
+@section('header-tools')
+<label class="claims-global-search" for="claims-global-search"><i class="bi bi-search"></i><input id="claims-global-search" type="search" placeholder="Buscar en el listado…"></label>
+@endsection
 
 @section('content')
-<section class="p-2">
-
-    {{-- Header --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-        <div>
-            <h3 class="mb-0 fw-bold">Siniestros</h3>
-            <nav aria-label="breadcrumb" class="mt-1">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('home') }}" class="text-decoration-none">Dashboard</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Siniestros</li>
-                </ol>
-            </nav>
-        </div>
-
-        @can('crear-siniestro')
-            <a class="btn btn-brand btn-sm" href="{{ route('siniestros.create') }}">
-                <i class="fas fa-plus me-2"></i>
-                Ingresar siniestro
-            </a>
-        @endcan
-    </div>
-
-    {{-- Panel principal --}}
-    <div class="panel">
-
-        <div class="table-responsive">
-            <table class="table table-sm table-hover align-middle mb-0 tablita w-100">
+<x-table-panel>
+    <x-slot:actions>
+@if(auth()->user()->isRestrictedInspector())
+    <form action="{{ route('claims.index') }}" method="GET" class="d-flex flex-wrap align-items-center gap-2 me-auto mb-3">
+        <label for="inbox-state">Bandeja</label>
+        <select id="inbox-state" name="status" class="form-select form-select-sm w-auto">
+            <option value="">Todas mis inspecciones</option>
+            <option value="Peritando" @selected(request('status') === 'Peritando')>Peritando</option>
+            <option value="IPgestion" @selected(request('status') === 'IPgestion')>En gestión</option>
+        </select>
+        <label for="inbox-date">Fecha IP</label>
+        <input id="inbox-date" name="date" type="date" class="form-control form-control-sm w-auto" value="{{ request('date') }}">
+        <button class="btn btn-palette-green btn-sm" type="submit">Filtrar</button>
+        <a class="btn btn-palette-gray btn-sm" href="{{ route('claims.index') }}">Limpiar</a>
+    </form>
+@endif
+@can('crear-siniestro')
+<a class="claims-create" href="{{ route('claims.create') }}"><i class="bi bi-plus-lg"></i> Nuevo siniestro</a>
+@endcan
+    </x-slot:actions>
+<table class="table align-middle w-100 app-data-table" data-standard-table>
                 <thead>
                     <tr>
                         <th class="d-none">ID</th>
 
                         <th>Siniestro</th>
+                        <th>Asegurado</th>
+                        <th>Inspector</th>
                         <th>Compañía</th>
 
                         @can('peritos-siniestro')
@@ -63,7 +63,6 @@
                             <th>Cliente</th>
                             <th>Dirección</th>
                             <th>Localidad</th>
-                            <th>Inspector</th>
                             <th>Motivo</th>
                         @endcan
 
@@ -76,68 +75,68 @@
                         <tr>
                             <td class="d-none">{{ $siniestro->id }}</td>
 
-                            <td class="fw-semibold">{{ $siniestro->siniestro }}</td>
-                            <td>{{ $siniestro->compania }}</td>
+                            <td class="fw-semibold">{{ $siniestro->claim_number }}</td>
+                            @include('siniestros.partials._person_links')
+                            <td>{{ $siniestro->company?->name }}</td>
 
                             @can('peritos-siniestro')
-                                <td>{{ $siniestro->fechaip ? date('d-m-Y', strtotime($siniestro->fechaip)) : '-' }}</td>
-                                <td>{{ $siniestro->nrocorto }}</td>
-                                <td>{{ $siniestro->direccion }}</td>
-                                <td>{{ $siniestro->localidad }}</td>
+                                <td>{{ $siniestro->inspection_date ? date('d-m-Y', strtotime($siniestro->inspection_date)) : '-' }}</td>
+                                <td>{{ $siniestro->short_number }}</td>
+                                <td>{{ $siniestro->address }}</td>
+                                <td>{{ $siniestro->city }}</td>
                             @endcan
 
-                            <td>{{ $siniestro->patente }}</td>
+                            <td>{{ $siniestro->license_plate }}</td>
 
                             @can('derivar-siniestro')
-                                <td>{{ $siniestro->fechaip ? date('d-m-Y', strtotime($siniestro->fechaip)) : '-' }}</td>
+                                <td>{{ $siniestro->inspection_date ? date('d-m-Y', strtotime($siniestro->inspection_date)) : '-' }}</td>
                             @endcan
 
                             @can('ver-siniestro')
                                 <td>
                                     {{-- Si querés lo hacemos badge por estado (pendiente/en gestión/cerrado) --}}
-                                    <span class="badge text-bg-light border">
-                                        {{ $siniestro->estado }}
-                                    </span>
+                                    @include('siniestros.partials._status')
                                 </td>
                                 <td>{{ $siniestro->created_at ? date('d-m-Y', strtotime($siniestro->created_at)) : '-' }}</td>
                                 <td>{{ $siniestro->updated_at ? date('d-m-Y', strtotime($siniestro->updated_at)) : '-' }}</td>
                                 <td class="text-start" style="min-width: 220px;">
                                     <span class="d-inline-block text-truncate" style="max-width: 420px;">
-                                        {{ $siniestro->observaciones }}
+                                        {{ $siniestro->notes }}
                                     </span>
                                 </td>
                             @endcan
 
-                            <td>{{ $siniestro->modalidad }}</td>
+                            <td>{{ $siniestro->inspection_mode }}</td>
 
                             @can('derivar-siniestro')
-                                <td>{{ $siniestro->cliente }}</td>
-                                <td>{{ $siniestro->direccion }}</td>
-                                <td>{{ $siniestro->localidad }}</td>
-                                <td>{{ $siniestro->inspector }}</td>
-                                <td>{{ $siniestro->motivo }}</td>
+                                <td>{{ $siniestro->client_type }}</td>
+                                <td>{{ $siniestro->address }}</td>
+                                <td>{{ $siniestro->city }}</td>
+                                <td>{{ $siniestro->reason }}</td>
                             @endcan
 
                             <td>
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <a href="{{ route('siniestros.edit', $siniestro->id) }}"
-                                       class="btn btn-outline-primary btn-sm px-3">
+                                <div class="table-actions justify-content-center">
+                                    <a href="{{ route('claims.edit', $siniestro->id) }}"
+                                       class="btn btn-palette-blue btn-sm px-3">
                                         <i class="fas fa-pen me-1"></i>
-                                        Editar
+                                        {{ auth()->user()->isRestrictedInspector() ? 'Gestionar' : 'Editar' }}
                                     </a>
 
-                                    <form action="{{ route('siniestros.destroy', $siniestro->id) }}"
+                                    @unless(auth()->user()->isRestrictedInspector())
+                                    <form action="{{ route('claims.destroy', $siniestro->id) }}"
                                           method="POST"
                                           class="m-0 p-0">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="btn btn-outline-danger btn-sm px-3"
+                                                class="btn btn-palette-orange btn-sm px-3"
                                                 onclick="return confirm('¿Seguro que querés borrar este registro?')">
                                             <i class="fas fa-trash me-1"></i>
                                             Borrar
                                         </button>
                                     </form>
+                                    @endunless
                                 </div>
                             </td>
 
@@ -145,27 +144,5 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
-
-        {{-- Paginación Laravel --}}
-        <div class="d-flex justify-content-end mt-3">
-            {!! $siniestros->links() !!}
-        </div>
-
-    </div>
-</section>
-@endsection
-
-@section('javas')
-<script>
-    $(function () {
-        // Si mantenés paginación de Laravel, DataTables SOLO para estilos/orden, sin paging
-        $('.tablita').DataTable({
-            paging: false,
-            info: false,
-            searching: true,
-            order: [], // no fuerza orden
-        });
-    });
-</script>
+</x-table-panel>
 @endsection

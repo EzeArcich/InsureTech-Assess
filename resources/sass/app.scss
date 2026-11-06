@@ -59,6 +59,7 @@ $card-border-radius: 1rem;
 
 // 3) Import Bootstrap
 @import "bootstrap/scss/bootstrap";
+@import "theme";
 
 
 // ==========================================================
@@ -439,3 +440,5 @@ main.app-main{
         border-radius: 1rem 1rem 0 0;
     }
 }
+
+@import 'admin-claims';

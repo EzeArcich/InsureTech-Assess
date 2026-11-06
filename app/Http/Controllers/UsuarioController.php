@@ -33,7 +33,7 @@ class UsuarioController extends Controller
         return view('usuarios.index',compact('usuarios')); */
 
         //Con paginación
-        $usuarios = User::paginate(5);
+        $usuarios = User::with('roles')->orderBy('id')->get();
         return view('usuarios.index',compact('usuarios'));
 
         //al usar esta paginacion, recordar poner en el el index.blade.php este codigo  {!! $usuarios->links() !!}
@@ -72,7 +72,7 @@ class UsuarioController extends Controller
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
     
-        return redirect()->route('usuarios.index');
+        return redirect()->route('users.index');
     }
 
     /**
@@ -131,7 +131,7 @@ class UsuarioController extends Controller
     
         $user->assignRole($request->input('roles'));
     
-        return redirect()->route('usuarios.index');
+        return redirect()->route('users.index');
     }
 
     /**
@@ -143,6 +143,6 @@ class UsuarioController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return redirect()->route('usuarios.index');
+        return redirect()->route('users.index');
     }
 }

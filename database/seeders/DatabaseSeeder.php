@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             'id' => 1,
             'name' => 'Super admin',
             'email' => 'admina@gmail.com',
-            'telefono' => null,
+            'phone' => null,
             'email_verified_at' => null,
             'password' => '$2y$10$wEtEjvw8AQ8mHM.n5KHfu.PlctXcuG7ro8sVO4xJkO6scNkLfZeki',
             'remember_token' => null,
@@ -80,6 +80,9 @@ class DatabaseSeeder extends Seeder
             'model_id' => 1, // El usuario con id 1
         ]);
 
+        $this->call(AdministrativeRoleSeeder::class);
+        $this->call(SeederUsuariosPorRol::class);
+        $this->call(ClaimSeeder::class);
         
 
     }
