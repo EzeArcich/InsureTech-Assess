@@ -14,17 +14,32 @@ Un mismo espacio para compañías, asegurados, productores, talleres y peritos.
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-base_de_datos-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
-[Funcionalidades](#-funcionalidades) · [Instalación](#-instalación) · [Roles](#-roles-y-accesos) · [Mapas](#-ubicaciones-y-hojas-de-ruta) · [Pruebas](#-pruebas)
+[Estado actual](#-estado-actual) · [Funcionalidades](#-funcionalidades) · [Instalación](#-instalación) · [Simulación](#-integración-de-aseguradoras-y-laboratorio) · [Pruebas](#-pruebas) · [Próximos pasos](#-próximos-pasos)
 
 </div>
 
 ---
 
+## 📌 Estado actual
+
+**Proyecto en desarrollo funcional**, con circuito operativo de siniestros, acceso por roles y un laboratorio autónomo para probar el ingreso de casos desde aseguradoras ficticias.
+
+Actualmente se puede recibir un siniestro por HTTP, incorporarlo al módulo operativo, coordinar la inspección, asignar un perito, gestionar la pericia y registrar su cierre y honorarios. El laboratorio permite alimentar ese circuito manualmente o mediante ejecuciones automáticas de múltiples compañías.
+
+| Disponible | Próxima etapa |
+| :--- | :--- |
+| API de recepción con autenticación por compañía, validación estricta e idempotencia. | Integraciones con sistemas reales de aseguradoras y preparación operativa del despliegue productivo. |
+| Simulador manual y autónomo, persistencia, escenarios, reintentos y métricas. | Ampliar escenarios y cobertura de recorridos completos de la interfaz. |
+| Pruebas PHPUnit, integración HTTP real y concurrencia MySQL en entornos aislados. | **Laravel Dusk** para pruebas automatizadas en navegador real. |
+
+> El laboratorio utiliza la API real de la aplicación. Esto permite validar el canal de entrada previsto para producción; no significa que ya existan aseguradoras externas conectadas ni un despliegue productivo validado.
+
 ## ✨ Funcionalidades
 
 | Módulo | Qué permite hacer |
 | :--- | :--- |
-| **Integración de aseguradoras** | Recibir siniestros por API con credenciales por compañía e idempotencia; probar envíos con un laboratorio administrativo. |
+| **Integración de aseguradoras** | Recibir siniestros por HTTP con credenciales por compañía, validación, trazabilidad e idempotencia. |
+| **Laboratorio de simulación** | Generar lotes manuales o ejecuciones autónomas multiaseguradora, con escenarios, límites, historial, métricas y control de procesos desde el panel. |
 | **Dashboard** | Consultar cantidades por estado, filtrar siniestros y comparar compañías con un gráfico de barras. |
 | **Siniestros** | Gestionar estados, adjuntos, datos del asegurado y asignaciones; consultar listados con búsqueda y paginación. |
 | **Coordinación** | Registrar modalidad, fecha, horario y domicilio; buscar y confirmar el punto de una pericia presencial. |
@@ -222,22 +237,141 @@ Al confirmar un siniestro **En gestión** como **Resuelto**, CEO o Administrativ
 
 ## 🧩 Integración de aseguradoras y laboratorio
 
-`POST /api/v1/integrations/claims` recibe siniestros usando credenciales independientes por compañía, con permiso `claims:create`. El emisor se identifica desde su token; el payload no puede elegir compañía, asegurado interno ni estado. El alta reutiliza `SaveClaim`, crea el asegurado y comienza en **Pendiente**.
+### Un único canal de entrada: HTTP real
 
-Los reintentos equivalentes conservan el mismo siniestro; mismo ID externo con otros datos devuelve **409**. Un bloqueo de la compañía y la restricción única protegen solicitudes simultáneas, incluso con distintas credenciales.
+Las aseguradoras envían sus casos a:
 
-El **Laboratorio de aseguradoras** permite generar de 1 a 25 payloads ficticios, previsualizar, confirmar el envío por HTTP y consultar resultados e historial. Requiere CEO o administrador equivalente, `CLAIM_SIMULATOR_ENABLED=true` y entorno local/testing. El token se conserva cifrado en el servidor, sin exponerlo al navegador.
+```http
+POST /api/v1/integrations/claims
+Authorization: Bearer <credencial_de_la_compañía>
+Content-Type: application/json
+```
+
+**El simulador consume ese mismo endpoint mediante solicitudes HTTP reales.** Tanto los lotes manuales como los Jobs automáticos ingresan por la autenticación, la validación y las reglas de negocio de la API. El simulador genera y persiste sus eventos; la creación del siniestro y su asegurado queda a cargo del receptor, mediante el servicio compartido `SaveClaim`.
+
+```mermaid
+flowchart LR
+    A[Aseguradora externa] --> D[API HTTP de integración]
+    B[Simulador manual] --> D
+    C[Scheduler y workers del simulador] --> D
+    D --> E[Autenticación y validación]
+    E --> F[Control idempotente y transacción]
+    F --> G[SaveClaim]
+    G --> H[Siniestro Pendiente y asegurado]
+    H --> I[Circuito operativo de InsureTech]
+```
+
+La integración productiva está prevista sobre este mismo contrato y recorrido de negocio. Actualmente el emisor externo se reproduce con compañías ficticias y un receptor local. El laboratorio permanece restringido a desarrollo; la exposición productiva de la API requiere su configuración de despliegue, HTTPS y gestión operativa de credenciales.
+
+### Protecciones de la API
+
+| Control implementado | Comportamiento |
+| :--- | :--- |
+| **Identidad por compañía** | La compañía se obtiene de la credencial Bearer; el payload no puede elegir otra compañía, un asegurado interno ni el estado inicial. |
+| **Credenciales independientes** | Se comprueban secreto, permiso `claims:create`, activación, revocación y vencimiento cuando esté configurado. Los secretos de credenciales reales se almacenan como hash. |
+| **Contrato estricto** | Se validan campos requeridos, formatos, longitudes y catálogos. Se rechazan campos desconocidos, incluidos identificadores internos y atributos protegidos. |
+| **Idempotencia** | La identidad del envío es compañía + `external_id` normalizado. El mismo contenido devuelve el recibo original sin crear otro siniestro. |
+| **Conflictos de contenido** | Reutilizar el mismo ID externo con otros datos devuelve **409**, en lugar de sobrescribir el caso existente. |
+| **Concurrencia** | Un bloqueo de compañía, restricciones únicas y una transacción protegen altas simultáneas, incluso con distintas credenciales de la misma compañía. |
+| **Integridad del alta** | Siniestro, asegurado y recibo idempotente se confirman juntos; un fallo al guardar el recibo revierte el alta. Los siniestros integrados se protegen frente al borrado y al cambio de compañía desde formularios internos. |
+| **Límite de solicitudes** | Se aplica el límite API existente de 60 solicitudes por minuto, por usuario autenticado o IP. |
+| **Trazabilidad y errores** | El middleware registra ID de solicitud, credencial, hash cuando está disponible, estado HTTP y duración, sin guardar el payload personal ni el token en esas trazas. Los errores internos devuelven un mensaje genérico. |
+
+Una creación devuelve **201**; un reintento equivalente, **200**. Las respuestas que atraviesan el middleware incluyen `X-Request-ID` y `Cache-Control: no-store`; un rechazo por rate limit puede ocurrir antes de ese middleware.
+
+### Simulación manual y autónoma
+
+El módulo se abre desde **Laboratorio de aseguradoras**, en `/claim-simulations`.
+
+| Modalidad | Alcance actual |
+| :--- | :--- |
+| **Manual** | Generación de 1 a 25 payloads ficticios, previsualización, confirmación, envío HTTP e historial por lote. |
+| **Automática** | Perfiles reutilizables por compañía; cada inicio crea una ejecución con snapshot de configuración y eventos persistidos. |
+| **Control de ejecución** | Iniciar, pausar, reanudar y detener; duración determinada o indefinida y finalización automática por vencimiento. |
+| **Multiaseguradora** | Varios perfiles y compañías simultáneos sobre un único Scheduler y un conjunto compartido de workers. |
+| **Escenarios** | Operación normal, hora pico, evento climático y problemas de comunicación. Intervalos exponenciales o fijos, motivos ponderados y semillas reproducibles. |
+| **Auditoría y métricas** | Eventos, payload persistido, intentos, resultado HTTP, errores, próximos disparos, tasa de éxito y enlaces al expediente. |
+
+El escenario climático representa granizo ficticio en notas y utiliza `Todo riesgo`, que pertenece al catálogo existente. No se inventan campos de gravedad ni motivos ajenos al dominio.
+
+### Protecciones del motor de simulación
+
+- **Reintentos acotados:** conservan exactamente el payload y el ID externo. Se reintentan fallos transitorios y respuestas ambiguas; los errores permanentes de validación no se reintentan indefinidamente.
+- **Respuesta perdida:** si la API creó el siniestro pero se perdió la confirmación HTTP, el siguiente intento recupera el recibo idempotente del mismo registro.
+- **Reservas y recuperación:** los eventos tienen reservas persistentes con vencimiento. Tras un reinicio se recuperan desde la base; la planificación y el encolado son transaccionales.
+- **Sin ráfagas de recuperación:** los intervalos perdidos no se reproducen todos juntos. Se reprograma desde el momento actual, conservando los eventos ya persistidos y sus límites.
+- **Límites de carga:** frecuencia, intentos por hora, pendientes, concurrencia y límite diario opcional. Hay un techo compartido por compañía de 3 envíos simultáneos y 120 intentos por hora.
+- **Pausa y detención:** bloquean nuevos envíos; una solicitud HTTP ya iniciada puede finalizar y conservar su resultado.
+- **Laboratorio aislado:** acceso CEO o administrador equivalente, flag explícito y entorno `local/testing`. El laboratorio no se habilita en producción sólo por activar el flag.
+- **Destino controlado:** únicamente HTTP loopback configurado por el servidor, sin URL elegida desde el formulario, proxy ni redirecciones.
+- **Credenciales y datos ficticios:** los tokens del laboratorio se guardan cifrados y no se exponen al navegador. Los payloads usan identidades ficticias y correos `example.test`.
+- **Fallas optativas:** timeout, fallos transitorios, HTTP fallido, pérdida de respuesta y duplicados intencionales se simulan exclusivamente en el laboratorio, deshabilitados por defecto y sin modificar la API receptora.
+
+Se busca procesamiento efectivo idempotente; no se promete entrega exactamente una vez a nivel de transporte. El historial ficticio del laboratorio sí conserva sus payloads bajo acceso administrativo.
+
+### Probar el laboratorio
+
+Configurar `.env`:
+
+```dotenv
+CLAIM_SIMULATOR_ENABLED=true
+CLAIM_SIMULATOR_ORIGIN=http://127.0.0.1:8001
+CLAIM_SIMULATION_HTTP_TIMEOUT=8
+CLAIM_SIMULATION_MAX_ATTEMPTS=4
+CLAIM_SIMULATION_FAULTS_ENABLED=false
+```
+
+Aplicar las migraciones pendientes sobre una base preparada para desarrollo:
 
 ```bash
 php artisan migrate --no-interaction
 php artisan config:clear --no-interaction
-# Requiere habilitar previamente el laboratorio en .env.
+```
+
+Si todavía no existe la compañía de laboratorio:
+
+```bash
 php artisan integrations:seed-demo --no-interaction
 ```
 
-La demo agrega **DEMO Seguro Norte** sin modificar compañías, usuarios ni siniestros existentes. Para el laboratorio se ejecuta un segundo proceso HTTP de la misma aplicación, separado del panel; el cliente sólo permite destinos locales de loopback. No se envían correos. El modo autónomo permite configurar perfiles multiaseguradora y ejecuciones con duración o indefinidas, pausa/reanudación, escenarios y límites. Utiliza un Scheduler compartido y workers de la cola `database/simulations`; no requiere procesos por compañía.
+El comando agrega **DEMO Seguro Norte** y su credencial de laboratorio. No crea usuarios ni siniestros, no modifica compañías existentes y rechaza repetirse si la demo ya está cargada.
 
-[OpenAPI](integration-openapi.yaml) · [Postman](integration.postman_collection.json).
+Con la aplicación web abierta, ingresar al laboratorio y presionar **Encender motor**. En desarrollo Linux inicia el worker `database/simulations`, `schedule:work` y el receptor HTTP local si falta; muestra el estado y evita duplicar los procesos gestionados. También detecta procesos de consola del proyecto cuando el sistema permite inspeccionarlos. Requiere PHP CLI, `proc_open`, `nohup`, `flock` y escritura en `storage/app/simulation-runtime`.
+
+Los procesos continúan al cerrar el navegador y se detienen al apagar la PC. Si alguno termina, se puede volver a iniciar desde el botón. Este lanzador local no reemplaza la supervisión de procesos de un despliegue permanente.
+
+<details>
+<summary><strong>Alternativa: iniciar los procesos desde consola</strong></summary>
+
+Ejecutar en terminales separadas, desde la raíz del proyecto:
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8001 --no-reload
+```
+
+```bash
+php artisan schedule:work --no-interaction
+```
+
+```bash
+php artisan queue:work database --queue=simulations --sleep=1 --tries=1 --timeout=30 --no-interaction
+```
+
+El receptor usa la misma aplicación y base de datos en un proceso separado del panel, para permitir llamadas HTTP reales sin bloquear el servidor de desarrollo. El motor administra los reintentos del evento; `--tries=1` corresponde a la entrega de cada Job. Usar un único método de gestión de procesos para evitar duplicados con instalaciones externas de cron/Supervisor.
+
+</details>
+
+**Ejemplo:** crear un perfil de DEMO Seguro Norte con operación normal, frecuencia **12 siniestros/hora**, duración **60 minutos**, motivos ponderados y límites de seguridad; confirmar e iniciar. Se puede cerrar la página y consultar luego los resultados desde el módulo operativo. Con intervalos exponenciales, 12/h es un promedio, no una cantidad exacta garantizada. La duración incluye el tiempo pausado o con la PC apagada.
+
+Para emitir una credencial de laboratorio para otra compañía ficticia existente:
+
+```bash
+php artisan integrations:issue-token ID_COMPANIA --simulation --name="Laboratorio adicional" --no-interaction
+```
+
+No hace falta un despliegue ni procesos independientes por compañía. El simulador no realiza envíos de correo. Todavía no se implementan actualizaciones de siniestros por integración ni retención automática del historial de simulación.
+
+[Contrato OpenAPI](integration-openapi.yaml) · [Colección Postman](integration.postman_collection.json).
 
 ## 🧪 Pruebas
 
@@ -255,14 +389,46 @@ DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test --compact tests/Featu
 
 Las pruebas cubren permisos y aislamiento por inspector, persistencia de siniestros, coordinación y mapas, cálculos de reparación, configuración por compañía y registro de honorarios y pagos. Las llamadas al geocodificador se simulan en las pruebas de integración.
 
+La integración y el laboratorio agregan cobertura de autenticación por compañía, campos protegidos, rollback, idempotencia, snapshots, planificación, pausa/reanudación, recuperación de reservas, límites, escenarios y reintentos. El control de procesos también tiene pruebas con procesos PHP reales e inofensivos en directorios temporales.
+
+Hay pruebas optativas que recorren **planificador → cola database → worker → API HTTP real → siniestro**, con una SQLite temporal. Incluyen la pérdida de una respuesta exitosa y un reintento que conserva un único registro:
+
+```bash
+INTEGRATION_HTTP_TESTS=true DB_CONNECTION=sqlite DB_DATABASE=:memory: \
+  php artisan test --compact tests/Feature/AutomaticSimulationHttpTest.php tests/Feature/ClaimIntegrationHttpTest.php
+```
+
+Las pruebas de concurrencia MySQL comprueban esperas reales por bloqueos entre conexiones, tanto en la recepción de solicitudes como entre planificadores. Son optativas con `INTEGRATION_CONCURRENCY_TESTS=true` y requieren un servidor **de pruebas**, PCNTL, permiso de crear/eliminar bases temporales y acceso a `performance_schema.data_lock_waits`. No deben ejecutarse migraciones de pruebas sobre una base operativa.
+
+Estas comprobaciones de backend, HTTP y procesos ya existen. La cobertura de interfaz mediante navegador real con Laravel Dusk es el siguiente paso.
+
+## 🔜 Próximos pasos
+
+### Laravel Dusk: recorridos completos en navegador
+
+**Planificado; todavía no está instalado ni implementado.** Se incorporará para comprobar el comportamiento visible de la aplicación, complementando PHPUnit y las pruebas HTTP existentes.
+
+Recorridos previstos:
+
+- [ ] Inicio de sesión, navegación y accesos por rol.
+- [ ] Preparación, previsualización y envío de un lote desde el laboratorio.
+- [ ] Creación de perfiles e inicio, pausa, reanudación y detención de simulaciones.
+- [ ] Consulta de estados, métricas y apertura del expediente generado.
+- [ ] Flujo operativo de coordinación y gestión del siniestro.
+- [ ] Interacciones JavaScript: modales, pestañas, Select2, DataTables y mapas.
+
+La preparación de Dusk deberá contemplar una base aislada y procesos de laboratorio controlados para que los recorridos sean reproducibles. Su incorporación no implica que hoy exista una suite de navegador ni que se hayan validado estos flujos con Dusk.
+
 ## 🗂️ Organización del proyecto
 
 ```text
 app/
+├── Console/            Comandos y registro del Scheduler
+├── Jobs/               Envíos HTTP de eventos de simulación
 ├── Http/Controllers/    Controladores de los módulos
 ├── Http/Requests/       Validación y autorización de formularios
 ├── Models/              Entidades y relaciones Eloquent
-└── Services/            Guardado, cálculos, cierre y geocodificación
+└── Services/            Dominio, integración, simulación y procesos locales
 
 database/
 ├── factories/           Generación de datos de prueba
@@ -274,8 +440,10 @@ resources/
 ├── sass/                Tema, paleta global y estilos compartidos
 └── views/               Vistas Blade y componentes
 
-routes/web.php           Rutas web agrupadas por dominio
-tests/Feature/          Pruebas funcionales
+config/claim_integrations.php  Configuración de API/laboratorio y límites del motor
+routes/api.php                Endpoint de integración
+routes/web.php                Rutas web agrupadas por dominio
+tests/Feature/                Pruebas funcionales, HTTP y concurrencia
 ```
 
 Los nombres de las tablas, campos y rutas principales están en inglés. Parte de los archivos conserva nombres históricos en español. La paleta compartida se define en [`resources/sass/_theme.scss`](resources/sass/_theme.scss).
