@@ -24,6 +24,7 @@ Un mismo espacio para compañías, asegurados, productores, talleres y peritos.
 
 | Módulo | Qué permite hacer |
 | :--- | :--- |
+| **Integración de aseguradoras** | Recibir siniestros por API con credenciales por compañía e idempotencia; probar envíos con un laboratorio administrativo. |
 | **Dashboard** | Consultar cantidades por estado, filtrar siniestros y comparar compañías con un gráfico de barras. |
 | **Siniestros** | Gestionar estados, adjuntos, datos del asegurado y asignaciones; consultar listados con búsqueda y paginación. |
 | **Coordinación** | Registrar modalidad, fecha, horario y domicilio; buscar y confirmar el punto de una pericia presencial. |
@@ -218,6 +219,25 @@ Las cantidades de reparación admiten hasta dos decimales, como `0.5`. El cálcu
 Al confirmar un siniestro **En gestión** como **Resuelto**, CEO o Administrativo genera un honorario pendiente de pago con el valor de esa compañía y modalidad. El importe queda registrado para que posteriores cambios de tarifas no lo alteren. El inspector consulta sus propios cobros; administración dispone de totales y filtros por compañía, perito, fecha de cierre y estado de pago.
 
 **Los valores reales se cargan desde Configuración:** los seeders no establecen tarifas comerciales ni generan pagos.
+
+## 🧩 Integración de aseguradoras y laboratorio
+
+`POST /api/v1/integrations/claims` recibe siniestros usando credenciales independientes por compañía, con permiso `claims:create`. El emisor se identifica desde su token; el payload no puede elegir compañía, asegurado interno ni estado. El alta reutiliza `SaveClaim`, crea el asegurado y comienza en **Pendiente**.
+
+Los reintentos equivalentes conservan el mismo siniestro; mismo ID externo con otros datos devuelve **409**. Un bloqueo de la compañía y la restricción única protegen solicitudes simultáneas, incluso con distintas credenciales.
+
+El **Laboratorio de aseguradoras** permite generar de 1 a 25 payloads ficticios, previsualizar, confirmar el envío por HTTP y consultar resultados e historial. Requiere CEO o administrador equivalente, `CLAIM_SIMULATOR_ENABLED=true` y entorno local/testing. El token se conserva cifrado en el servidor, sin exponerlo al navegador.
+
+```bash
+php artisan migrate --no-interaction
+php artisan config:clear --no-interaction
+# Requiere habilitar previamente el laboratorio en .env.
+php artisan integrations:seed-demo --no-interaction
+```
+
+La demo agrega **DEMO Seguro Norte** sin modificar compañías, usuarios ni siniestros existentes. Para el laboratorio se ejecuta un segundo proceso HTTP de la misma aplicación, separado del panel; el cliente sólo permite destinos locales de loopback. No se envían correos. El modo autónomo permite configurar perfiles multiaseguradora y ejecuciones con duración o indefinidas, pausa/reanudación, escenarios y límites. Utiliza un Scheduler compartido y workers de la cola `database/simulations`; no requiere procesos por compañía.
+
+[OpenAPI](integration-openapi.yaml) · [Postman](integration.postman_collection.json).
 
 ## 🧪 Pruebas
 

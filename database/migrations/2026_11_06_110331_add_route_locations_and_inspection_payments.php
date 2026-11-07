@@ -41,6 +41,12 @@ return new class extends Migration
     {
         Schema::dropIfExists('inspection_payments');
         Schema::dropIfExists('inspection_rates');
+        // MySQL may replace the inspector FK index with the covering route index.
+        if (Schema::getConnection()->getDriverName() === 'mysql' && ! Schema::hasIndex('claims', ['inspector_id'])) {
+            Schema::table('claims', function (Blueprint $table): void {
+                $table->index('inspector_id', 'claims_inspector_rollback_index');
+            });
+        }
         Schema::table('claims', function (Blueprint $table): void {
             $table->dropIndex('claims_daily_route_index');
             $table->dropColumn(['inspection_address', 'inspection_latitude', 'inspection_longitude']);

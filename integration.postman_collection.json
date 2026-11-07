@@ -1,0 +1,160 @@
+{
+  "info": {
+    "name": "InsureTech — integración de aseguradoras",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Emitir credencial por integrations:issue-token para una compañía existente. Completar token sin versionarlo. Crear, repetir y luego ejecutar conflicto conservando external_id. El simulador obtiene su secreto cifrado sin mostrarlo; para usar Postman emitir una credencial independiente."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8001/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "external_id",
+      "value": ""
+    },
+    {
+      "key": "claim_id",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Registrar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/integrations/claims",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"external_id\": \"{{external_id}}\",\n  \"claim_number\": \"SIM-NORTE-001\",\n  \"client_name\": \"SIMULADO Asegurado\",\n  \"client_email\": \"asegurado@example.test\",\n  \"license_plate\": \"AA123AA\",\n  \"reason\": \"Todo riesgo\",\n  \"notes\": \"SIMULACIÓN: datos ficticios.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "if (pm.response.code === 201) pm.collectionVariables.set('claim_id', pm.response.json().data.id);"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('external_id')) pm.collectionVariables.set('external_id','sim-'+pm.variables.replaceIn('{{$guid}}')); "
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Reintentar mismo payload",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/integrations/claims",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"external_id\": \"{{external_id}}\",\n  \"claim_number\": \"SIM-NORTE-001\",\n  \"client_name\": \"SIMULADO Asegurado\",\n  \"client_email\": \"asegurado@example.test\",\n  \"license_plate\": \"AA123AA\",\n  \"reason\": \"Todo riesgo\",\n  \"notes\": \"SIMULACIÓN: datos ficticios.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "if (pm.response.code === 201) pm.collectionVariables.set('claim_id', pm.response.json().data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Conflicto de contenido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/integrations/claims",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"external_id\": \"{{external_id}}\",\n  \"claim_number\": \"SIM-NORTE-001\",\n  \"client_name\": \"SIMULADO Otro Asegurado\",\n  \"client_email\": \"asegurado@example.test\",\n  \"license_plate\": \"AA123AA\",\n  \"reason\": \"Todo riesgo\",\n  \"notes\": \"SIMULACIÓN: datos ficticios.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+              "if (pm.response.code === 201) pm.collectionVariables.set('claim_id', pm.response.json().data.id);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

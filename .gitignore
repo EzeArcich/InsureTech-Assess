@@ -12,3 +12,19 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# Documentación técnica y ADR: conservar sólo copias locales
+*.[mM][dD]
+*.mdx
+/docs/
+/adr/
+/adrs/
+/.adr/
+
+# Mantener README e instrucciones del proyecto
+!README.md
+!AGENTS.md
+!SKILL.md
+!/.agents/**/*.md
+!/.cursor/**/*.md
+!/.ai/**/*.md

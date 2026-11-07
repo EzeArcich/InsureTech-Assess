@@ -18,4 +18,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+Route::post('/v1/integrations/claims', [\App\Http\Controllers\IntegrationClaimController::class, 'store'])
+    ->middleware(\App\Http\Middleware\AuthenticateCompanyIntegration::class)->name('integrations.claims.store');

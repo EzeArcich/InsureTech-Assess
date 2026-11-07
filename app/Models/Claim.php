@@ -108,6 +108,11 @@ class Claim extends Model
         return $this->belongsToMany(Part::class, 'claim_part', 'claim_id', 'part_id');
     }
 
+    public function integrationReceipt(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(IntegratedClaim::class, 'claim_id');
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

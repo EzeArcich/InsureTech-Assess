@@ -208,6 +208,9 @@ class SiniestroController extends Controller
         $claim = Siniestro::visibleTo(Auth::user())->findOrFail($id);
         DB::transaction(function () use ($claim): void {
             $claim = Siniestro::lockForUpdate()->findOrFail($claim->id);
+            if ($claim->integrationReceipt()->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['claim' => 'No se puede eliminar un siniestro recibido por integración; se preserva su trazabilidad.']);
+            }
             if ($claim->inspectionPayment()->exists()) {
                 throw \Illuminate\Validation\ValidationException::withMessages(['claim' => 'No se puede eliminar un siniestro con honorarios registrados.']);
             }

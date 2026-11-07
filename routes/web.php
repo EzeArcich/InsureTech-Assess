@@ -108,3 +108,24 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
         Route::post('/inspection-emails', [CoordinacionesController::class, 'correoEdu'])->name('inspection_emails.store');
     });
 });
+
+Route::middleware(['auth', \App\Http\Middleware\EnsureClaimSimulatorEnabled::class, 'can:simulate-claims'])->prefix('claim-simulations')->name('claim-simulations.')->group(function (): void {
+    Route::get('/', [\App\Http\Controllers\ClaimSimulationController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\ClaimSimulationController::class, 'store'])->name('store');
+    Route::get('/runtime', [\App\Http\Controllers\SimulationRuntimeController::class, 'show'])->middleware('throttle:30,1')->name('runtime.show');
+    Route::post('/runtime', [\App\Http\Controllers\SimulationRuntimeController::class, 'store'])->middleware('throttle:5,1')->name('runtime.store');
+    Route::prefix('automatic')->name('automatic.')->controller(\App\Http\Controllers\AutomaticSimulationController::class)->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('/metrics', 'metrics')->middleware('throttle:30,1')->name('metrics');
+        Route::get('/profiles/create', 'create')->name('create');
+        Route::post('/profiles', 'store')->name('store');
+        Route::get('/profiles/{profile}/edit', 'edit')->name('edit');
+        Route::put('/profiles/{profile}', 'update')->name('update');
+        Route::post('/profiles/{profile}/duplicate', 'duplicate')->name('duplicate');
+        Route::post('/profiles/{profile}/start', 'start')->middleware('throttle:5,1')->name('start');
+        Route::get('/runs/{run}', 'show')->name('show');
+        Route::post('/runs/{run}/transition', 'transition')->name('transition');
+    });
+    Route::get('/{claimSimulation}', [\App\Http\Controllers\ClaimSimulationController::class, 'show'])->name('show');
+    Route::post('/{claimSimulation}/send', [\App\Http\Controllers\ClaimSimulationController::class, 'send'])->middleware('throttle:5,1')->name('send');
+});

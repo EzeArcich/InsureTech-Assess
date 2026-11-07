@@ -49,6 +49,11 @@
             <a href="{{ route('blogs.index') }}" class="{{ request()->routeIs('blogs.*') ? 'is-active' : '' }}"><i class="bi bi-journal-text"></i> Noticias</a>
 
             @endunless
+            @if(app()->environment(['local','testing']) && config('claim_integrations.simulator_enabled'))
+            @can('simulate-claims')
+            <a href="{{ route('claim-simulations.index') }}" class="{{ request()->routeIs('claim-simulations.*') ? 'is-active' : '' }}"><i class="bi bi-send"></i> Laboratorio de aseguradoras</a>
+            @endcan
+            @endif
             @hasrole('CEO')
             <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'is-active' : '' }}"><i class="bi bi-gear"></i> Roles</a>
             @endhasrole

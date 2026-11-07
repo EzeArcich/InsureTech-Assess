@@ -13,6 +13,10 @@ class InsuranceMigrationTest extends TestCase
     public function test_normalization_and_rollback_preserve_legacy_contact_details(): void
     {
         DB::table('claims')->count();
+        $automaticMigration = require database_path('migrations/2026_11_07_020505_add_automatic_claim_simulations.php');
+        $automaticMigration->down();
+        $integrationMigration = require database_path('migrations/2026_11_07_012556_create_claim_integration_tables.php');
+        $integrationMigration->down();
         $emailMigration = require database_path('migrations/2026_11_06_124053_create_email_templates_and_deliveries_tables.php');
         $emailMigration->down();
         $routeMigration = require database_path('migrations/2026_11_06_110331_add_route_locations_and_inspection_payments.php');
@@ -48,5 +52,7 @@ class InsuranceMigrationTest extends TestCase
         $repairMigration->up();
         $routeMigration->up();
         $emailMigration->up();
+        $integrationMigration->up();
+        $automaticMigration->up();
     }
 }

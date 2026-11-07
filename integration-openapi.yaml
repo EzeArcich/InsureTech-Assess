@@ -1,0 +1,247 @@
+openapi: 3.1.0
+info:
+  title: InsureTech — recepción de siniestros
+  version: 1.0.0
+  description: Compañía obtenida del Bearer token propio. Alta mediante SaveClaim
+    y estado Pendiente. Idempotencia por compañía y external_id normalizado, hash
+    de contenido validado. HTTPS en producción. Sin pólizas ni gravedad en el dominio
+    actual.
+servers:
+- url: http://127.0.0.1:8001/api/v1
+  description: Receptor local de laboratorio
+security:
+- companyBearer: []
+paths:
+  /integrations/claims:
+    post:
+      operationId: receiveInsurerClaim
+      summary: Registrar siniestro de aseguradora autenticada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimInput'
+      responses:
+        '201':
+          description: Alta confirmada transaccionalmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '200':
+          description: 'Reintento equivalente: mismo siniestro y snapshot original'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '401':
+          description: Credencial inválida, revocada, vencida o ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '403':
+          description: Credencial sin permiso o inactiva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '409':
+          description: ID externo recibido con otros datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '422':
+          description: Validación de campos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+        '429':
+          description: Rate limit API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo interno genérico, sin detalles del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+              description: Correlación con la traza del receptor
+components:
+  securitySchemes:
+    companyBearer:
+      type: http
+      scheme: bearer
+      description: <credential_id>|<secret>. Se emite por CLI; sólo hash para credenciales
+        reales. Permiso claims:create.
+  schemas:
+    ClaimInput:
+      type: object
+      additionalProperties: false
+      required:
+      - external_id
+      - claim_number
+      - client_name
+      properties:
+        external_id:
+          type: string
+          maxLength: 100
+          pattern: ^[A-Za-z0-9][A-Za-z0-9._:-]*$
+          description: Normalizado a minúsculas. Identidad única dentro de la compañía
+            autenticada.
+        claim_number:
+          type: string
+          maxLength: 191
+        client_name:
+          type: string
+          maxLength: 191
+        client_email:
+          type:
+          - string
+          - 'null'
+          maxLength: 191
+          format: email
+        phone:
+          type:
+          - string
+          - 'null'
+          maxLength: 191
+        address:
+          type:
+          - string
+          - 'null'
+          maxLength: 191
+        city:
+          type:
+          - string
+          - 'null'
+          maxLength: 191
+        license_plate:
+          type:
+          - string
+          - 'null'
+          maxLength: 191
+        client_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - Asegurado
+          - Tercero
+          - Cotizacion
+          - null
+        inspection_mode:
+          type:
+          - string
+          - 'null'
+          enum:
+          - presencial
+          - videollamada
+          - foto y presupuesto
+          - foto
+          - null
+        reason:
+          type:
+          - string
+          - 'null'
+          maxLength: 10000
+        notes:
+          type:
+          - string
+          - 'null'
+          maxLength: 10000
+    ClaimResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            external_id: &id001
+              type: string
+            claim_number: *id001
+            company_id:
+              type: integer
+            status: *id001
+            created_at:
+              type: string
+              format: date-time
+          required:
+          - id
+          - external_id
+          - claim_number
+          - company_id
+          - status
+          - created_at
+        meta:
+          type: object
+          properties:
+            replayed:
+              type: boolean
+            request_id:
+              type: string
+              format: uuid
+          required:
+          - replayed
+          - request_id
+      required:
+      - data
+      - meta
+    Error:
+      type: object
+      properties:
+        message: *id001
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: *id001
+      required:
+      - message

@@ -32,6 +32,10 @@ class SaveClaim
                     }
                 }
             }
+            if ($claim->exists && isset($attributes['company_id']) && (int) $attributes['company_id'] !== (int) $claim->company_id
+                && $claim->integrationReceipt()->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['company_id' => 'Un siniestro recibido por integración conserva su compañía emisora.']);
+            }
             $locationChanged = false;
             foreach (['address', 'city', 'workshop_id'] as $field) {
                 if (array_key_exists($field, $attributes) && trim((string) $attributes[$field]) !== trim((string) $claim->$field)) {

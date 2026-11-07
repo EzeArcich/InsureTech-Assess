@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+        Gate::define('simulate-claims', fn (User $user): bool => $user->hasRole('CEO'));
 
         Gate::define('coordinate-inspections', fn (User $user): bool => $user->canCoordinateInspections());
 
