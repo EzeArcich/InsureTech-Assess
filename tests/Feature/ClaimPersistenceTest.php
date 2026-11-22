@@ -6,6 +6,7 @@ use App\Models\Claim;
 use App\Models\Company;
 use App\Models\Inspector;
 use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
@@ -20,9 +21,10 @@ class ClaimPersistenceTest extends TestCase
         $user->givePermissionTo(Permission::create(['name' => 'crear-siniestro', 'guard_name' => 'web']));
         $company = Company::factory()->create(['prefix' => 'ML']);
         $inspector = Inspector::factory()->create();
+        $vehicle = Vehicle::factory()->create();
 
         $response = $this->actingAs($user)->post('/claims', [
-            'company_id' => $company->id, 'claim_number' => 'ML54897894656166',
+            'company_id' => $company->id, 'vehicle_id' => $vehicle->id, 'claim_number' => 'ML54897894656166',
             'client_name' => 'Ana Asegurada', 'phone' => '1144556677',
             'address' => 'San Martín 123', 'city' => 'Buenos Aires',
             'inspector_id' => $inspector->id, 'client_type' => 'Asegurado',

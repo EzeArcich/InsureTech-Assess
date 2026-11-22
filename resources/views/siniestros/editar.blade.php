@@ -92,6 +92,9 @@
                 <span class="badge text-bg-light border">Alta</span>
             </div>
 
+            <div class="mb-3"><label for="insured-account" class="form-label">Relato del asegurado</label><textarea id="insured-account" class="form-control" rows="4" readonly>{{ $siniestro->insured_account }}</textarea></div>
+            <div class="mb-3"><label for="vehicle-id" class="form-label">Vehículo</label><input id="vehicle-id" class="form-control" readonly value="@if($siniestro->vehicle){{ $siniestro->vehicle->brand }} {{ $siniestro->vehicle->model }} · {{ $siniestro->vehicle->version }} · {{ $siniestro->vehicle->year }}@else Sin vehículo asociado @endif"><small class="text-muted">La asociación queda fija desde el alta.</small></div>
+            @include('siniestros.partials._inspection_photos')
             <div class="row g-3">
 
 <div class="col-12 col-md-4">

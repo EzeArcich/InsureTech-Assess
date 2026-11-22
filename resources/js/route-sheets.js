@@ -18,9 +18,11 @@ if (mapElement && window.L) {
     points.forEach(point => {
         const popup = document.createElement('div');
         const link = document.createElement('a'); link.href = point.url; link.textContent = point.number; popup.append(link);
-        [point.inspector, point.time, point.address].filter(Boolean).forEach(text => { const line = document.createElement('div'); line.textContent = text; popup.append(line); });
+        [`Perito: ${point.inspector || 'Sin asignar'}`, `Horario: ${point.time || 'Sin horario'}`, point.address].filter(Boolean).forEach(text => { const line = document.createElement('div'); line.textContent = text; popup.append(line); });
+        const tooltip = document.createElement('div');
+        [point.number, `Perito: ${point.inspector || 'Sin asignar'}`, `Horario: ${point.time || 'Sin horario'}`, point.address].filter(Boolean).forEach(text => { const line = document.createElement('div'); line.textContent = text; tooltip.append(line); });
         const color = getComputedStyle(document.documentElement).getPropertyValue(`--color-${colors[inspectors.indexOf(point.inspector) % colors.length]}`).trim();
-        L.circleMarker([point.lat, point.lng], { radius: 9, color, fillColor: color, fillOpacity: 0.8 }).bindPopup(popup).addTo(group);
+        L.circleMarker([point.lat, point.lng], { radius: 9, color, fillColor: color, fillOpacity: 0.8 }).bindPopup(popup).bindTooltip(tooltip, { direction: 'top' }).addTo(group);
     });
     group.addTo(map);
     if (points.length) map.fitBounds(group.getBounds(), { padding: [35, 35], maxZoom: 15 });
@@ -113,3 +115,5 @@ searchButton?.addEventListener('click', async () => {
         if (error.name !== 'AbortError' && generation === searchGeneration) results.textContent = 'No se pudo conectar con el buscador. Podés marcar el punto manualmente.';
     } finally { if (generation === searchGeneration) searchButton.disabled = false; }
 });
+
+document.querySelector('#route-inspector')?.addEventListener('change', event => event.target.form.requestSubmit());

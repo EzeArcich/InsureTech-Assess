@@ -136,7 +136,9 @@ class SiniestroController extends Controller
         $productores = Productores::all();
         $companies = Company::orderBy('name')->get();
 
-        return view('siniestros.crear', compact('talleres', 'users', 'siniestros', 'siniestro', 'productores', 'companies'));
+        $vehicles = \App\Models\Vehicle::orderBy('brand')->orderBy('model')->orderBy('year')->get();
+
+        return view('siniestros.crear', compact('talleres', 'users', 'siniestros', 'siniestro', 'productores', 'companies', 'vehicles'));
     }
 
     public function store(SaveClaimRequest $request, SaveClaim $saveClaim): RedirectResponse
@@ -156,10 +158,10 @@ class SiniestroController extends Controller
 
     public function edit(Siniestro $claim): View
     {
-        $siniestro = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
+        $siniestro = Siniestro::visibleTo(Auth::user())->with(['vehicle', 'inspectionPhotos'])->findOrFail($claim->id);
         if (Auth::user()->isRestrictedInspector()) {
-            $siniestro->load('company.rates', 'parts', 'workshop');
-            return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id))]);
+            $siniestro->load('company.rates', 'parts', 'catalogParts', 'workshop', 'vehicle', 'inspectionPhotos');
+            return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id)), 'selectedCatalogParts' => $this->selectedCatalogParts($siniestro)]);
         }
         $relaciones = Siniestro::visibleTo(Auth::user())->where('license_plate', $siniestro->license_plate)->where('status', 'Pendiente')->get();
         $users = Inspector::orderBy('name')->get();
@@ -172,13 +174,37 @@ class SiniestroController extends Controller
         return view('siniestros.editar', compact('siniestro', 'talleres','users', 'productores', 'relaciones', 'companies', 'emailTemplates'));
     }
 
+    private function selectedCatalogParts(Siniestro $claim): \Illuminate\Support\Collection
+    {
+        if (session()->hasOldInput('catalog_parts_present')) {
+            $codes = old('catalog_part_codes', []);
+            if (! is_array($codes)) {
+                return collect();
+            }
+
+            return \App\Models\CatalogCollisionPart::where('vehicle_configuration_code', $claim->vehicle?->catalog_configuration_code)
+                ->whereIn('code', array_slice($codes, 0, 100))->orderBy('name')->get();
+        }
+
+        return $claim->catalogParts;
+    }
+
+    public function photo(Siniestro $claim, int $photo): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        abort_unless(Auth::user()->isRestrictedInspector() || Auth::user()->canCoordinateInspections() || Auth::user()->canAny(['ver-siniestro', 'editar-siniestro', 'ceo-siniestro', 'peritos-siniestro', 'derivar-siniestro', 'terceros-siniestro', 'cotizar-siniestro']), 403);
+        $claim = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
+        $photo = $claim->inspectionPhotos()->findOrFail($photo);
+
+        return response()->file(\Illuminate\Support\Facades\Storage::disk('local')->path($photo->path));
+    }
+
     public function inspection(Siniestro $claim): View
     {
         $siniestro = Siniestro::visibleTo(Auth::user())->findOrFail($claim->id);
         abort_unless(Auth::user()->isRestrictedInspector() || Auth::user()->canAny(['editar-siniestro', 'ceo-siniestro', 'peritos-siniestro']), 403);
-        $siniestro->load('company.rates', 'parts', 'workshop');
+        $siniestro->load('company.rates', 'parts', 'catalogParts', 'workshop', 'vehicle', 'inspectionPhotos');
 
-        return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id))]);
+        return view('siniestros.inspection', ['siniestro' => $siniestro, 'selectedWorkshop' => \App\Models\Workshop::find(old('workshop_id', $siniestro->workshop_id)), 'selectedCatalogParts' => $this->selectedCatalogParts($siniestro)]);
     }
 
     public function derivar(Siniestro $claim): View
@@ -317,6 +343,9 @@ class SiniestroController extends Controller
         if ($request->hasFile('image')) {
             $claim->image = $request->file('image')->store('claims/'.$claim->id.'/covers', 'public');
             $claim->save();
+        }
+        foreach ($request->file('inspection_photos', []) as $photo) {
+            $claim->inspectionPhotos()->create(['path' => $photo->store('claims/'.$claim->id.'/inspection-photos', 'local')]);
         }
         foreach ($request->file('urls', []) as $file) {
             $claim->files()->create(['url' => $file->store('claims/'.$claim->id.'/attachments', 'public')]);

@@ -82,7 +82,13 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AdministrativeRoleSeeder::class);
         $this->call(SeederUsuariosPorRol::class);
-        $this->call(ClaimSeeder::class);
+        if (! app()->environment('production')) {
+            $this->call([
+                DemoCollisionCatalogSeeder::class,
+                ClaimSeeder::class,
+                PlatformUsageSeeder::class,
+            ]);
+        }
         $this->call(EmailTemplateSeeder::class);
         
 

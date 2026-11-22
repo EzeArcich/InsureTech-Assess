@@ -73,4 +73,19 @@ class RouteSheetTest extends TestCase
         $this->actingAs(User::factory()->create())->get('/route-sheets')->assertForbidden();
         $this->put('/route-sheets/'.$claim->id.'/assignment', [])->assertForbidden();
     }
+    public function test_planner_defaults_to_tomorrow_and_switches_map_between_coordinated_and_inspector(): void
+    {
+        $this->withoutVite();
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-09 10:00:00'));
+        $planner = User::factory()->create();
+        $planner->assignRole(Role::findOrCreate('Hojas de ruta', 'web'));
+        $inspector = Inspector::factory()->create();
+        $coordinated = Claim::factory()->create(['status' => 'Coordinado', 'inspector_id' => null, 'inspection_mode' => 'presencial', 'inspection_date' => '2026-11-10']);
+        $coordinated->forceFill(['inspection_latitude' => -34.6, 'inspection_longitude' => -58.4])->save();
+        $assigned = Claim::factory()->for($inspector)->create(['status' => 'Peritando', 'inspection_mode' => 'presencial', 'inspection_date' => '2026-11-10', 'inspection_time' => '10:30']);
+        $assigned->forceFill(['inspection_latitude' => -34.61, 'inspection_longitude' => -58.41])->save();
+        $this->actingAs($planner)->get('/route-sheets')->assertOk()->assertViewHas('date', '2026-11-10')->assertViewHas('points', fn ($points): bool => $points->pluck('id')->all() === [$coordinated->id]);
+        $this->get('/route-sheets?inspector_id='.$inspector->id)->assertOk()->assertViewHas('points', fn ($points): bool => $points->pluck('id')->all() === [$assigned->id] && $points->first()['time'] === '10:30');
+    }
+
 }

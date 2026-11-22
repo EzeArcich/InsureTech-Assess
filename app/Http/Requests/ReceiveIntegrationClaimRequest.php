@@ -30,6 +30,8 @@ class ReceiveIntegrationClaimRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:191'], 'address' => ['nullable', 'string', 'max:191'], 'city' => ['nullable', 'string', 'max:191'],
             'license_plate' => ['nullable', 'string', 'max:191'],
             'client_type' => ['nullable', 'in:Asegurado,Tercero,Cotizacion'],
+            'insured_account' => ['nullable', 'string', 'max:10000'],
+            'vehicle_id' => ['nullable', 'integer', 'exists:vehicles,id'],
             'reason' => ['nullable', 'string', 'max:10000'],
             'inspection_mode' => ['nullable', 'in:presencial,videollamada,foto y presupuesto,foto'],
             'notes' => ['nullable', 'string', 'max:10000'],

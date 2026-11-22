@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class SaveClaim
 {
-    public function __construct(private CalculateClaimEstimate $estimates) {}
+    public function __construct(private CalculateClaimEstimate $estimates, private SyncClaimCatalogParts $catalogParts) {}
 
     /** @param array<string, mixed> $attributes */
     public function handle(array $attributes, ?Claim $claim = null): Claim
@@ -21,6 +21,9 @@ class SaveClaim
             $claim ??= new Claim;
             if ($claim->exists) {
                 $claim = Claim::query()->when(auth()->user(), fn ($query, $user) => $query->visibleTo($user))->lockForUpdate()->findOrFail($claim->id);
+            }
+            if ($claim->exists && array_key_exists('vehicle_id', $attributes) && (string) $attributes['vehicle_id'] !== (string) $claim->vehicle_id) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['vehicle_id' => 'El vehículo no puede cambiarse después del alta.']);
             }
             if (($attributes['status'] ?? null) === 'Resuelto') {
                 throw \Illuminate\Validation\ValidationException::withMessages(['status' => 'Usá el módulo de honorarios para confirmar el cierre del siniestro.']);
@@ -88,13 +91,16 @@ class SaveClaim
                 $attributes['producer_name'] = $producer->name;
                 $attributes['producer_email'] = $producer->email;
             }
-            $claim->fill(Arr::except($attributes, ['client_name', 'client_email', 'phone', 'address', 'city', 'urls', 'image', 'parts_present', 'part_names', 'inspection_address', 'inspection_latitude', 'inspection_longitude']));
+            $claim->fill(Arr::except($attributes, ['client_name', 'client_email', 'phone', 'address', 'city', 'urls', 'image', 'inspection_photos', 'parts_present', 'part_names', 'catalog_parts_present', 'catalog_part_codes', 'inspection_address', 'inspection_latitude', 'inspection_longitude']));
             $claim->company_id = $companyId;
             $claim->client_id = $client->id;
             if ($quote !== null) {
                 $claim->forceFill($quote);
             }
             $claim->save();
+            if (array_key_exists('catalog_parts_present', $attributes) || array_key_exists('catalog_part_codes', $attributes)) {
+                $this->catalogParts->handle($claim, $attributes['catalog_part_codes'] ?? []);
+            }
             if (array_key_exists('parts_present', $attributes) || array_key_exists('part_names', $attributes)) {
                 $partIds = [];
                 foreach ($attributes['part_names'] ?? [] as $name) {

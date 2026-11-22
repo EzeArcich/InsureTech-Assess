@@ -28,3 +28,10 @@ yarn-error.log
 !/.agents/**/*.md
 !/.cursor/**/*.md
 !/.ai/**/*.md
+
+# Configuración y archivos locales de testing
+.env.*
+!.env.example
+/datos_ddbb_testing
+/InsureTech_Catalogo_Colision_Seeders.zip
+/InsureTech_Catalogo_Colision_Seeders/

@@ -23,6 +23,8 @@
                 <option value="IPgestion" @selected(old('status', $siniestro->status) === 'IPgestion')>En gestión · inspección realizada</option>
             </select>
         </div>
+        <div class="mb-3"><label for="insured-account" class="form-label">Relato del asegurado</label><textarea id="insured-account" class="form-control" rows="4" readonly>{{ $siniestro->insured_account }}</textarea></div>
+        @include('siniestros.partials._inspection_photos')
         @include("siniestros.partials._repair_fields")
         <div class="mb-3">
             <label class="form-label" for="inspection-notes">Observaciones del inspector</label>

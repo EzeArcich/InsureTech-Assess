@@ -8,12 +8,12 @@
 @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
 <form class="panel mb-3 d-flex flex-wrap gap-3 align-items-end" method="GET" action="{{ route('route-sheets.index') }}">
 <div><label class="form-label" for="route-date">Día</label><input class="form-control" type="date" id="route-date" name="date" value="{{ $date }}" required></div>
-@if(!auth()->user()->isRestrictedInspector())<div><label class="form-label" for="route-inspector">Perito</label><select class="form-select" name="inspector_id" id="route-inspector"><option value="">Todos los peritos</option>@foreach($inspectors as $inspector)<option value="{{ $inspector->id }}" @selected((string)$inspectorId === (string)$inspector->id)>{{ $inspector->name }}</option>@endforeach</select></div>@endif
+@if(!auth()->user()->isRestrictedInspector())<div><label class="form-label" for="route-inspector">Perito</label><select class="form-select" name="inspector_id" id="route-inspector"><option value="">Coordinadas por derivar</option>@foreach($inspectors as $inspector)<option value="{{ $inspector->id }}" @selected((string)$inspectorId === (string)$inspector->id)>{{ $inspector->name }}</option>@endforeach</select></div>@endif
 <button class="btn btn-palette-green">Ver agenda</button>
 </form>
 <div class="panel mb-3">
 <h2 class="h5">Mapa del {{ \Illuminate\Support\Carbon::parse($date)->format('d/m/Y') }}</h2>
-<p>{{ $assignments->count() }} inspecciones asignadas · {{ $points->count() }} puntos presenciales confirmados.</p>
+<p>@if(auth()->user()->canPlanInspectionRoutes() && !$inspectorId)Coordinadas por derivar @else Inspecciones del perito seleccionado @endif · {{ $points->count() }} puntos presenciales confirmados.</p>
 <div id="inspection-map" class="inspection-map" data-points="{{ $points->toJson() }}" data-tiles="{{ config('services.inspection_map.tile_url') }}"></div>
 <p id="map-feedback" class="text-muted mt-2" role="status">Seleccioná «Ubicar» para marcar o corregir un domicilio con un clic en el mapa.</p>
 <form id="map-location-form" method="POST" class="mt-3" hidden>@csrf @method('PUT')
@@ -27,10 +27,10 @@
 <x-table-panel>
 <x-slot:actions><h2 class="h5 me-auto">Inspecciones del día</h2></x-slot:actions>
 <table class="table w-100 app-data-table" data-standard-table><thead><tr><th>Siniestro</th><th>Perito</th><th>Horario</th><th>Modalidad</th><th>Domicilio</th><th>Ubicación</th><th>Acciones</th></tr></thead><tbody>
-@foreach($assignments as $claim)
+@foreach($mapClaims as $claim)
 <tr><td><a href="{{ route('claims.show', $claim->id) }}">{{ $claim->claim_number }}</a></td><td>{{ $claim->inspector?->name }}</td><td>{{ $claim->inspection_time ?: 'Sin horario' }}</td><td>{{ $claim->inspection_mode }}</td><td>{{ $claim->inspection_address ?: ($claim->workshop ? $claim->workshop->address.' · '.$claim->workshop->city : $claim->address.' · '.$claim->city) }}</td><td>{{ $claim->inspectionModality() !== 'in_person' ? 'Remota · fuera del mapa' : ($claim->inspection_latitude !== null && $claim->inspection_longitude !== null ? 'Confirmada' : 'Sin ubicar') }}</td><td><div class="table-actions">
 @if($claim->inspectionModality() === 'in_person')<button class="btn btn-palette-blue btn-sm" type="button" data-locate data-geocode-url="{{ route('route-sheets.geocode', $claim) }}" data-url="{{ route('route-sheets.location', $claim) }}" data-number="{{ $claim->claim_number }}" data-address="{{ $claim->inspection_address ?: ($claim->workshop ? $claim->workshop->address.' · '.$claim->workshop->city : $claim->address.' · '.$claim->city) }}" data-lat="{{ $claim->inspection_latitude }}" data-lng="{{ $claim->inspection_longitude }}">{{ $claim->inspection_latitude !== null ? 'Revisar ubicación' : 'Buscar ubicación' }}</button>@endif
-@if(auth()->user()->canPlanInspectionRoutes())<button type="button" class="btn btn-palette-yellow btn-sm" data-assign data-url="{{ route('route-sheets.assign', $claim) }}" data-number="{{ $claim->claim_number }}" data-inspector="{{ $claim->inspector_id }}" data-date="{{ $date }}" data-time="{{ $claim->inspection_time }}">Reasignar</button>@endif
+@if(auth()->user()->canPlanInspectionRoutes())<button type="button" class="btn btn-palette-yellow btn-sm" data-assign data-url="{{ route('route-sheets.assign', $claim) }}" data-number="{{ $claim->claim_number }}" data-inspector="{{ $claim->inspector_id }}" data-date="{{ $date }}" data-time="{{ $claim->inspection_time }}">{{ $claim->status === 'Coordinado' ? 'Asignar' : 'Reasignar' }}</button>@endif
 </div></td></tr>
 @endforeach
 </tbody></table></x-table-panel>

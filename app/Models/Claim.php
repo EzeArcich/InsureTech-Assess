@@ -15,7 +15,7 @@ class Claim extends Model
     use HasFactory, Userstamps;
 
     protected $fillable = [
-        'workshop_id', 'bodywork_unit', 'bodywork_units', 'mechanical_unit', 'mechanical_units', 'paint_panels',
+        'vehicle_id', 'insured_account', 'workshop_id', 'bodywork_unit', 'bodywork_units', 'mechanical_unit', 'mechanical_units', 'paint_panels',
         'company_id',
         'client_id',
         'inspector_id',
@@ -98,6 +98,16 @@ class Claim extends Model
         return $this->hasOne(InspectionPayment::class, 'claim_id');
     }
 
+    public function vehicle(): BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function inspectionPhotos(): HasMany
+    {
+        return $this->hasMany(InspectionPhoto::class, 'claim_id');
+    }
+
     public function workshop(): BelongsTo
     {
         return $this->belongsTo(Workshop::class);
@@ -106,6 +116,11 @@ class Claim extends Model
     public function parts(): BelongsToMany
     {
         return $this->belongsToMany(Part::class, 'claim_part', 'claim_id', 'part_id');
+    }
+
+    public function catalogParts(): BelongsToMany
+    {
+        return $this->belongsToMany(CatalogCollisionPart::class, 'claim_catalog_part', 'claim_id', 'part_code', 'id', 'code');
     }
 
     public function integrationReceipt(): \Illuminate\Database\Eloquent\Relations\HasOne

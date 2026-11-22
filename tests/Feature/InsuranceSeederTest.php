@@ -19,6 +19,7 @@ class InsuranceSeederTest extends TestCase
         $this->seed(ClaimSeeder::class);
 
         $this->assertDatabaseCount('claims', 200);
+        $this->assertSame(0, Claim::whereNull('vehicle_id')->count());
         $this->assertDatabaseCount('clients', 200);
         $this->assertDatabaseCount('companies', 5);
         $this->assertDatabaseCount('inspectors', 10);
@@ -35,6 +36,19 @@ class InsuranceSeederTest extends TestCase
         }
         $this->assertSame(200, Claim::distinct()->count('claim_number'));
         $this->assertSame(200, Claim::distinct()->count('client_id'));
+    }
+
+    public function test_narrative_seeder_adds_claims_without_changing_existing_accounts(): void
+    {
+        $this->seed(ClaimSeeder::class);
+        $existing = Claim::firstOrFail();
+        $existing->update(['insured_account' => 'Relato conservado']);
+
+        $this->seed(\Database\Seeders\ClaimNarrativeSeeder::class);
+
+        $this->assertDatabaseCount('claims', 220);
+        $this->assertSame('Relato conservado', $existing->fresh()->insured_account);
+        $this->assertSame(220, Claim::whereNotNull('insured_account')->count());
     }
 
     public function test_factory_uses_the_selected_company_prefix(): void
@@ -69,7 +83,7 @@ class InsuranceSeederTest extends TestCase
     {
         $this->seed(\Database\Seeders\DatabaseSeeder::class);
 
-        $this->assertDatabaseCount('claims', 200);
+        $this->assertDatabaseCount('claims', 251);
         $this->assertDatabaseHas('inspectors', ['email' => 'inspectores@example.com']);
         $inspector = \App\Models\Inspector::where('email', 'inspectores@example.com')->firstOrFail();
         $this->assertSame('inspectores@example.com', $inspector->user->email);

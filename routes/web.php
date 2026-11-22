@@ -52,6 +52,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
     });
     Route::get('/workshops/search', [\App\Http\Controllers\InspectionWorkshopController::class, 'search'])->name('workshops.search');
     Route::resource('workshops', THController::class);
+    Route::apiResource('vehicles', \App\Http\Controllers\VehicleController::class);
     Route::get('/parts/search', [\App\Http\Controllers\PartController::class, 'search'])->name('parts.search');
     Route::middleware('role:CEO')->prefix('settings')->group(function (): void {
         Route::put('/companies/{company}/inspection-rates', [\App\Http\Controllers\InspectionRateController::class, 'update'])->name('settings.inspection-rates.update');
@@ -94,6 +95,9 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictInspectorAccess::class])
         Route::get('/{id}/data', [SiniestroController::class, 'editData'])->whereNumber('id')->name('data.show');
         Route::put('/{id}/data', [SiniestroController::class, 'updateData'])->whereNumber('id')->name('data.update');
         Route::get('/{claim}/inspection', [SiniestroController::class, 'inspection'])->name('inspection');
+        Route::get('/{claim}/photos/{photo}', [SiniestroController::class, 'photo'])->whereNumber(['claim', 'photo'])->name('photos.show');
+        Route::put('/{claim}/parts/catalog', [\App\Http\Controllers\PartController::class, 'updateCatalog'])->whereNumber('claim')->name('parts.catalog-update');
+        Route::get('/{claim}/parts/catalog-search', [\App\Http\Controllers\PartController::class, 'searchCatalog'])->whereNumber('claim')->name('parts.catalog-search');
         Route::get('/{claim}/parts', [\App\Http\Controllers\PartController::class, 'show'])->name('parts');
         Route::post('/{claim}/workshops', [\App\Http\Controllers\InspectionWorkshopController::class, 'store'])->name('workshops.store');
         Route::get('/{claim}/refer', [SiniestroController::class, 'derivar'])->whereNumber('claim')->name('refer');

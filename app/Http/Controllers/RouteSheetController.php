@@ -22,7 +22,7 @@ class RouteSheetController extends Controller
             'date' => ['nullable', 'date_format:Y-m-d'],
             'inspector_id' => ['nullable', 'integer', 'exists:inspectors,id'],
         ]);
-        $date = $filters['date'] ?? now()->toDateString();
+        $date = $filters['date'] ?? ($user->canPlanInspectionRoutes() ? now()->addDay()->toDateString() : now()->toDateString());
         $inspectors = $user->isRestrictedInspector()
             ? Inspector::where('user_id', $user->id)->get()
             : Inspector::orderBy('name')->get();
@@ -31,19 +31,22 @@ class RouteSheetController extends Controller
             ->whereNotNull('inspector_id')->whereDate('inspection_date', $date)
             ->when($inspectorId, fn ($query) => $query->where('inspector_id', $inspectorId))
             ->orderBy('inspection_time')->orderBy('id')->get();
-        $points = $assignments->filter(fn (Claim $claim): bool => $claim->inspectionModality() === 'in_person'
-            && $claim->inspection_latitude !== null && $claim->inspection_longitude !== null)
-            ->map(fn (Claim $claim): array => [
-                'id' => $claim->id, 'number' => $claim->claim_number, 'inspector' => $claim->inspector?->name,
-                'address' => $claim->inspection_address, 'time' => $claim->inspection_time,
-                'lat' => (float) $claim->inspection_latitude, 'lng' => (float) $claim->inspection_longitude,
-                'url' => route('claims.show', $claim->id),
-            ])->values();
         $candidates = $user->canPlanInspectionRoutes()
             ? Claim::visibleTo($user)->with('workshop')->where('status', 'Coordinado')->orderBy('inspection_date')->orderBy('id')->get()
             : collect();
+        $mapClaims = $user->canPlanInspectionRoutes() && ! $inspectorId
+            ? $candidates->filter(fn (Claim $claim): bool => $claim->inspection_date?->toDateString() === $date)
+            : $assignments;
+        $points = $mapClaims->filter(fn (Claim $claim): bool => $claim->inspectionModality() === 'in_person'
+            && $claim->inspection_latitude !== null && $claim->inspection_longitude !== null)
+            ->map(fn (Claim $claim): array => [
+                'id' => $claim->id, 'number' => $claim->claim_number, 'inspector' => $claim->inspector?->name,
+                'address' => $claim->inspection_address, 'time' => $claim->inspection_time, 'status' => $claim->status,
+                'lat' => (float) $claim->inspection_latitude, 'lng' => (float) $claim->inspection_longitude,
+                'url' => route('claims.show', $claim->id),
+            ])->values();
 
-        return view('route-sheets.index', compact('date', 'inspectorId', 'inspectors', 'assignments', 'points', 'candidates'));
+        return view('route-sheets.index', compact('date', 'inspectorId', 'inspectors', 'assignments', 'points', 'candidates', 'mapClaims'));
     }
 
     public function assign(AssignInspectionRequest $request, Claim $claim): RedirectResponse

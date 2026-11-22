@@ -60,6 +60,8 @@
                 <span class="badge text-bg-light border">Alta</span>
             </div>
 
+            <div class="mb-3"><label for="insured_account" class="form-label">Relato del asegurado</label><textarea name="insured_account" id="insured_account" class="form-control" rows="4">{{ old('insured_account') }}</textarea><small class="text-muted">Se conservará sin cambios después del alta.</small></div>
+            <div class="mb-3"><label for="vehicle-id" class="form-label">Vehículo</label><select id="vehicle-id" name="vehicle_id" class="form-select" required><option value="">Seleccionar vehículo...</option>@foreach($vehicles as $vehicle)<option value="{{ $vehicle->id }}" @selected(old('vehicle_id') == $vehicle->id)>{{ $vehicle->brand }} {{ $vehicle->model }} · {{ $vehicle->version }} · {{ $vehicle->year }} @if($vehicle->doors) · {{ $vehicle->doors }} puertas @endif</option>@endforeach</select><small class="text-muted">El vehículo quedará asociado de forma permanente al crear el siniestro.</small></div>
             <div class="row g-3">
 
 <div class="col-12 col-md-3">

@@ -22,7 +22,7 @@ class RestrictInspectorAccess
                 'route-sheets.index', 'route-sheets.location', 'route-sheets.geocode', 'inspection-payments.index', 'inspection-payments.show',
                 'home', 'claims.index', 'claims.assigned', 'claims.in_progress',
                 'claims.show', 'claims.edit', 'claims.update', 'claims.data.show', 'claims.data.update',
-                'workshops.search', 'parts.search', 'claims.inspection', 'claims.parts', 'claims.workshops.store',
+                'workshops.search', 'parts.search', 'claims.photos.show', 'claims.inspection', 'claims.parts', 'claims.parts.catalog-search', 'claims.parts.catalog-update', 'claims.workshops.store',
                 'clients.show', 'inspectors.show', 'inspectors.show.data',
             ), 403);
         }
@@ -45,7 +45,7 @@ class RestrictInspectorAccess
             abort_unless($request->routeIs(
                 'home', 'claims.index', 'claims.pending', 'claims.absent', 'claims.show', 'claims.edit', 'claims.update',
                 'claims.data.show', 'claims.data.update', 'claims.location.search', 'claims.nearby',
-                'clients.show', 'inspectors.show', 'workshops.data', 'workshops.search', 'producers.data',
+                'claims.photos.show', 'clients.show', 'inspectors.show', 'workshops.data', 'workshops.search', 'producers.data',
                 'coordination.*', 'email-templates.*', 'claims.producer-email.*',
             ), 403);
         }

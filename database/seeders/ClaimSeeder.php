@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Company;
 use App\Models\Inspector;
 use App\Models\Producer;
+use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,10 @@ class ClaimSeeder extends Seeder
 
             $inspectors = Inspector::orderBy('id')->get();
             $producers = Producer::orderBy('id')->get();
+            if (! Vehicle::whereNotNull('catalog_configuration_code')->exists()) {
+                $this->call(DemoCollisionCatalogSeeder::class);
+            }
+            $vehicles = Vehicle::whereNotNull('catalog_configuration_code')->orderBy('id')->get();
             $remaining = max(0, 200 - Claim::count());
             $index = 0;
 
@@ -31,6 +36,7 @@ class ClaimSeeder extends Seeder
                 $client = $clients->get($offset) ?? Client::factory()->for(Company::orderBy('id')->firstOrFail())->create();
                 $producer = $producers[$index % $producers->count()];
                 Claim::factory()->for($client)->for($producer)->for($inspectors[$index % $inspectors->count()])->create([
+                    'vehicle_id' => $vehicles[$index % $vehicles->count()]->id,
                     'status' => ['Pendiente', 'Ausente', 'Coordinado', 'Peritando', 'IPgestion'][$index % 5],
                     'producer_name' => $producer->name,
                     'producer_email' => $producer->email,
